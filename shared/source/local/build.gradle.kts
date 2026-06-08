@@ -64,6 +64,7 @@ kotlin {
         androidMain {
             dependencies {
                 implementation(libs.sql.delight.android)
+                implementation(libs.androidx.ktx.core)
             }
         }
 

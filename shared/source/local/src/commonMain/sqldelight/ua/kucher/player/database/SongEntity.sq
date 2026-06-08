@@ -1,7 +1,6 @@
 CREATE TABLE IF NOT EXISTS SongEntity (
  id INTEGER PRIMARY KEY NOT NULL,
  title TEXT NOT NULL,
- imageUrl TEXT NOT NULL,
  artist TEXT NOT NULL,
  duration INTEGER NOT NULL,
  uri TEXT NOT NULL,
@@ -9,4 +8,21 @@ CREATE TABLE IF NOT EXISTS SongEntity (
 );
 
 CREATE INDEX IF NOT EXISTS song_name ON SongEntity(title);
+
+getSongs:
+SELECT *
+FROM SongEntity;
+
+getSongById:
+SELECT *
+FROM SongEntity
+WHERE id=?;
+
+insertSong:
+INSERT OR REPLACE INTO SongEntity(id, title, artist, duration, uri, albumId)
+VALUES ?;
+
+deleteAllSongs:
+DELETE FROM SongEntity;
+
 

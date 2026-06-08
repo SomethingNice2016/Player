@@ -31,4 +31,5 @@ kotlin {
 dependencies {
     implementation(projects.app.common)
     implementation(libs.androidx.activityCompose)
+    implementation(libs.androidx.ktx.core)
 }

@@ -8,7 +8,6 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.android.kmp.library)
     alias(libs.plugins.kotlinx.serialization)
-    alias(libs.plugins.metro)
     alias(libs.plugins.buildConfig)
 }
 
@@ -40,16 +39,12 @@ kotlin {
             implementation(libs.compose.nav3)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.materialKolor)
-        }
-
-        commonTest.dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.compose.ui.test)
-            implementation(libs.kotlinx.coroutines.test)
+            implementation(libs.androidx.ktx.core)
         }
 
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.androidx.ktx.core)
         }
 
         iosMain.dependencies {
