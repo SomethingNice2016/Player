@@ -8,7 +8,9 @@ import ua.kucher.player.database.ArtistEntity
 import ua.kucher.player.database.SongEntity
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
-internal actual class LocalStorageSource(private val context: Context) {
+internal actual class LocalStorageSource(
+    private val context: Context
+) {
 
     companion object {
         private const val SONG_SELECTION = "${MediaStore.Audio.Media.IS_MUSIC}=1"
@@ -47,26 +49,28 @@ internal actual class LocalStorageSource(private val context: Context) {
             while (cursor.moveToNext()) {
 
                 val audioId = cursor.getLong(idCol)
+                val albumId = cursor.getLong(albumIdCol)
 
-                result.add(
-                    SongEntity(
-                        id = audioId,
-                        title = cursor.getString(titleCol),
-                        artistId = cursor.getLong(artistIdCol),
-                        duration = cursor.getLong(durationCol),
-                        uri = ContentUris.withAppendedId(audioUri, audioId).toString(),
-                        albumId = cursor.getLong(albumIdCol)
-                    )
+                result += SongEntity(
+                    id = audioId,
+                    title = cursor.getString(titleCol),
+                    artistId = cursor.getLong(artistIdCol),
+                    duration = cursor.getLong(durationCol),
+                    uri = ContentUris.withAppendedId(
+                        audioUri,
+                        audioId
+                    ).toString(),
+                    albumId = albumId,
                 )
             }
         }
+
         return result
     }
 
     actual suspend fun getAlbums(): List<AlbumEntity> {
         val result = mutableListOf<AlbumEntity>()
 
-        // albumId -> artistId
         val albumArtistMap = mutableMapOf<Long, Long>()
 
         context.contentResolver.query(
@@ -84,9 +88,10 @@ internal actual class LocalStorageSource(private val context: Context) {
             val artistIdCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST_ID)
 
             while (cursor.moveToNext()) {
-                val albumId = cursor.getLong(albumIdCol)
-                val artistId = cursor.getLong(artistIdCol)
-                albumArtistMap.putIfAbsent(albumId, artistId)
+                albumArtistMap.putIfAbsent(
+                    cursor.getLong(albumIdCol),
+                    cursor.getLong(artistIdCol)
+                )
             }
         }
 
@@ -105,14 +110,13 @@ internal actual class LocalStorageSource(private val context: Context) {
             val titleCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM)
 
             while (cursor.moveToNext()) {
+
                 val albumId = cursor.getLong(idCol)
 
-                result.add(
-                    AlbumEntity(
-                        id = albumId,
-                        title = cursor.getString(titleCol),
-                        artistId = albumArtistMap[albumId] ?: -1L
-                    )
+                result += AlbumEntity(
+                    id = albumId,
+                    title = cursor.getString(titleCol),
+                    artistId = albumArtistMap[albumId] ?: -1L,
                 )
             }
         }
@@ -122,31 +126,33 @@ internal actual class LocalStorageSource(private val context: Context) {
     actual suspend fun getArtists(): List<ArtistEntity> {
         val result = mutableListOf<ArtistEntity>()
 
-        val projection = arrayOf(
-            MediaStore.Audio.Artists._ID,
-            MediaStore.Audio.Artists.ARTIST,
-            MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,
-            MediaStore.Audio.Artists.NUMBER_OF_TRACKS
-        )
-
         context.contentResolver.query(
             MediaStore.Audio.Artists.EXTERNAL_CONTENT_URI,
-            projection,
+            arrayOf(
+                MediaStore.Audio.Artists._ID,
+                MediaStore.Audio.Artists.ARTIST,
+                MediaStore.Audio.Artists.NUMBER_OF_ALBUMS,
+                MediaStore.Audio.Artists.NUMBER_OF_TRACKS
+            ),
             null,
             null,
             ARTIST_SORT_ORDER
         )?.use { cursor ->
+
             val idCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists._ID)
             val nameCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.ARTIST)
             val albumsCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.NUMBER_OF_ALBUMS)
             val tracksCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Artists.NUMBER_OF_TRACKS)
 
             while (cursor.moveToNext()) {
+
+                val artistId = cursor.getLong(idCol)
+
                 result += ArtistEntity(
-                    id = cursor.getLong(idCol),
+                    id = artistId,
                     name = cursor.getString(nameCol),
-                    numberOfAlbums = cursor.getInt(albumsCol).toLong(),
-                    numberOfSongs = cursor.getInt(tracksCol).toLong()
+                    numberOfAlbums = cursor.getLong(albumsCol),
+                    numberOfSongs = cursor.getLong(tracksCol),
                 )
             }
         }

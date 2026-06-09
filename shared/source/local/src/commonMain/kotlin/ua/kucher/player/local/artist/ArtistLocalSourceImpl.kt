@@ -2,9 +2,9 @@ package ua.kucher.player.local.artist
 
 import app.cash.sqldelight.coroutines.asFlow
 import kotlinx.coroutines.flow.map
-import ua.fora.selfcheckout.local.mapToList
 import ua.kucher.player.database.ArtisEntityQueries
 import ua.kucher.player.local.LocalStorageSource
+import ua.kucher.player.local.mapToList
 
 internal class ArtistLocalSourceImpl(
     private val localStorageSource: LocalStorageSource,

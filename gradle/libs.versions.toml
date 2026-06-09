@@ -23,7 +23,7 @@ junit = "1.3.0"
 sqlDelight = "2.3.2"
 koin = "4.2.1"
 ktx = "1.13.1"
-grand = "2.2.0"
+coil = "3.4.0"
 
 androidSdkMin = "26"
 androidSdkTarget = "37"
@@ -93,6 +93,10 @@ sql-delight-native = { module = "app.cash.sqldelight:native-driver", version.ref
 sql-delight-runtime = { module = "app.cash.sqldelight:runtime", version.ref = "sqlDelight" }
 sql-delight-coroutines = { module = "app.cash.sqldelight:coroutines-extensions", version.ref = "sqlDelight" }
 sql-delight-paging = { module = "app.cash.sqldelight:androidx-paging3-extensions", version.ref = "sqlDelight" }
+
+#Image loader
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-http = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "coil" }
 
 [plugins]
 
