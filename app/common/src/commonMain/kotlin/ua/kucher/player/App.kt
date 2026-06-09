@@ -24,9 +24,7 @@ import player.app.common.generated.resources.*
 
 @Preview
 @Composable
-fun App(
-    onThemeChanged: @Composable (isDark: Boolean) -> Unit = {}
-) = PlayerTheme {
+fun App() = PlayerTheme {
     Column(
         modifier = Modifier
             .fillMaxSize()

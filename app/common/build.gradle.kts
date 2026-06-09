@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.internal.types.error.ErrorModuleDescriptor.platform
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -40,11 +41,21 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.materialKolor)
             implementation(libs.androidx.ktx.core)
+
+            //koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose.core)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose.navigation)
+
+            implementation(projects.shared.data)
+            implementation(projects.shared.entity)
         }
 
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.ktx.core)
+            implementation(libs.koin.android)
         }
 
         iosMain.dependencies {
