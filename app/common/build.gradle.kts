@@ -1,5 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.internal.types.error.ErrorModuleDescriptor.platform
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -8,7 +9,6 @@ plugins {
     alias(libs.plugins.compose.multiplatform)
     alias(libs.plugins.android.kmp.library)
     alias(libs.plugins.kotlinx.serialization)
-    alias(libs.plugins.metro)
     alias(libs.plugins.buildConfig)
 }
 
@@ -40,16 +40,22 @@ kotlin {
             implementation(libs.compose.nav3)
             implementation(libs.kotlinx.serialization.json)
             implementation(libs.materialKolor)
-        }
+            implementation(libs.androidx.ktx.core)
 
-        commonTest.dependencies {
-            implementation(kotlin("test"))
-            implementation(libs.compose.ui.test)
-            implementation(libs.kotlinx.coroutines.test)
+            //koin
+            implementation(libs.koin.core)
+            implementation(libs.koin.compose.core)
+            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.koin.compose.navigation)
+
+            implementation(projects.shared.data)
+            implementation(projects.shared.entity)
         }
 
         androidMain.dependencies {
             implementation(libs.kotlinx.coroutines.android)
+            implementation(libs.androidx.ktx.core)
+            implementation(libs.koin.android)
         }
 
         iosMain.dependencies {

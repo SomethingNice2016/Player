@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.kotlinx.serialization) apply false
     alias(libs.plugins.compose.compiler) apply false
     alias(libs.plugins.compose.multiplatform) apply false
-    alias(libs.plugins.metro) apply false
     alias(libs.plugins.buildConfig) apply false
     alias(libs.plugins.sqlDelight) apply false
 }

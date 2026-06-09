@@ -13,7 +13,7 @@ android {
         minSdk = libs.versions.androidSdkMin.get().toInt()
         //noinspection EditedTargetSdkVersion
         targetSdk = libs.versions.androidSdkTarget.get().toInt()
-        applicationId = "ua.kucher.player.androidApp"
+        applicationId = "ua.kucher.player.android"
         versionCode = 1
         versionName = "1.0.0"
     }
@@ -29,6 +29,18 @@ kotlin {
 }
 
 dependencies {
-    implementation(projects.app.common)
     implementation(libs.androidx.activityCompose)
+    implementation(libs.androidx.ktx.core)
+
+    //koin
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.compose.core)
+    implementation(libs.koin.compose.viewmodel)
+    implementation(libs.koin.compose.navigation)
+
+    implementation(projects.app.common)
+    implementation(projects.shared.entity)
+    implementation(projects.shared.data)
+    implementation(projects.shared.source.local)
 }
