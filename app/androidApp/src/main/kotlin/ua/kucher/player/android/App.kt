@@ -7,6 +7,7 @@ import org.koin.core.context.startKoin
 import ua.kucher.player.data.dataModule
 import ua.kucher.player.local.localAndroidModule
 import ua.kucher.player.local.localModule
+import ua.kucher.player.viewModelModule
 
 class App: Application() {
 
@@ -18,7 +19,8 @@ class App: Application() {
             modules(
                 localAndroidModule,
                 localModule,
-                dataModule
+                dataModule,
+                viewModelModule
             )
         }
     }

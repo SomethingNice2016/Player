@@ -1,4 +1,4 @@
-package ua.fora.selfcheckout.local
+package ua.kucher.player.local
 
 import app.cash.sqldelight.Query
 import app.cash.sqldelight.coroutines.mapToList

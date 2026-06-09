@@ -13,7 +13,10 @@ data class PlayerColorScheme(
     val menuDisableButton: Color,
     val favoriteEnableButton: Color,
     val primaryTextColor: Color,
-    val secondaryTextColor: Color
+    val secondaryTextColor: Color,
+    val rippleColor: Color,
+    val borderMain: Color,
+    val iconsMain: Color
 )
 
 internal fun playerLightColorScheme() = PlayerColorScheme(
@@ -24,7 +27,10 @@ internal fun playerLightColorScheme() = PlayerColorScheme(
     menuDisableButton = PlayerPaletteTokens.MediumGray,
     favoriteEnableButton = PlayerPaletteTokens.BrightRed,
     primaryTextColor = PlayerPaletteTokens.White,
-    secondaryTextColor = PlayerPaletteTokens.MediumGray
+    secondaryTextColor = PlayerPaletteTokens.MediumGray,
+    rippleColor = PlayerPaletteTokens.White,
+    borderMain = PlayerPaletteTokens.White.copy(alpha = 0.25F),
+    iconsMain = PlayerPaletteTokens.White
 )
 
 internal fun playerDarkColorScheme() = PlayerColorScheme(
@@ -35,7 +41,10 @@ internal fun playerDarkColorScheme() = PlayerColorScheme(
     menuDisableButton = PlayerPaletteTokens.MediumGray,
     favoriteEnableButton = PlayerPaletteTokens.BrightRed,
     primaryTextColor = PlayerPaletteTokens.White,
-    secondaryTextColor = PlayerPaletteTokens.MediumGray
+    secondaryTextColor = PlayerPaletteTokens.MediumGray,
+    rippleColor = PlayerPaletteTokens.White,
+    borderMain = PlayerPaletteTokens.White.copy(alpha = 0.25F),
+    iconsMain = PlayerPaletteTokens.White
 )
 
 internal val LocalPlayerColorScheme = staticCompositionLocalOf {

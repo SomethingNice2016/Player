@@ -25,7 +25,7 @@ class MainActivity : ComponentActivity() {
             if (granted) {
                 loadAudio()
             } else {
-//                finish()
+                Log.w("Song", "Permissions not grated")
             }
         }
 
@@ -37,16 +37,14 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun checkPermission() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(
-                    this,
-                    requiredPermission()
-                ) == PackageManager.PERMISSION_GRANTED
-            ) {
-                loadAudio()
-            } else {
-                requestAudioPermission.launch(requiredPermission())
-            }
+        if (ContextCompat.checkSelfPermission(
+                this,
+                requiredPermission()
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
+            loadAudio()
+        } else {
+            requestAudioPermission.launch(requiredPermission())
         }
     }
 
@@ -60,9 +58,15 @@ class MainActivity : ComponentActivity() {
 
     private fun loadAudio() {
         lifecycleScope.launch(Dispatchers.IO) {
-            songRepository.fetchArtists()
-            songRepository.fetchAlbums()
-            songRepository.fetchSongs()
+            songRepository.fetchArtists().onFailure {
+                Log.w("Song", "", it)
+            }
+            songRepository.fetchAlbums().onFailure {
+                Log.w("Song", "", it)
+            }
+            songRepository.fetchSongs().onFailure {
+                Log.w("Song", "", it)
+            }
         }
     }
 }
