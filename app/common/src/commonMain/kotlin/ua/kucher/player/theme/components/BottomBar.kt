@@ -2,10 +2,14 @@ package ua.kucher.player.theme.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -27,8 +31,8 @@ internal fun BottomBar(
         modifier = modifier
             .fillMaxWidth()
             .padding(
-                horizontal = PlayerTheme.dimens.dimens20Px,
-                vertical = PlayerTheme.dimens.dimens16Px
+                horizontal = PlayerTheme.dimens.dimens8Px,
+                vertical = PlayerTheme.dimens.dimens8Px
             ),
 
         color = PlayerTheme.colorScheme.primaryBackground,
@@ -42,7 +46,7 @@ internal fun BottomBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(Color.Transparent)
-                .padding(vertical = PlayerTheme.dimens.dimens14Px),
+                .padding(vertical = PlayerTheme.dimens.dimens8Px),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -51,7 +55,7 @@ internal fun BottomBar(
 
                 val selected = item == current
 
-                Box(
+                IconButton(
                     modifier = Modifier
                         .size(PlayerTheme.dimens.menuIconSize)
                         .background(
@@ -60,9 +64,8 @@ internal fun BottomBar(
                             else
                                 Color.Transparent,
                             shape = CircleShape
-                        )
-                        .clickable { onClick(item) },
-                    contentAlignment = Alignment.Center
+                        ),
+                    onClick = { onClick(item) }
                 ) {
                     Icon(
                         painter = painterResource(requireNotNull(item.icon) { "Bottom menu item icon must not be null!" } ),

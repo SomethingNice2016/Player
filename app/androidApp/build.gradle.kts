@@ -42,5 +42,4 @@ dependencies {
     implementation(projects.app.common)
     implementation(projects.shared.entity)
     implementation(projects.shared.data)
-    implementation(projects.shared.source.local)
 }

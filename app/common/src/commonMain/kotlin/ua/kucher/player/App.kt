@@ -16,7 +16,7 @@ import ua.kucher.player.theme.components.BottomBar
 
 @Preview
 @Composable
-fun App() = PlayerTheme {
+fun App() = PlayerTheme(useDarkTheme = true) {
 
     val navController = rememberNavController()
 
@@ -35,7 +35,9 @@ fun App() = PlayerTheme {
             modifier = Modifier.align(Alignment.BottomCenter),
             current = currentRoute,
             onClick = { route ->
-                navController.navigate(route.path)
+                navController.navigate(route.path) {
+                    launchSingleTop = true
+                }
             }
         )
     }

@@ -2,14 +2,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.window.ComposeUIViewController
 import org.koin.core.context.startKoin
-import ua.kucher.player.App
 import platform.UIKit.UIApplication
 import platform.UIKit.UIStatusBarStyleDarkContent
 import platform.UIKit.UIStatusBarStyleLightContent
 import platform.UIKit.UIViewController
 import platform.UIKit.setStatusBarStyle
+import ua.kucher.player.App
+import ua.kucher.player.mainModule
 
 fun MainViewController(): UIViewController = ComposeUIViewController {
+    startKoin {
+        modules(mainModule)
+    }
     App()
 }
 

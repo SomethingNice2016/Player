@@ -29,11 +29,9 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-include(":app:common")
 include(":app:androidApp")
-
-//include(":ui:core")
-
+include(":app:common")
+include(":shared:core:common")
 include(":shared:entity")
 include(":shared:data")
 include(":shared:source:local")
