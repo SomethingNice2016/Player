@@ -1,7 +1,10 @@
 package ua.kucher.player.local.album
 
 import app.cash.sqldelight.coroutines.asFlow
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import ua.kucher.player.database.AlbumEntityQueries
 import ua.kucher.player.local.LocalStorageSource
 import ua.kucher.player.local.mapToList
@@ -30,11 +33,13 @@ internal class AlbumLocalSourceImpl(
             entity.toDomain()
         }
 
-    override suspend fun fetchAlbums() {
+    override suspend fun fetchAlbums() = runCatching {
         val albumsInDevice = localStorageSource.getAlbums()
         albumEntityQueries.deleteAllAlbums()
-        albumsInDevice.forEach { album ->
-            albumEntityQueries.insertAlbum(album)
-        }
+        albumsInDevice.map { album ->
+            coroutineScope {
+                launch { albumEntityQueries.insertAlbum(album) }
+            }
+        }.joinAll()
     }
 }

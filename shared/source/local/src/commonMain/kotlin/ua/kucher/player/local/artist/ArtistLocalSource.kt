@@ -9,6 +9,6 @@ interface ArtistLocalSource {
 
     fun getArtists(): Flow<List<Artist>>
 
-    suspend fun fetchArtists()
+    suspend fun fetchArtists(): Result<Unit>
 
 }

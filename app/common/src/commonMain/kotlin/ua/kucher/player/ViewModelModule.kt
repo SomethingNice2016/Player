@@ -6,8 +6,13 @@ import ua.kucher.player.home.HomeViewModel
 import ua.kucher.player.setting.SettingViewModel
 import ua.kucher.player.songlist.SongListViewModel
 
-val viewModelModule = module {
-    viewModel { SongListViewModel(get()) }
+internal val viewModelModule = module {
+    viewModel {
+        SongListViewModel(
+            timeFormatter = get(),
+            songRepository = get()
+        )
+    }
     viewModel { HomeViewModel() }
     viewModel { SettingViewModel() }
 }

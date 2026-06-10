@@ -11,15 +11,21 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.koin.android.ext.android.inject
 import ua.kucher.player.App
+import ua.kucher.player.data.albun.AlbumRepository
+import ua.kucher.player.data.artist.ArtistRepository
 import ua.kucher.player.data.song.SongRepository
 
 class MainActivity : ComponentActivity() {
 
     private val songRepository: SongRepository by inject()
+
+    private val albumRepository: AlbumRepository by inject()
+
+    private val artistRepository: ArtistRepository by inject()
+
     private val requestAudioPermission =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
             if (granted) {
@@ -57,15 +63,23 @@ class MainActivity : ComponentActivity() {
 
 
     private fun loadAudio() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            songRepository.fetchArtists().onFailure {
-                Log.w("Song", "", it)
+        lifecycleScope.launch {
+            launch {
+                albumRepository.fetchAlbums().onFailure {
+                    Log.w("Song", "", it)
+                }
             }
-            songRepository.fetchAlbums().onFailure {
-                Log.w("Song", "", it)
+
+            launch {
+                artistRepository.fetchArtists().onFailure {
+                    Log.w("Song", "", it)
+                }
             }
-            songRepository.fetchSongs().onFailure {
-                Log.w("Song", "", it)
+
+            launch {
+                songRepository.fetchSongs().onFailure {
+                    Log.w("Song", "", it)
+                }
             }
         }
     }

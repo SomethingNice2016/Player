@@ -13,6 +13,6 @@ interface SongLocalSource {
 
     fun getSongsByArtist(artistId: Long): Flow<List<Song>>
 
-    suspend fun fetchSongs()
+    suspend fun fetchSongs(): Result<Unit>
 
 }

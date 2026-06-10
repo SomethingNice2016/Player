@@ -1,5 +1,6 @@
 package ua.kucher.player.local.song
 
+import ua.kucher.player.core.common.bitmap.SharedBitmap
 import ua.kucher.player.database.AlbumEntity
 import ua.kucher.player.database.ArtistEntity
 import ua.kucher.player.database.SongEntity
@@ -13,30 +14,8 @@ internal data class SongDto(
     val song: SongEntity,
     val artist: ArtistEntity?,
     val album: AlbumEntity?,
-    val artwork: ByteArray? = null
-) {
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other == null || this::class != other::class) return false
-
-        other as SongDto
-
-        if (song != other.song) return false
-        if (artist != other.artist) return false
-        if (album != other.album) return false
-        if (!artwork.contentEquals(other.artwork)) return false
-
-        return true
-    }
-
-    override fun hashCode(): Int {
-        var result = song.hashCode()
-        result = 31 * result + (artist?.hashCode() ?: 0)
-        result = 31 * result + (album?.hashCode() ?: 0)
-        result = 31 * result + (artwork?.contentHashCode() ?: 0)
-        return result
-    }
-}
+    val artwork: SharedBitmap? = null
+)
 
 internal fun SongDto.toDomain() = Song(
     id = song.id,

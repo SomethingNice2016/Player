@@ -50,6 +50,8 @@ kotlin {
                 implementation(libs.sql.delight.runtime)
                 implementation(libs.sql.delight.coroutines)
 
+                //Project modules
+                implementation(projects.shared.core.common)
                 implementation(projects.shared.entity)
             }
         }

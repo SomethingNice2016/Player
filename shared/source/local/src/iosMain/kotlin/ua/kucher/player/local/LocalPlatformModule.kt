@@ -2,7 +2,7 @@ package ua.kucher.player.local
 
 import org.koin.dsl.module
 
-val localIOSModule = module {
+actual val localPlatformModule = module {
     single { LocalStorageSource() }
     single { ArtworkExtractor() }
     factory { DatabaseDriverFactory() }

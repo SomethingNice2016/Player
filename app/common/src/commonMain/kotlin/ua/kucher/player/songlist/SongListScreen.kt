@@ -3,15 +3,32 @@ package ua.kucher.player.songlist
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.*
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
@@ -22,15 +39,18 @@ import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.ic_options
 import player.app.common.generated.resources.ic_play_background
 import player.app.common.generated.resources.music_label
-import ua.kucher.player.entity.Song
+import ua.kucher.player.core.common.bitmap.SharedBitmap
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
 import ua.kucher.player.theme.components.PlayerTopAppBarDefaults
 import ua.kucher.player.theme.extensions.BottomNavSpacer
 
+
+private const val SONG_IMAGE_QUALITY = 25
 @Composable
 internal fun SongListScreen(
-    songs: List<Song>
+    uiState: SongListUiState,
+    onSongClick: (songId: Long) -> Unit
 ) {
 
     val lazyListState = rememberLazyListState()
@@ -53,36 +73,53 @@ internal fun SongListScreen(
                 )
             }
         ) { paddingValues ->
-            LazyColumn(
-                modifier = Modifier.padding(paddingValues),
-                state = lazyListState,
-            ) {
-                itemsIndexed(
-                    items = songs,
-                    key = { index, song -> song.id + index }
-                ) { _, song ->
-                    SongItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        title = song.title,
-                        artist = song.artist?.name ?: "",
-                        artwork = song.artwork
-                    ) {
+            when (uiState) {
+                SongListUiState.Error -> {}
+                SongListUiState.Loading -> CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(50.dp)
+                        .align(Alignment.Center),
+                    color = PlayerTheme.colorScheme.seekbarProgressColor,
+                    trackColor = PlayerTheme.colorScheme.seekbarProgressColor
+                )
 
-                    }
-                }
-                item {
-                    BottomNavSpacer()
-                }
+                is SongListUiState.Success -> SuccessContent(
+                    modifier = Modifier.padding(paddingValues),
+                    uiState = uiState,
+                    lazyListState = lazyListState,
+                    onSongClick = onSongClick
+                )
             }
         }
-        if (songs.isEmpty()) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(50.dp)
-                    .align(Alignment.Center),
-                color = PlayerTheme.colorScheme.seekbarProgressColor,
-                trackColor = PlayerTheme.colorScheme.seekbarProgressColor
+    }
+}
+
+@Composable
+private fun SuccessContent(
+    modifier: Modifier = Modifier,
+    uiState: SongListUiState.Success,
+    lazyListState: LazyListState,
+    onSongClick: (songId: Long) -> Unit
+) {
+    LazyColumn(
+        modifier = modifier,
+        state = lazyListState,
+    ) {
+        items(
+            items = uiState.songs,
+            key = { song -> song.id }
+        ) { song ->
+            SongItem(
+                modifier = Modifier.fillMaxWidth(),
+                title = song.title,
+                artist = song.artistName,
+                artwork = song.artwork,
+                duration = song.duration,
+                onClick = { onSongClick(song.id) }
             )
+        }
+        item {
+            BottomNavSpacer()
         }
     }
 }
@@ -92,7 +129,8 @@ private fun SongItem(
     modifier: Modifier = Modifier,
     title: String,
     artist: String,
-    artwork: ByteArray?,
+    duration: String,
+    artwork: SharedBitmap?,
     onClick: () -> Unit
 ) {
     Row(
@@ -114,7 +152,7 @@ private fun SongItem(
         ) {
             Image(
                 modifier = Modifier.fillMaxSize(),
-                painter = rememberAsyncImagePainter(artwork),
+                painter = rememberAsyncImagePainter(artwork?.toByteArray(SONG_IMAGE_QUALITY)),
                 contentDescription = title,
                 contentScale = ContentScale.Crop,
             )
@@ -123,7 +161,7 @@ private fun SongItem(
                     .padding(PlayerTheme.dimens.dimens2Px)
                     .fillMaxSize(),
                 painter = painterResource(Res.drawable.ic_play_background),
-                tint = PlayerTheme.colorScheme.primaryTextColor,
+                tint = PlayerTheme.colorScheme.iconsMain,
                 contentDescription = null,
             )
         }
@@ -161,7 +199,7 @@ private fun SongItem(
                 )
                 Spacer(modifier = Modifier.width(PlayerTheme.dimens.dimens8Px))
                 Text(
-                    text = "2:55",
+                    text = duration,
                     color = PlayerTheme.colorScheme.secondaryTextColor,
                     fontStyle = PlayerTheme.typography.mediumBody.fontStyle,
                     maxLines = 1,
@@ -170,15 +208,16 @@ private fun SongItem(
             }
         }
         IconButton(
-            modifier = Modifier
-                .size(PlayerTheme.dimens.menuIconSize)
-                .padding(PlayerTheme.dimens.dimens12Px),
+            modifier = Modifier.size(PlayerTheme.dimens.menuIconSize),
             onClick = {},
             content = {
                 Image(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(PlayerTheme.dimens.dimens12Px),
                     painter = painterResource(Res.drawable.ic_options),
-                    contentDescription = null
+                    contentDescription = null,
+                    colorFilter = ColorFilter.tint(PlayerTheme.colorScheme.iconsMain)
                 )
             }
         )

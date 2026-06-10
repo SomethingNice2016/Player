@@ -11,8 +11,11 @@ internal fun SongListRoute(
     viewModel: SongListViewModel
 ) {
 
-    val songs by viewModel.songList.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
 
-    SongListScreen(songs)
+    SongListScreen(
+        uiState = uiState,
+        onSongClick = {}
+    )
 
 }

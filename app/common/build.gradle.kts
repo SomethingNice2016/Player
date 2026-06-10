@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 plugins {
@@ -51,8 +50,10 @@ kotlin {
             //image loader
             implementation(libs.coil.compose)
 
+            //Project modules
             implementation(projects.shared.data)
             implementation(projects.shared.entity)
+            implementation(projects.shared.core.common)
         }
 
         androidMain.dependencies {
