@@ -9,5 +9,6 @@
     <string name="setting_label">Setting</string>
     <string name="setting_item_source_code">Source code</string>
     <string name="setting_item_about">About app</string>
+    <string name="setting_item_rate_app">Rate app</string>
     <string name="github_url">https://github.com/SomethingNice2016/Player</string>
 </resources>

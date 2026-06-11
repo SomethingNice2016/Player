@@ -29,6 +29,7 @@ coil = "3.4.0"
 androidSdkMin = "26"
 androidSdkTarget = "37"
 androidSdkCompiled = "36"
+startupRuntime = "1.2.0"
 
 [libraries]
 
@@ -104,6 +105,7 @@ coil-http = { module = "io.coil-kt.coil3:coil-network-okhttp", version.ref = "co
 
 multiplatformSettings = { module = "com.russhwolf:multiplatform-settings-no-arg", version.ref = "multiplatformSettings" }
 materialKolor = { module = "com.materialkolor:material-kolor", version.ref = "materialKolor" }
+androidx-startup-runtime = { group = "androidx.startup", name = "startup-runtime", version.ref = "startupRuntime" }
 
 [plugins]
 

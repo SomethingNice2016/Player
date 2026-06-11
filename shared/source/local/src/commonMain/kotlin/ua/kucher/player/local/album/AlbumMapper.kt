@@ -7,10 +7,12 @@ internal fun AlbumEntity.toDomain() = Album(
     id = id,
     title = title,
     artistId = artistId,
+    artwork = artwork
 )
 
 internal fun Album.toEntity() = AlbumEntity(
     id = id,
     title = title,
     artistId = artistId,
+    artwork = artwork
 )

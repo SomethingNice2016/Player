@@ -4,6 +4,6 @@ import org.koin.dsl.module
 
 actual val localPlatformModule = module {
     single { LocalStorageSource() }
-    single { ArtworkExtractor() }
+    single { ArtworkCache() }
     factory { DatabaseDriverFactory() }
 }

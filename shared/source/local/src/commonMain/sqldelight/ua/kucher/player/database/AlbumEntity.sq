@@ -1,7 +1,8 @@
 CREATE TABLE IF NOT EXISTS AlbumEntity (
  id INTEGER PRIMARY KEY NOT NULL,
  title TEXT NOT NULL,
- artistId INTEGER NOT NULL
+ artistId INTEGER NOT NULL,
+ artwork TEXT DEFAULT NULL
 );
 
 CREATE INDEX IF NOT EXISTS album_name ON AlbumEntity(title);
@@ -21,7 +22,7 @@ FROM AlbumEntity
 WHERE artistId=?;
 
 insertAlbum:
-INSERT OR REPLACE INTO AlbumEntity(id, title, artistId)
+INSERT OR REPLACE INTO AlbumEntity(id, title, artistId, artwork)
 VALUES ?;
 
 deleteAllAlbums:

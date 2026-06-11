@@ -24,6 +24,7 @@ import ua.kucher.player.theme.PlayerTheme
 @Composable
 internal fun BottomBar(
     modifier: Modifier = Modifier,
+    items: List<PlayerRoute>,
     current: PlayerRoute,
     onClick: (PlayerRoute) -> Unit
 ) {
@@ -51,7 +52,7 @@ internal fun BottomBar(
             verticalAlignment = Alignment.CenterVertically
         ) {
 
-            PlayerRoute.getMainMenuItems().forEach { item ->
+            items.forEach { item ->
 
                 val selected = item == current
 

@@ -29,6 +29,7 @@ kotlin {
 }
 
 dependencies {
+    implementation(libs.androidx.startup.runtime)
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.ktx.core)
 
