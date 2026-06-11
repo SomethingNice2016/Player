@@ -3,11 +3,12 @@ package ua.kucher.player
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ua.kucher.player.navigation.PlayerNavigation
 import ua.kucher.player.navigation.PlayerRoute
@@ -20,10 +21,18 @@ fun App() = PlayerTheme(useDarkTheme = true) {
 
     val navController = rememberNavController()
 
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val navBackStackEntry by navController.currentBackStack.collectAsState()
 
-    val currentRoute = navBackStackEntry?.destination?.route?.let { path ->
-        PlayerRoute.getByPath(path)
+    val menuItems = remember {
+        PlayerRoute.getMainMenuItems()
+    }
+
+    val currentRoute = navBackStackEntry.mapNotNull { backStackEntry ->
+        backStackEntry.destination.route?.let { path ->
+            PlayerRoute.getByPath(path)
+        }
+    }.findLast { route ->
+        menuItems.contains(route)
     } ?: PlayerRoute.Home
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -34,6 +43,7 @@ fun App() = PlayerTheme(useDarkTheme = true) {
         BottomBar(
             modifier = Modifier.align(Alignment.BottomCenter),
             current = currentRoute,
+            items = menuItems,
             onClick = { route ->
                 navController.navigate(route.path) {
                     launchSingleTop = true
@@ -42,3 +52,4 @@ fun App() = PlayerTheme(useDarkTheme = true) {
         )
     }
 }
+

@@ -23,16 +23,22 @@ import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.ic_about
 import player.app.common.generated.resources.ic_github
+import player.app.common.generated.resources.ic_star
 import player.app.common.generated.resources.setting_item_about
+import player.app.common.generated.resources.setting_item_rate_app
 import player.app.common.generated.resources.setting_item_source_code
 import player.app.common.generated.resources.setting_label
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
 import ua.kucher.player.theme.components.PlayerTopAppBarDefaults
-import ua.kucher.player.theme.extensions.bottomNavPaddings
+import ua.kucher.player.theme.extensions.BottomNavSpacer
 
 @Composable
-internal fun SettingScreen() {
+internal fun SettingScreen(
+    onRateAppClick: () -> Unit,
+    onSourceCodeClick: () -> Unit,
+    onAboutClick: () -> Unit
+) {
 
     val scrollBehavior = PlayerTopAppBarDefaults.scrollBehavior()
 
@@ -55,18 +61,23 @@ internal fun SettingScreen() {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .bottomNavPaddings()
         ) {
+            SettingItem(
+                text = stringResource(Res.string.setting_item_rate_app),
+                painter = painterResource(Res.drawable.ic_star),
+                onClick = onRateAppClick
+            )
             SettingItem(
                 text = stringResource(Res.string.setting_item_source_code),
                 painter = painterResource(Res.drawable.ic_github),
-                onClick = {}
+                onClick = onSourceCodeClick
             )
             SettingItem(
                 text = stringResource(Res.string.setting_item_about),
                 painter = painterResource(Res.drawable.ic_about),
-                onClick = {}
+                onClick = onAboutClick
             )
+            BottomNavSpacer()
         }
     }
 }

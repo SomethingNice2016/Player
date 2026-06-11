@@ -21,7 +21,7 @@ internal class SongListViewModel(
                 SongUi(
                     id = song.id,
                     title = song.title,
-                    artwork = song.artwork,
+                    artwork = song.artwork ?: song.album?.artwork,
                     artistName = song.artist?.name ?: "",
                     duration = timeFormatter.toFormatDuration(song.duration)
                 )

@@ -3,14 +3,20 @@ CREATE TABLE IF NOT EXISTS SongEntity (
  title TEXT NOT NULL,
  duration INTEGER NOT NULL,
  uri TEXT NOT NULL,
+ artwork TEXT DEFAULT NULL,
  albumId INTEGER NOT NULL DEFAULT -1,
- artistId INTEGER NOT NULL DEFAULT -1
+ artistId INTEGER NOT NULL DEFAULT -1,
+ lastModified INTEGER NOT NULL
 );
 
 CREATE INDEX IF NOT EXISTS song_name ON SongEntity(title);
 
 getSongs:
 SELECT *
+FROM SongEntity;
+
+getAllSongsIds:
+SELECT id
 FROM SongEntity;
 
 getSongById:
@@ -29,10 +35,27 @@ FROM SongEntity
 WHERE artistId=?;
 
 insertSong:
-INSERT OR REPLACE INTO SongEntity(id, title, duration, uri, albumId, artistId)
+INSERT INTO SongEntity(id, title, duration, uri, artwork, albumId, artistId, lastModified)
 VALUES ?;
 
-deleteAllSongs:
-DELETE FROM SongEntity;
+updateSong:
+UPDATE SongEntity
+SET
+    title=?,
+    duration=?,
+    uri=?,
+    albumId=?,
+    artistId=?,
+    lastModified=?
+WHERE id=?;
+
+insertArtwork:
+UPDATE SongEntity
+SET artwork=?
+WHERE id=?;
+
+deleteSongById:
+DELETE FROM SongEntity
+WHERE id=?;
 
 

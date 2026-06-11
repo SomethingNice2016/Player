@@ -29,7 +29,8 @@ internal actual class LocalStorageSource(
             MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST_ID,
             MediaStore.Audio.Media.DURATION,
-            MediaStore.Audio.Media.ALBUM_ID
+            MediaStore.Audio.Media.ALBUM_ID,
+            MediaStore.Audio.Media.DATE_MODIFIED
         )
 
         context.contentResolver.query(
@@ -45,22 +46,24 @@ internal actual class LocalStorageSource(
             val artistIdCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST_ID)
             val durationCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)
             val albumIdCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
+            val lastModifiedCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATE_MODIFIED)
 
             while (cursor.moveToNext()) {
 
                 val audioId = cursor.getLong(idCol)
-                val albumId = cursor.getLong(albumIdCol)
 
                 result += SongEntity(
                     id = audioId,
                     title = cursor.getString(titleCol),
                     artistId = cursor.getLong(artistIdCol),
                     duration = cursor.getLong(durationCol),
+                    albumId = cursor.getLong(albumIdCol),
+                    lastModified = cursor.getLong(lastModifiedCol),
+                    artwork = null,
                     uri = ContentUris.withAppendedId(
                         audioUri,
                         audioId
                     ).toString(),
-                    albumId = albumId,
                 )
             }
         }
@@ -99,7 +102,7 @@ internal actual class LocalStorageSource(
             MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
             arrayOf(
                 MediaStore.Audio.Albums._ID,
-                MediaStore.Audio.Albums.ALBUM
+                MediaStore.Audio.Albums.ALBUM,
             ),
             null,
             null,
@@ -117,6 +120,10 @@ internal actual class LocalStorageSource(
                     id = albumId,
                     title = cursor.getString(titleCol),
                     artistId = albumArtistMap[albumId] ?: -1L,
+                    artwork = ContentUris.withAppendedId(
+                        MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
+                        albumId
+                    ).toString()
                 )
             }
         }

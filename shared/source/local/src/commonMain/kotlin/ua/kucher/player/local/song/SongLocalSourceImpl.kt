@@ -2,108 +2,124 @@ package ua.kucher.player.local.song
 
 import app.cash.sqldelight.coroutines.asFlow
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.sync.Mutex
-import kotlinx.coroutines.sync.withLock
-import ua.kucher.player.core.common.bitmap.SharedBitmap
 import ua.kucher.player.database.AlbumEntityQueries
 import ua.kucher.player.database.ArtisEntityQueries
+import ua.kucher.player.database.SongEntity
 import ua.kucher.player.database.SongEntityQueries
-import ua.kucher.player.local.ArtworkExtractor
+import ua.kucher.player.local.ArtworkCache
 import ua.kucher.player.local.LocalStorageSource
+import ua.kucher.player.local.mapToList
 
 internal class SongLocalSourceImpl(
+    private val artworkCache: ArtworkCache,
     private val localStorageSource: LocalStorageSource,
-    private val artworkExtractor: ArtworkExtractor,
     private val songEntityQueries: SongEntityQueries,
     private val artisEntityQueries: ArtisEntityQueries,
     private val albumEntityQueries: AlbumEntityQueries,
 ) : SongLocalSource {
 
-    private val artworkExtractorMutex = Mutex()
+    override fun getSongById(id: Long) = songEntityQueries.getSongById(id)
+        .asFlow()
+        .map { query ->
+            val song = query.executeAsOne()
+            SongDto(
+                song = song,
+                album = albumEntityQueries.getAlbumById(song.albumId).executeAsOneOrNull(),
+                artist = artisEntityQueries.getArtistById(song.artistId).executeAsOneOrNull(),
+            ).toDomain()
+        }
 
-    private val artworkCash = MutableStateFlow<LinkedHashMap<Long, SharedBitmap>>(LinkedHashMap())
-
-    override fun getSongById(id: Long) = combine(
-        songEntityQueries.getSongById(id).asFlow(),
-        artworkCash
-    ) { query, artworks ->
-        val song = query.executeAsOne()
-        SongDto(
-            song = song,
-            album = albumEntityQueries.getAlbumById(song.albumId).executeAsOneOrNull(),
-            artist = artisEntityQueries.getArtistById(song.artistId).executeAsOneOrNull(),
-            artwork = artworks[song.id]
-        ).toDomain()
-    }
-
-    override fun getSongs() = combine(
-        songEntityQueries.getSongs().asFlow(),
-        artworkCash
-    ) { query, artworks ->
-        query.executeAsList().map { entity ->
+    override fun getSongs() = songEntityQueries.getSongs()
+        .asFlow()
+        .mapToList { entity ->
             SongDto(
                 song = entity,
                 album = albumEntityQueries.getAlbumById(entity.albumId).executeAsOneOrNull(),
                 artist = artisEntityQueries.getArtistById(entity.artistId).executeAsOneOrNull(),
-                artwork = artworks[entity.id]
             ).toDomain()
         }
-    }
 
-    override fun getSongsByAlbum(albumId: Long) = combine(
-        songEntityQueries.getSongsByAlbum(albumId).asFlow(),
-        artworkCash
-    ) { query, artworks ->
-        query.executeAsList().map { entity ->
+    override fun getSongsByAlbum(albumId: Long) = songEntityQueries.getSongsByAlbum(albumId)
+        .asFlow()
+        .mapToList { entity ->
             SongDto(
                 song = entity,
                 album = albumEntityQueries.getAlbumById(entity.albumId).executeAsOneOrNull(),
                 artist = artisEntityQueries.getArtistById(entity.artistId).executeAsOneOrNull(),
-                artwork = artworks[entity.id]
             ).toDomain()
         }
-    }
 
-    override fun getSongsByArtist(artistId: Long) = combine(
-        songEntityQueries.getSongsByArtist(artistId).asFlow(),
-        artworkCash
-    ) { query, artworks ->
-        query.executeAsList().map { entity ->
+    override fun getSongsByArtist(artistId: Long) = songEntityQueries.getSongsByArtist(artistId)
+        .asFlow()
+        .mapToList { entity ->
             SongDto(
                 song = entity,
                 album = albumEntityQueries.getAlbumById(entity.albumId).executeAsOneOrNull(),
                 artist = artisEntityQueries.getArtistById(entity.artistId).executeAsOneOrNull(),
-                artwork = artworks[entity.id]
             ).toDomain()
         }
-    }
 
     override suspend fun fetchSongs() = runCatching {
         val songsInDevice = localStorageSource.getSongs()
-        songEntityQueries.deleteAllSongs()
-        songsInDevice.map { song ->
-            coroutineScope {
-                launch {
-                    songEntityQueries.insertSong(song)
-                }
+        val dbIds = songEntityQueries
+            .getAllSongsIds()
+            .executeAsList()
+            .toSet()
+
+        val mediaStoreIds = songsInDevice
+            .map { it.id }
+            .toSet()
+
+        (dbIds - mediaStoreIds).forEach { id ->
+            songEntityQueries.deleteSongById(id)
+            artworkCache.deleteArtworkFromCache(id)
+        }
+
+        val existingSongs = songsInDevice.mapNotNull { song ->
+            songEntityQueries.getSongById(song.id)
+                .executeAsOneOrNull()
+        }
+
+        val newSongs = mutableListOf<SongEntity>()
+
+        songsInDevice.forEach { song ->
+
+            val existing = existingSongs.find { item ->
+                item.id == song.id
             }
-        }.joinAll()
-        val updatedMap = LinkedHashMap(artworkCash.value)
-        songsInDevice.map { song ->
+
+            when {
+                existing == null -> {
+                    songEntityQueries.insertSong(song)
+                    newSongs.add(song)
+                }
+
+                existing.lastModified != song.lastModified -> {
+                    songEntityQueries.updateSong(
+                        title = song.title,
+                        duration = song.duration,
+                        uri = song.uri,
+                        albumId = song.albumId,
+                        artistId = song.artistId,
+                        lastModified = song.lastModified,
+                        id = song.id
+                    )
+                }
+
+                else -> Unit
+            }
+        }
+        newSongs.map { song ->
             coroutineScope {
                 launch {
-                    artworkExtractor.extractSongArtwork(song.id)?.let { artwork ->
-                        artworkExtractorMutex.withLock {
-                            updatedMap[song.id] = artwork
-                        }
+                    artworkCache.getAndCacheArtwork(song.id)?.also { artwork ->
+                        songEntityQueries.insertArtwork(artwork, song.id)
                     }
                 }
             }
         }.joinAll()
-        artworkCash.value = updatedMap
     }
 }

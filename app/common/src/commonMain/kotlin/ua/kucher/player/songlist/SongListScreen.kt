@@ -33,20 +33,18 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.ic_options
 import player.app.common.generated.resources.ic_play_background
 import player.app.common.generated.resources.music_label
-import ua.kucher.player.core.common.bitmap.SharedBitmap
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
 import ua.kucher.player.theme.components.PlayerTopAppBarDefaults
 import ua.kucher.player.theme.extensions.BottomNavSpacer
 
 
-private const val SONG_IMAGE_QUALITY = 25
 @Composable
 internal fun SongListScreen(
     uiState: SongListUiState,
@@ -107,7 +105,7 @@ private fun SuccessContent(
     ) {
         items(
             items = uiState.songs,
-            key = { song -> song.id }
+            key = { song -> song.id.toString() + song.artwork }
         ) { song ->
             SongItem(
                 modifier = Modifier.fillMaxWidth(),
@@ -130,7 +128,7 @@ private fun SongItem(
     title: String,
     artist: String,
     duration: String,
-    artwork: SharedBitmap?,
+    artwork: String?,
     onClick: () -> Unit
 ) {
     Row(
@@ -150,9 +148,9 @@ private fun SongItem(
                 .clip(PlayerTheme.shapes.radius4Px)
                 .background(PlayerTheme.colorScheme.menuEnableButton.copy(alpha = 0.15F))
         ) {
-            Image(
+            AsyncImage(
                 modifier = Modifier.fillMaxSize(),
-                painter = rememberAsyncImagePainter(artwork?.toByteArray(SONG_IMAGE_QUALITY)),
+                model = artwork,
                 contentDescription = title,
                 contentScale = ContentScale.Crop,
             )

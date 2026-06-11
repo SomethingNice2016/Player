@@ -1,6 +1,5 @@
 package ua.kucher.player.local.song
 
-import ua.kucher.player.core.common.bitmap.SharedBitmap
 import ua.kucher.player.database.AlbumEntity
 import ua.kucher.player.database.ArtistEntity
 import ua.kucher.player.database.SongEntity
@@ -14,7 +13,6 @@ internal data class SongDto(
     val song: SongEntity,
     val artist: ArtistEntity?,
     val album: AlbumEntity?,
-    val artwork: SharedBitmap? = null
 )
 
 internal fun SongDto.toDomain() = Song(
@@ -24,7 +22,8 @@ internal fun SongDto.toDomain() = Song(
     uri = song.uri,
     album = album?.toDomain(),
     artist = artist?.toDomain(),
-    artwork = artwork
+    artwork = song.artwork,
+    lastModified = song.lastModified
 )
 
 internal fun Song.toDto() = SongDto(
@@ -34,11 +33,12 @@ internal fun Song.toDto() = SongDto(
         duration = duration,
         uri = uri,
         albumId = album?.id ?: -1L,
-        artistId = artist?.id ?: -1L
+        artistId = artist?.id ?: -1L,
+        artwork = artwork,
+        lastModified = lastModified
     ),
     artist = artist?.toEntity(),
     album = album?.toEntity(),
-    artwork = artwork
 )
 
 

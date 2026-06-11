@@ -34,7 +34,7 @@ val localModule = module {
     single<SongLocalSource> {
         SongLocalSourceImpl(
             localStorageSource = get(),
-            artworkExtractor = get(),
+            artworkCache = get(),
             songEntityQueries = get(),
             artisEntityQueries = get(),
             albumEntityQueries = get()
