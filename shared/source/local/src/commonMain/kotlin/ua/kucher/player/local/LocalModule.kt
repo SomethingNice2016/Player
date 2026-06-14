@@ -11,6 +11,8 @@ import ua.kucher.player.local.song.SongLocalSourceImpl
 
 val localModule = module {
 
+    includes(localPlatformModule)
+
     single { KucherPlayerDatabase(get<DatabaseDriverFactory>().createDriver()) }
 
     factory { get<KucherPlayerDatabase>().songEntityQueries }

@@ -6,10 +6,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,6 +16,7 @@ import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ua.kucher.player.navigation.PlayerRoute
 import ua.kucher.player.theme.PlayerTheme
+import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 
 @Composable
 internal fun BottomBar(
@@ -55,30 +52,24 @@ internal fun BottomBar(
             items.forEach { item ->
 
                 val selected = item == current
+                val background: Color
+                val tint: Color
 
-                IconButton(
-                    modifier = Modifier
-                        .size(PlayerTheme.dimens.menuIconSize)
-                        .background(
-                            color = if (selected)
-                                PlayerTheme.colorScheme.menuEnableButton.copy(alpha = 0.15f)
-                            else
-                                Color.Transparent,
-                            shape = CircleShape
-                        ),
-                    onClick = { onClick(item) }
-                ) {
-                    Icon(
-                        painter = painterResource(requireNotNull(item.icon) { "Bottom menu item icon must not be null!" } ),
-                        contentDescription = item.label?.let { labelRes ->
-                            stringResource(labelRes)
-                        } ?: "",
-                        tint = if (selected)
-                            PlayerTheme.colorScheme.menuEnableButton
-                        else
-                            PlayerTheme.colorScheme.menuDisableButton
-                    )
+                if (selected) {
+                    background = PlayerTheme.colorScheme.rippleColor
+                    tint = PlayerTheme.colorScheme.menuEnableButton
+                } else {
+                    background = Color.Transparent
+                    tint = PlayerTheme.colorScheme.menuDisableButton
                 }
+
+                PlayerMenuIconButton(
+                    backgroundColor = background,
+                    tint = tint,
+                    painter = painterResource(requireNotNull(item.icon) { "Bottom menu item icon must not be null!" }),
+                    contentDescription = item.label?.let { res -> stringResource(res) } ?: "",
+                    onClick = { onClick(item) }
+                )
             }
         }
     }

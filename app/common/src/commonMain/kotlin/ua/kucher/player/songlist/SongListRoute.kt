@@ -15,7 +15,7 @@ internal fun SongListRoute(
 
     SongListScreen(
         uiState = uiState,
-        onSongClick = {}
+        onSongClick = viewModel::playSong
     )
 
 }

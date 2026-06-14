@@ -10,7 +10,8 @@ internal val viewModelModule = module {
     viewModel {
         SongListViewModel(
             timeFormatter = get(),
-            songRepository = get()
+            songRepository = get(),
+            playbackController = get()
         )
     }
     viewModel { HomeViewModel() }

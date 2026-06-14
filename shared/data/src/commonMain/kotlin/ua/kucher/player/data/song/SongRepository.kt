@@ -2,16 +2,19 @@ package ua.kucher.player.data.song
 
 import kotlinx.coroutines.flow.Flow
 import ua.kucher.player.entity.Song
+import ua.kucher.player.entity.SongPlaylist
 
 interface SongRepository {
 
     fun getSongById(id: Long): Flow<Song>
 
-    fun getSongs(): Flow<List<Song>>
+    fun getAllSongs(): Flow<SongPlaylist.AllSongs>
 
-    fun getSongsByAlbum(albumId: Long): Flow<List<Song>>
+    fun getFavouriteSongs(): Flow<SongPlaylist.FavouriteSongs>
 
-    fun getSongsByArtist(artistId: Long): Flow<List<Song>>
+    fun getSongsByAlbum(albumId: Long): Flow<SongPlaylist.ByAlbum>
+
+    fun getSongsByArtist(artistId: Long): Flow<SongPlaylist.ByArtist>
 
     suspend fun fetchSongs(): Result<Unit>
 

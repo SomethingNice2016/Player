@@ -14,7 +14,7 @@ internal actual class LocalStorageSource(
 
     companion object {
         private const val SONG_SELECTION = "${MediaStore.Audio.Media.IS_MUSIC}=1"
-        private const val SONG_SORT_ORDER = "${MediaStore.Audio.Media.DATE_ADDED} DESC"
+        private const val SONG_SORT_ORDER = "${MediaStore.Audio.Media.DATE_ADDED} ASC"
         private const val ALBUM_SORT_ORDER = "${MediaStore.Audio.Albums.ALBUM} ASC"
         private const val ARTIST_SORT_ORDER = "${MediaStore.Audio.Artists.ARTIST} ASC"
     }
