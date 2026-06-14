@@ -8,6 +8,7 @@ import ua.kucher.player.data.dataModule
 val mainModule = module {
 
     includes(
+        mainPlatformModule,
         dataModule,
         viewModelModule
     )

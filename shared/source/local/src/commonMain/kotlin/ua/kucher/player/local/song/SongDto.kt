@@ -22,7 +22,7 @@ internal fun SongDto.toDomain() = Song(
     uri = song.uri,
     album = album?.toDomain(),
     artist = artist?.toDomain(),
-    artwork = song.artwork,
+    songArtwork = song.artwork,
     lastModified = song.lastModified
 )
 
@@ -34,7 +34,7 @@ internal fun Song.toDto() = SongDto(
         uri = uri,
         albumId = album?.id ?: -1L,
         artistId = artist?.id ?: -1L,
-        artwork = artwork,
+        artwork = songArtwork,
         lastModified = lastModified
     ),
     artist = artist?.toEntity(),

@@ -28,7 +28,7 @@ internal fun playerLightColorScheme() = PlayerColorScheme(
     favoriteEnableButton = PlayerPaletteTokens.BrightRed,
     primaryTextColor = PlayerPaletteTokens.CharcoalBlack,
     secondaryTextColor = PlayerPaletteTokens.MediumGray,
-    rippleColor = PlayerPaletteTokens.Black.copy(alpha = 0.12f),
+    rippleColor = PlayerPaletteTokens.RoyalPurple.copy(alpha = 0.15F),
     borderMain = PlayerPaletteTokens.Platinum,
     iconsMain = PlayerPaletteTokens.CharcoalBlack
 )
@@ -42,7 +42,7 @@ internal fun playerDarkColorScheme() = PlayerColorScheme(
     favoriteEnableButton = PlayerPaletteTokens.BrightRed,
     primaryTextColor = PlayerPaletteTokens.White,
     secondaryTextColor = PlayerPaletteTokens.MediumGray,
-    rippleColor = PlayerPaletteTokens.White,
+    rippleColor = PlayerPaletteTokens.RoyalPurple.copy(alpha = 0.15F),
     borderMain = PlayerPaletteTokens.White.copy(alpha = 0.25F),
     iconsMain = PlayerPaletteTokens.White
 )

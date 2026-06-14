@@ -5,27 +5,37 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import ua.kucher.player.core.common.datetime.TimeFormatter
 import ua.kucher.player.data.song.SongRepository
+import ua.kucher.player.player.PlaybackController
 
 internal class SongListViewModel(
     private val timeFormatter: TimeFormatter,
-    private val songRepository: SongRepository
+    private val songRepository: SongRepository,
+    private val playbackController: PlaybackController
 ) : ViewModel() {
 
-    val uiState: StateFlow<SongListUiState> = songRepository.getSongs().map { songs ->
+    val uiState: StateFlow<SongListUiState> = combine(
+        songRepository.getAllSongs(),
+        playbackController.currentItem,
+        playbackController.isPlaying
+    ) { songs, playlistItem, isPlaying ->
         SongListUiState.success(
-            songs = songs.map { song ->
+            songs = songs.items.map { song ->
                 SongUi(
                     id = song.id,
                     title = song.title,
-                    artwork = song.artwork ?: song.album?.artwork,
+                    artwork = song.artwork,
                     artistName = song.artist?.name ?: "",
                     duration = timeFormatter.toFormatDuration(song.duration)
                 )
-            }
+            },
+            playingSongId = playlistItem?.id,
+            isPlaying = isPlaying
         )
     }.catch {
         emit(SongListUiState.Error)
@@ -35,4 +45,17 @@ internal class SongListViewModel(
         initialValue = SongListUiState.Loading
     )
 
+    fun playSong(id: Long) {
+        viewModelScope.launch {
+            combine(
+                songRepository.getAllSongs(),
+                songRepository.getSongById(id)
+            ) { songs, song ->
+                Pair(songs, song)
+            }.firstOrNull()?.let { (songs, song) ->
+                playbackController.prepare(songs)
+                playbackController.play(song)
+            }
+        }
+    }
 }

@@ -35,7 +35,16 @@ FROM SongEntity
 WHERE artistId=?;
 
 insertSong:
-INSERT INTO SongEntity(id, title, duration, uri, artwork, albumId, artistId, lastModified)
+INSERT INTO SongEntity(
+    id,
+    title,
+    duration,
+    uri,
+    artwork,
+    albumId,
+    artistId,
+    lastModified
+)
 VALUES ?;
 
 updateSong:

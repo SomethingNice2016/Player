@@ -30,7 +30,6 @@ kotlin {
             api(libs.compose.resources)
             api(libs.compose.ui.tooling.preview)
             api(libs.compose.material3)
-            implementation(compose.materialIconsExtended)
             implementation(libs.kermit)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.androidx.lifecycle.viewmodel)
@@ -62,6 +61,13 @@ kotlin {
             implementation(libs.androidx.ktx.core)
             implementation(libs.koin.android)
             implementation(libs.coil.http)
+
+            //Media
+            implementation(libs.androidx.media.exoplayer.core)
+            implementation(libs.androidx.media.session)
+            implementation(libs.androidx.media.cast)
+            implementation(libs.androidx.media.ktx)
+            implementation(libs.androidx.media.ui)
         }
 
         iosMain.dependencies {

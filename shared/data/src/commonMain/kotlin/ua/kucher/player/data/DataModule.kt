@@ -8,14 +8,10 @@ import ua.kucher.player.data.artist.ArtistRepositoryImpl
 import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.data.song.SongRepositoryImpl
 import ua.kucher.player.local.localModule
-import ua.kucher.player.local.localPlatformModule
 
 val dataModule = module {
 
-    includes(
-        localPlatformModule,
-        localModule
-    )
+    includes(localModule)
 
     single<ArtistRepository> {
         ArtistRepositoryImpl(
@@ -35,6 +31,8 @@ val dataModule = module {
         SongRepositoryImpl(
             dispatcherProvider = get(),
             songLocalSource = get(),
+            artistLocalSource = get(),
+            albumLocalSource = get()
         )
     }
 }
