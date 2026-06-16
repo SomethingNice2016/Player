@@ -18,4 +18,8 @@ interface PlaybackController {
 
     fun playPause()
 
+    fun forward()
+
+    fun back()
+
 }

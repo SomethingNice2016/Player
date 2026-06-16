@@ -15,29 +15,28 @@ import ua.kucher.player.songlist.SongListRoute
 internal fun PlayerNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: PlayerRoute = PlayerRoute.Home,
+    startDestination: AppRoute = AppRoute.SongList,
 ) {
     NavHost(
         modifier = modifier,
         navController = navController,
         startDestination = startDestination.path,
     ) {
-
-        composable(route = PlayerRoute.Home.path) { navBackStackEntry ->
+        composable(route = AppRoute.Home.path) { navBackStackEntry ->
             HomeRoute(
                 navController = navController,
                 viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
             )
         }
 
-        composable(route = PlayerRoute.SongList.path) { navBackStackEntry ->
+        composable(route = AppRoute.SongList.path) { navBackStackEntry ->
             SongListRoute(
                 navController = navController,
                 viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
             )
         }
 
-        composable(route = PlayerRoute.Settings.path) { navBackStackEntry ->
+        composable(route = AppRoute.Settings.path) { navBackStackEntry ->
             SettingRoute(
                 navController = navController,
                 viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)

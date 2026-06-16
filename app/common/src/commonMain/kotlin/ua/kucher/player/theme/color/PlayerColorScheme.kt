@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 @Immutable
 data class PlayerColorScheme(
     val primaryBackground: Color,
+    val secondaryBackground: Color,
     val seekbarProgressColor: Color,
     val seekbarColor: Color,
     val menuEnableButton: Color,
@@ -21,8 +22,9 @@ data class PlayerColorScheme(
 
 internal fun playerLightColorScheme() = PlayerColorScheme(
     primaryBackground = PlayerPaletteTokens.GhostWhite,
+    secondaryBackground = PlayerPaletteTokens.MidnightBlueSurface,
     seekbarProgressColor = PlayerPaletteTokens.RoyalPurple,
-    seekbarColor = PlayerPaletteTokens.Platinum,
+    seekbarColor = PlayerPaletteTokens.Black,
     menuEnableButton = PlayerPaletteTokens.RoyalPurple,
     menuDisableButton = PlayerPaletteTokens.MediumGray,
     favoriteEnableButton = PlayerPaletteTokens.BrightRed,
@@ -35,8 +37,9 @@ internal fun playerLightColorScheme() = PlayerColorScheme(
 
 internal fun playerDarkColorScheme() = PlayerColorScheme(
     primaryBackground = PlayerPaletteTokens.MidnightBlue,
-    seekbarProgressColor = PlayerPaletteTokens.RoyalPurple,
-    seekbarColor = PlayerPaletteTokens.White,
+    secondaryBackground = PlayerPaletteTokens.MidnightBlueSurface,
+    seekbarProgressColor = PlayerPaletteTokens.White,
+    seekbarColor = PlayerPaletteTokens.White.copy(alpha = 0.5F),
     menuEnableButton = PlayerPaletteTokens.RoyalPurple,
     menuDisableButton = PlayerPaletteTokens.MediumGray,
     favoriteEnableButton = PlayerPaletteTokens.BrightRed,
@@ -48,5 +51,5 @@ internal fun playerDarkColorScheme() = PlayerColorScheme(
 )
 
 internal val LocalPlayerColorScheme = staticCompositionLocalOf {
-    playerLightColorScheme()
+    playerDarkColorScheme()
 }

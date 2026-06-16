@@ -61,6 +61,14 @@ internal class PlaybackControllerImpl : PlaybackController, Player.Listener {
         playWhenReady = !playWhenReady
     }
 
+    override fun forward() {
+        controller?.seekToNext()
+    }
+
+    override fun back() {
+        controller?.seekToPrevious()
+    }
+
     override fun onIsPlayingChanged(isPlaying: Boolean) {
         _isPlaying.value = isPlaying
     }

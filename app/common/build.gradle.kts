@@ -57,6 +57,8 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.androidx.startup.runtime)
+            implementation(libs.androidx.compose.icons)
+            implementation(libs.androidx.constraintlayout.compose)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.ktx.core)
             implementation(libs.koin.android)

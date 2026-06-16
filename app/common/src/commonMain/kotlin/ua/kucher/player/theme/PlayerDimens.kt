@@ -24,7 +24,9 @@ class PlayerDimens(
     val dimens80Px: Dp = 80.dp,
     val menuIconSize: Dp = 48.dp,
     val songIconSize: Dp = 50.dp,
-    val settingItemSize: Dp = 24.dp
+    val settingItemSize: Dp = 24.dp,
+    val seekbarThumbSize: Dp = 16.dp,
+    val seekbarTrackSize: Dp = 4.dp
 )
 
 internal val LocalPlayerDimens = staticCompositionLocalOf { PlayerDimens() }
