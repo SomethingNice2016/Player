@@ -17,5 +17,4 @@ internal fun SongListRoute(
         uiState = uiState,
         onSongClick = viewModel::playSong
     )
-
 }

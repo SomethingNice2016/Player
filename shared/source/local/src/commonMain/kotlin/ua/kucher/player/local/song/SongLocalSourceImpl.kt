@@ -1,8 +1,10 @@
 package ua.kucher.player.local.song
 
 import app.cash.sqldelight.coroutines.asFlow
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import ua.kucher.player.database.AlbumEntityQueries
@@ -12,7 +14,10 @@ import ua.kucher.player.database.SongEntityQueries
 import ua.kucher.player.local.ArtworkCache
 import ua.kucher.player.local.LocalStorageSource
 import ua.kucher.player.local.mapToList
+import ua.kucher.player.local.mapToOne
+import ua.kucher.player.local.mapToOneOrNull
 
+@OptIn(ExperimentalCoroutinesApi::class)
 internal class SongLocalSourceImpl(
     private val artworkCache: ArtworkCache,
     private val localStorageSource: LocalStorageSource,
@@ -23,13 +28,18 @@ internal class SongLocalSourceImpl(
 
     override fun getSongById(id: Long) = songEntityQueries.getSongById(id)
         .asFlow()
-        .map { query ->
-            val song = query.executeAsOne()
-            SongDto(
-                song = song,
-                album = albumEntityQueries.getAlbumById(song.albumId).executeAsOneOrNull(),
-                artist = artisEntityQueries.getArtistById(song.artistId).executeAsOneOrNull(),
-            ).toDomain()
+        .mapToOne()
+        .flatMapLatest { song ->
+            combine(
+                artisEntityQueries.getArtistById(song.artistId).asFlow().mapToOneOrNull(),
+                albumEntityQueries.getAlbumById(song.albumId).asFlow().mapToOneOrNull()
+            ) { artist, album ->
+                SongDto(
+                    song = song,
+                    album = album,
+                    artist = artist,
+                ).toDomain()
+            }
         }
 
     override fun getSongs() = songEntityQueries.getSongs()

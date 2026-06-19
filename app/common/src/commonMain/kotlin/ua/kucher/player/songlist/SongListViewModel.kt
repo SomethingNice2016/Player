@@ -3,15 +3,14 @@ package ua.kucher.player.songlist
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import ua.kucher.player.SongUi
 import ua.kucher.player.core.common.datetime.TimeFormatter
 import ua.kucher.player.data.song.SongRepository
-import ua.kucher.player.player.PlaybackController
+import ua.kucher.player.playback.PlaybackController
 
 internal class SongListViewModel(
     private val timeFormatter: TimeFormatter,
@@ -19,30 +18,30 @@ internal class SongListViewModel(
     private val playbackController: PlaybackController
 ) : ViewModel() {
 
-    val uiState: StateFlow<SongListUiState> = combine(
+    val uiState = combine(
         songRepository.getAllSongs(),
-        playbackController.currentItem,
+        playbackController.currentItemId,
         playbackController.isPlaying
-    ) { songs, playlistItem, isPlaying ->
-        SongListUiState.success(
+    ) { songs, currentItemId, isPlaying ->
+        SongListUiState(
             songs = songs.items.map { song ->
                 SongUi(
                     id = song.id,
                     title = song.title,
                     artwork = song.artwork,
                     artistName = song.artist?.name ?: "",
-                    duration = timeFormatter.toFormatDuration(song.duration)
+                    duration = song.duration,
+                    displayDuration = timeFormatter.toFormatDuration(song.duration)
                 )
             },
-            playingSongId = playlistItem?.id,
-            isPlaying = isPlaying
+            playingSongId = currentItemId,
+            isPlaying = isPlaying,
+            isPlayerShowed = currentItemId != null
         )
-    }.catch {
-        emit(SongListUiState.Error)
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(),
-        initialValue = SongListUiState.Loading
+        initialValue = SongListUiState()
     )
 
     fun playSong(id: Long) {

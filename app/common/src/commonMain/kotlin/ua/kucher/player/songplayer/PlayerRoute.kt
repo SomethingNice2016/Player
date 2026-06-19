@@ -1,0 +1,30 @@
+package ua.kucher.player.songplayer
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.navigation.NavController
+
+@Composable
+internal fun PlayerRoute(
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel: MusicPlayerViewModel,
+    content: @Composable () -> Unit = {}
+) {
+
+    val state by viewModel.uiState.collectAsState(null)
+
+    MusicPlayerScreen(
+        modifier = modifier,
+        content = content,
+        state = state,
+        onForward = viewModel::forward,
+        onPrevious = viewModel::back,
+        onPlayPause = viewModel::playPause,
+        onShuffle = viewModel::shuffle,
+        onRepeat = viewModel::repeat,
+        onSeek = viewModel::seekToPosition
+    )
+}

@@ -36,8 +36,8 @@ internal fun playerLightColorScheme() = PlayerColorScheme(
 )
 
 internal fun playerDarkColorScheme() = PlayerColorScheme(
-    primaryBackground = PlayerPaletteTokens.MidnightBlue,
-    secondaryBackground = PlayerPaletteTokens.MidnightBlueSurface,
+    primaryBackground = PlayerPaletteTokens.MidnightBlueSurface,
+    secondaryBackground = PlayerPaletteTokens.MidnightBlue,
     seekbarProgressColor = PlayerPaletteTokens.White,
     seekbarColor = PlayerPaletteTokens.White.copy(alpha = 0.5F),
     menuEnableButton = PlayerPaletteTokens.RoyalPurple,

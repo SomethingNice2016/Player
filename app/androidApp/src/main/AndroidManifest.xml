@@ -7,34 +7,45 @@
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO"/>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
+                     android:maxSdkVersion="32"/>
 
 
     <application
-        android:name=".App"
-        android:icon="@mipmap/ic_launcher"
-        android:label="Player"
-        android:theme="@android:style/Theme.Material.NoActionBar">
+            android:name=".App"
+            android:allowBackup="false"
+            android:dataExtractionRules="@xml/data_extraction_rules"
+            android:fullBackupContent="false"
+            android:icon="@mipmap/ic_launcher"
+            android:label="Player"
+            android:theme="@android:style/Theme.Material.NoActionBar">
 
         <meta-data android:name="com.google.android.gms.cast.framework.OPTIONS_PROVIDER_CLASS_NAME"
                    android:value="androidx.media3.cast.DefaultCastOptionsProvider"/>
 
         <activity
                 android:name="ua.kucher.player.MainActivity"
-            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
-            android:launchMode="singleInstance"
-            android:windowSoftInputMode="adjustPan"
-            android:exported="true">
+                android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
+                android:launchMode="singleInstance"
+                android:screenOrientation="portrait"
+                tools:ignore="LockedOrientationActivity"
+                android:windowSoftInputMode="adjustPan"
+                android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:mimeType="audio/*"/>
             </intent-filter>
         </activity>
 
         <service
-                android:name="ua.kucher.player.player.PlaybackService"
+                android:name="ua.kucher.player.playback.PlaybackService"
                 android:foregroundServiceType="mediaPlayback"
-                android:exported="true">
+                android:exported="false">
             <intent-filter>
                 <action android:name="androidx.media3.session.MediaLibraryService"/>
                 <action android:name="android.media.browse.MediaBrowserService"/>

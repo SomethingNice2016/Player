@@ -2,6 +2,7 @@ package ua.kucher.player.theme.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -20,35 +21,87 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.ic_pause_outline
+import player.app.common.generated.resources.ic_play_outline
 import player.app.common.generated.resources.ic_repeat
+import player.app.common.generated.resources.ic_repeat_one
 import player.app.common.generated.resources.ic_shuffle
 import player.app.common.generated.resources.ic_skip_back
 import player.app.common.generated.resources.ic_skip_forward
+import ua.kucher.player.playback.PlaybackController
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 
+private const val DIVIDER = 1000L
+
 @Composable
-internal fun PlayerController(
+internal fun PlayerControl(
     modifier: Modifier = Modifier,
     title: String,
     artist: String,
+    displayDuration: String,
+    displayProgress: String,
+    duration: Long,
+    progress: Long,
+    isPlaying: Boolean,
+    isShuffle: Boolean,
+    repeatMode: PlaybackController.RepeatMode,
     onForward: () -> Unit,
     onPrevious: () -> Unit,
-    onPlayPause: () -> Unit
+    onPlayPause: () -> Unit,
+    onShuffle: () -> Unit,
+    onRepeat: () -> Unit,
+    onSeek: (newValue: Long) -> Unit
 ) {
+
+    var isDragging by remember { mutableStateOf(false) }
+
+    var dragValue by remember { mutableFloatStateOf(0F) }
+
+    val sliderValue = if (isDragging) dragValue else progress.div(DIVIDER).toFloat()
+
+    val shuffleButtonColor = if (isShuffle)
+        PlayerTheme.colorScheme.menuEnableButton
+    else
+        PlayerTheme.colorScheme.iconsMain
+
+    val repeatButtonRes: DrawableResource
+    val repeatButtonColor: Color
+
+
+    when (repeatMode) {
+        PlaybackController.RepeatMode.OFF -> {
+            repeatButtonRes = Res.drawable.ic_repeat
+            repeatButtonColor = PlayerTheme.colorScheme.iconsMain
+        }
+
+        PlaybackController.RepeatMode.ALL -> {
+            repeatButtonRes = Res.drawable.ic_repeat
+            repeatButtonColor = PlayerTheme.colorScheme.menuEnableButton
+        }
+
+        PlaybackController.RepeatMode.ONE -> {
+            repeatButtonRes = Res.drawable.ic_repeat_one
+            repeatButtonColor = PlayerTheme.colorScheme.menuEnableButton
+        }
+    }
+
+
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -61,12 +114,17 @@ internal fun PlayerController(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = PlayerTheme.dimens.dimens8Px),
+                .padding(horizontal = PlayerTheme.dimens.dimens8Px)
+                .basicMarquee(
+                    iterations = Int.MAX_VALUE,
+                    repeatDelayMillis = 0,
+                    initialDelayMillis = 0,
+                    velocity = PlayerTheme.dimens.dimens60Px
+                ),
             text = title,
             color = PlayerTheme.colorScheme.primaryTextColor,
             style = PlayerTheme.typography.h4,
-            maxLines = 2,
-            overflow = TextOverflow.Ellipsis
+            maxLines = 1
         )
         Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens8Px))
 
@@ -78,24 +136,25 @@ internal fun PlayerController(
             color = PlayerTheme.colorScheme.secondaryTextColor,
             style = PlayerTheme.typography.mediumTitle,
             maxLines = 1,
-            overflow = TextOverflow.MiddleEllipsis
+            overflow = TextOverflow.Ellipsis
         )
 
         Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens32Px))
-
-        var value by remember {
-            mutableStateOf(0F)
-        }
 
         Slider(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(PlayerTheme.dimens.dimens16Px),
-            value = value,
+            value = sliderValue,
+            valueRange = 0F..duration.div(DIVIDER).toFloat(),
             onValueChange = { newValue ->
-                value = newValue
+                isDragging = true
+                dragValue = newValue
             },
-            valueRange = 0F..100F,
+            onValueChangeFinished = {
+                onSeek(dragValue.toLong().times(DIVIDER))
+                isDragging = false
+            },
             thumb = {
                 Box(
                     modifier = Modifier
@@ -136,13 +195,13 @@ internal fun PlayerController(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = "1:22",
+                text = displayProgress,
                 color = PlayerTheme.colorScheme.primaryTextColor,
                 style = MaterialTheme.typography.bodyLarge
             )
 
             Text(
-                text = "2:22",
+                text = displayDuration,
                 color = PlayerTheme.colorScheme.primaryTextColor,
                 style = MaterialTheme.typography.bodyLarge
             )
@@ -155,13 +214,13 @@ internal fun PlayerController(
         ) {
             PlayerMenuIconButton(
                 painter = painterResource(Res.drawable.ic_shuffle),
-                onClick = {
-                    println("Shuffle")
-                }
+                tint = shuffleButtonColor,
+                onClick = onShuffle
             )
 
             PlayerMenuIconButton(
                 painter = painterResource(Res.drawable.ic_skip_back),
+                tint = PlayerTheme.colorScheme.iconsMain,
                 onClick = onPrevious
             )
 
@@ -173,8 +232,13 @@ internal fun PlayerController(
                     .clickable(onClick = onPlayPause),
                 contentAlignment = Alignment.Center
             ) {
+                val playButtonIconRes = if (isPlaying)
+                    Res.drawable.ic_pause_outline
+                else
+                    Res.drawable.ic_play_outline
+
                 Image(
-                    painter = painterResource(Res.drawable.ic_pause_outline),
+                    painter = painterResource(playButtonIconRes),
                     colorFilter = ColorFilter.tint(PlayerTheme.colorScheme.iconsMain),
                     contentDescription = ""
                 )
@@ -182,14 +246,14 @@ internal fun PlayerController(
 
             PlayerMenuIconButton(
                 painter = painterResource(Res.drawable.ic_skip_forward),
+                tint = PlayerTheme.colorScheme.iconsMain,
                 onClick = onForward
             )
 
             PlayerMenuIconButton(
-                painter = painterResource(Res.drawable.ic_repeat),
-                onClick = {
-                    println("Repeat")
-                }
+                painter = painterResource(repeatButtonRes),
+                tint = repeatButtonColor,
+                onClick = onRepeat
             )
         }
     }
@@ -200,13 +264,27 @@ internal fun PlayerController(
 )
 @Composable
 private fun PlayerControlPreview() {
-    Box(modifier = Modifier.background(PlayerTheme.colorScheme.primaryBackground)) {
-        PlayerController(
-            title = "Title",
-            artist = "Artist",
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(PlayerTheme.colorScheme.primaryBackground)
+    ) {
+        PlayerControl(
+            title = "Never fade away",
+            artist = "SAMURAI",
+            displayDuration = "2:11",
+            displayProgress = "1:22",
+            duration = 100000,
+            progress = 69000,
+            isPlaying = true,
+            isShuffle = false,
+            repeatMode = PlaybackController.RepeatMode.ONE,
             onForward = {},
             onPrevious = {},
-            onPlayPause = {}
+            onPlayPause = {},
+            onShuffle = {},
+            onRepeat = {},
+            onSeek = {}
         )
     }
 }

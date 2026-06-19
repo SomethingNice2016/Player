@@ -13,8 +13,8 @@ import androidx.navigation.compose.rememberNavController
 import org.koin.compose.viewmodel.koinViewModel
 import ua.kucher.player.navigation.AppRoute
 import ua.kucher.player.navigation.PlayerNavigation
-import ua.kucher.player.player.PlayerRoute
-import ua.kucher.player.player.PlayerViewModel
+import ua.kucher.player.songplayer.MusicPlayerViewModel
+import ua.kucher.player.songplayer.PlayerRoute
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.BottomBar
 
@@ -26,7 +26,7 @@ fun App() = PlayerTheme(useDarkTheme = true) {
 
     val navBackStackEntry by navController.currentBackStack.collectAsState()
 
-    val playerViewModel: PlayerViewModel = koinViewModel()
+    val playerViewModel: MusicPlayerViewModel = koinViewModel()
 
     val menuItems = remember {
         AppRoute.getMainMenuItems()

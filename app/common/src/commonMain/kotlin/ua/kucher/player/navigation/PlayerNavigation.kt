@@ -15,7 +15,7 @@ import ua.kucher.player.songlist.SongListRoute
 internal fun PlayerNavigation(
     modifier: Modifier = Modifier,
     navController: NavHostController = rememberNavController(),
-    startDestination: AppRoute = AppRoute.SongList,
+    startDestination: AppRoute = AppRoute.Home,
 ) {
     NavHost(
         modifier = modifier,

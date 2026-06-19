@@ -4,10 +4,7 @@ import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.safeDrawing
-import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.ripple
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -48,7 +45,6 @@ internal fun PlayerTheme(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = PlayerTheme.colorScheme.primaryBackground)
-                .windowInsetsPadding(WindowInsets.safeDrawing)
         ) {
             content.invoke()
         }

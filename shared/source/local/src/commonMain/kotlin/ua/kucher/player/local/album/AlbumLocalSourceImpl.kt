@@ -2,12 +2,12 @@ package ua.kucher.player.local.album
 
 import app.cash.sqldelight.coroutines.asFlow
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import ua.kucher.player.database.AlbumEntityQueries
 import ua.kucher.player.local.LocalStorageSource
 import ua.kucher.player.local.mapToList
+import ua.kucher.player.local.mapToOne
 
 internal class AlbumLocalSourceImpl(
     private val localStorageSource: LocalStorageSource,
@@ -15,8 +15,9 @@ internal class AlbumLocalSourceImpl(
 ) : AlbumLocalSource {
     override fun getAlbumById(id: Long) = albumEntityQueries
         .getAlbums()
-        .asFlow().map { query ->
-            query.executeAsOne().toDomain()
+        .asFlow()
+        .mapToOne { entity ->
+            entity.toDomain()
         }
 
     override fun getAlbums() = albumEntityQueries

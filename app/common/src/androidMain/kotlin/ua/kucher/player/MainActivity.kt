@@ -2,12 +2,12 @@ package ua.kucher.player
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -16,7 +16,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
 import com.google.common.util.concurrent.ListenableFuture
 import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.launch
@@ -26,8 +25,10 @@ import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
 import ua.kucher.player.data.albun.AlbumRepository
 import ua.kucher.player.data.artist.ArtistRepository
 import ua.kucher.player.data.song.SongRepository
-import ua.kucher.player.player.PlaybackControllerImpl
-import ua.kucher.player.player.PlaybackService
+import ua.kucher.player.playback.PlaybackControllerImpl
+import ua.kucher.player.playback.PlaybackService
+import ua.kucher.player.playback.cancelStopPlaybackService
+import ua.kucher.player.playback.stopPlaybackService
 import kotlin.properties.Delegates
 
 class MainActivity : ComponentActivity() {
@@ -68,9 +69,23 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        enableEdgeToEdge()
+        enableEdgeToEdge(
+            statusBarStyle = SystemBarStyle.dark(
+                android.graphics.Color.TRANSPARENT,
+            ),
+        )
         setContent { App() }
         checkPermission()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        cancelStopPlaybackService()
+    }
+
+    override fun onDestroy() {
+        stopPlaybackService()
+        super.onDestroy()
     }
 
     private fun checkPermission() {
@@ -117,14 +132,7 @@ class MainActivity : ComponentActivity() {
 
     @SuppressLint("UnsafeOptInUsageError")
     private suspend fun initializeController() {
-        controllerFuture =
-            MediaController.Builder(
-                applicationContext,
-                SessionToken(
-                    applicationContext,
-                    ComponentName(this, PlaybackService::class.java)
-                ),
-            ).buildAsync()
+        controllerFuture = PlaybackService.getMediaController(applicationContext)
         setController()
     }
 

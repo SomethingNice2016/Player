@@ -61,6 +61,7 @@ kotlin {
             implementation(libs.androidx.constraintlayout.compose)
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.androidx.ktx.core)
+            implementation(libs.androidx.workmanager)
             implementation(libs.koin.android)
             implementation(libs.coil.http)
 

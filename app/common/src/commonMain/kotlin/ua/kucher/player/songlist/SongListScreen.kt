@@ -1,33 +1,31 @@
 package ua.kucher.player.songlist
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.ic_search
 import player.app.common.generated.resources.music_label
 import player.app.common.generated.resources.search
-import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
 import ua.kucher.player.theme.components.PlayerTopAppBarDefaults
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 import ua.kucher.player.theme.components.items.SongItem
 import ua.kucher.player.theme.extensions.BottomNavSpacer
+import ua.kucher.player.theme.extensions.MiniPlayerSpacer
 
 
 @Composable
@@ -45,7 +43,8 @@ internal fun SongListScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .nestedScroll(scrollBehavior.nestedScrollConnection),
-            containerColor = PlayerTheme.colorScheme.primaryBackground,
+            contentWindowInsets = WindowInsets(0),
+            containerColor = Color.Transparent,
             topBar = {
                 PlayerTopAppBar(
                     modifier = Modifier.fillMaxWidth(),
@@ -63,31 +62,20 @@ internal fun SongListScreen(
                 )
             }
         ) { paddingValues ->
-            when (uiState) {
-                SongListUiState.Error -> {}
-                SongListUiState.Loading -> CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(50.dp)
-                        .align(Alignment.Center),
-                    color = PlayerTheme.colorScheme.seekbarProgressColor,
-                    trackColor = PlayerTheme.colorScheme.seekbarProgressColor
-                )
-
-                is SongListUiState.Success -> SuccessContent(
-                    modifier = Modifier.padding(paddingValues),
-                    uiState = uiState,
-                    lazyListState = lazyListState,
-                    onSongClick = onSongClick
-                )
-            }
+            SongsListContent(
+                modifier = Modifier.padding(paddingValues),
+                uiState = uiState,
+                lazyListState = lazyListState,
+                onSongClick = onSongClick
+            )
         }
     }
 }
 
 @Composable
-private fun SuccessContent(
+private fun SongsListContent(
     modifier: Modifier = Modifier,
-    uiState: SongListUiState.Success,
+    uiState: SongListUiState,
     lazyListState: LazyListState,
     onSongClick: (songId: Long) -> Unit
 ) {
@@ -104,14 +92,15 @@ private fun SuccessContent(
                 title = song.title,
                 artist = song.artistName,
                 artwork = song.artwork,
-                duration = song.duration,
+                duration = song.displayDuration,
                 isSongPlaying = song.id == uiState.playingSongId,
                 isPlaying = uiState.isPlaying,
                 onClick = { onSongClick(song.id) }
             )
         }
-        item {
-            BottomNavSpacer()
+        if (uiState.isPlayerShowed) {
+            item { MiniPlayerSpacer() }
         }
+        item { BottomNavSpacer() }
     }
 }

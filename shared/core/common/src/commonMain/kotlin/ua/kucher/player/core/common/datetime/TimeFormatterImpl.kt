@@ -35,14 +35,9 @@ internal class TimeFormatterImpl : TimeFormatter {
         val time = LocalTime.fromMillisecondOfDay(duration.toInt())
 
         return when {
-            duration < TEN_MINUTES_TIME_MILLIS ->
-                underTenMinutesFormat.format(time)
-
-            duration < ONE_HOUR_TIME_MILLIS ->
-                underOneHourFormat.format(time)
-
-            else ->
-                overOneHourFormat.format(time)
+            duration < TEN_MINUTES_TIME_MILLIS -> underTenMinutesFormat.format(time)
+            duration < ONE_HOUR_TIME_MILLIS -> underOneHourFormat.format(time)
+            else -> overOneHourFormat.format(time)
         }
     }
 }
