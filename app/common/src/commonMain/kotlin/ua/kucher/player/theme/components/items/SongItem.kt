@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,8 +28,8 @@ import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
+import player.app.common.generated.resources.default_song_artwork
 import player.app.common.generated.resources.ic_options
-import player.app.common.generated.resources.ic_play_background
 import player.app.common.generated.resources.song_item_description
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.AudioVisualizer
@@ -81,6 +80,8 @@ internal fun SongItem(
                     model = artwork,
                     contentDescription = title,
                     contentScale = ContentScale.Crop,
+                    placeholder = painterResource(Res.drawable.default_song_artwork),
+                    error = painterResource(Res.drawable.default_song_artwork)
                 )
             }
             if (isSongPlaying) {
@@ -91,15 +92,6 @@ internal fun SongItem(
                     isPlaying = isPlaying,
                     barsCount = 5,
                     color = PlayerTheme.colorScheme.iconsMain
-                )
-            } else {
-                Icon(
-                    modifier = Modifier
-                        .padding(PlayerTheme.dimens.dimens2Px)
-                        .fillMaxSize(),
-                    painter = painterResource(Res.drawable.ic_play_background),
-                    tint = PlayerTheme.colorScheme.iconsMain,
-                    contentDescription = null,
                 )
             }
         }

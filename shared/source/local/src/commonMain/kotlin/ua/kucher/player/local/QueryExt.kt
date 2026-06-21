@@ -16,6 +16,10 @@ internal inline fun <reified IN : Any, reified OUT : Any> Flow<Query<IN>>.mapToL
     }
 }
 
+internal inline fun <reified IN : Any> Flow<Query<IN>>.mapToOneOrNull() = map { query ->
+    query.executeAsOneOrNull()
+}
+
 internal inline fun <reified IN : Any, reified OUT : Any> Flow<Query<IN>>.mapToOneOrNull(
     crossinline mapper: suspend (IN) -> OUT,
 ) = map { query ->
@@ -23,4 +27,14 @@ internal inline fun <reified IN : Any, reified OUT : Any> Flow<Query<IN>>.mapToO
         mapper(entity)
 
     }
+}
+
+internal inline fun <reified IN : Any, reified OUT : Any> Flow<Query<IN>>.mapToOne(
+    crossinline mapper: suspend (IN) -> OUT,
+) = map { query ->
+    mapper(query.executeAsOne())
+}
+
+internal inline fun <reified IN : Any> Flow<Query<IN>>.mapToOne() = map { query ->
+    query.executeAsOne()
 }

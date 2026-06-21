@@ -22,3 +22,6 @@ VALUES ?;
 
 deleteAllArtists:
 DELETE FROM ArtistEntity;
+
+deleteArtist:
+DELETE FROM ArtistEntity WHERE id=?;

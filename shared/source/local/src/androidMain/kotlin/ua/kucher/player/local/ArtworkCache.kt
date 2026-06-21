@@ -4,6 +4,9 @@ import android.content.ContentUris
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
+import ua.kucher.player.core.common.bitmap.cropToSquare
+import ua.kucher.player.core.common.bitmap.toBitmap
+import ua.kucher.player.core.common.bitmap.toByteArray
 import java.io.File
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
@@ -37,6 +40,10 @@ internal actual class ArtworkCache(private val context: Context) {
         )
 
         val bytes = retriever.embeddedPicture
+            ?.toBitmap()
+            ?.cropToSquare()
+            ?.toByteArray()
+
         retriever.release()
 
         if (bytes?.toList().isNullOrEmpty()) {
@@ -63,5 +70,4 @@ internal actual class ArtworkCache(private val context: Context) {
             artworkFile.delete()
         }
     }
-
 }

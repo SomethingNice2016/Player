@@ -6,7 +6,7 @@ import ua.kucher.player.entity.SongPlaylist
 
 interface SongRepository {
 
-    fun getSongById(id: Long): Flow<Song>
+    fun getSongById(id: Long): Flow<Song?>
 
     fun getAllSongs(): Flow<SongPlaylist.AllSongs>
 

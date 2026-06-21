@@ -10,8 +10,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
+import org.koin.compose.viewmodel.koinViewModel
+import ua.kucher.player.navigation.AppRoute
 import ua.kucher.player.navigation.PlayerNavigation
-import ua.kucher.player.navigation.PlayerRoute
+import ua.kucher.player.songplayer.MusicPlayerViewModel
+import ua.kucher.player.songplayer.PlayerRoute
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.BottomBar
 
@@ -23,33 +26,41 @@ fun App() = PlayerTheme(useDarkTheme = true) {
 
     val navBackStackEntry by navController.currentBackStack.collectAsState()
 
+    val playerViewModel: MusicPlayerViewModel = koinViewModel()
+
     val menuItems = remember {
-        PlayerRoute.getMainMenuItems()
+        AppRoute.getMainMenuItems()
     }
 
     val currentRoute = navBackStackEntry.mapNotNull { backStackEntry ->
         backStackEntry.destination.route?.let { path ->
-            PlayerRoute.getByPath(path)
+            AppRoute.getByPath(path)
         }
     }.findLast { route ->
         menuItems.contains(route)
-    } ?: PlayerRoute.Home
+    } ?: AppRoute.Home
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        PlayerNavigation(
-            modifier = Modifier.fillMaxSize(),
-            navController = navController
-        )
-        BottomBar(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            current = currentRoute,
-            items = menuItems,
-            onClick = { route ->
-                navController.navigate(route.path) {
-                    launchSingleTop = true
+    PlayerRoute(
+        navController = navController,
+        viewModel = playerViewModel
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            PlayerNavigation(
+                modifier = Modifier.fillMaxSize(),
+                navController = navController
+            )
+
+            BottomBar(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                current = currentRoute,
+                items = menuItems,
+                onClick = { route ->
+                    navController.navigate(route.path) {
+                        launchSingleTop = true
+                    }
                 }
-            }
-        )
+            )
+        }
     }
 }
 
