@@ -1,6 +1,7 @@
 package ua.kucher.player.core.common.coroutines.dispather
 
 import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.MainCoroutineDispatcher
 
 interface DispatcherProvider {
 
@@ -10,7 +11,7 @@ interface DispatcherProvider {
 
     val io: CoroutineDispatcher
 
-    val main: CoroutineDispatcher
+    val main: MainCoroutineDispatcher
 
     val default: CoroutineDispatcher
 

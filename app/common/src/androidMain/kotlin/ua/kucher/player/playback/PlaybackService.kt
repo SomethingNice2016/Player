@@ -61,25 +61,23 @@ class PlaybackService : MediaLibraryService(),
         }
     }
 
-    private var mediaSession: MediaLibrarySession by Delegates.notNull()
-
     private val dispatcherProvider: DispatcherProvider by inject()
 
-    private var player: Player by Delegates.notNull()
+    private lateinit var player: Player
+
+    private lateinit var mediaSession: MediaLibrarySession
 
     private var customCommands: List<CommandButton> by Delegates.notNull()
 
     private var customLayout = ImmutableList.of<CommandButton>()
 
-    private val turnShuffleOnButton by
-    lazy @OptIn(UnstableApi::class) {
+    private val turnShuffleOnButton by lazy {
         CommandButton.Builder(CommandButton.ICON_SHUFFLE_OFF)
             .setDisplayName("")
             .setPlayerCommand(Player.COMMAND_SET_SHUFFLE_MODE, true)
             .build()
     }
-    private val turnShuffleOffButton by
-    lazy @OptIn(UnstableApi::class) {
+    private val turnShuffleOffButton by lazy {
         CommandButton.Builder(CommandButton.ICON_SHUFFLE_ON)
             .setDisplayName("")
             .setPlayerCommand(Player.COMMAND_SET_SHUFFLE_MODE, false)
@@ -94,15 +92,14 @@ class PlaybackService : MediaLibraryService(),
     }
 
     override fun onDestroy() {
-        mediaSession.release()
-        mediaSession.player.release()
-        mediaSession.player.clearMediaItems()
         clearListener()
+        player.release()
+        mediaSession.release()
         super.onDestroy()
     }
 
     override fun onTaskRemoved(rootIntent: Intent?) {
-        if (!player.playWhenReady)
+        if (!player.isPlaying)
             stopSelf()
     }
 
@@ -164,10 +161,12 @@ class PlaybackService : MediaLibraryService(),
                 builder.setSessionActivity(nonNullIntent)
             }
         }.build()
-        if (customLayout.isEmpty()) return
-        mediaSession.setCustomLayout(customLayout)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S)
-            this@PlaybackService.setListener(this)
+        if (customLayout.isNotEmpty()) {
+            mediaSession.setCustomLayout(customLayout)
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            setListener(this)
+        }
     }
 
     private fun getAudioAttributes() = AudioAttributes.Builder()

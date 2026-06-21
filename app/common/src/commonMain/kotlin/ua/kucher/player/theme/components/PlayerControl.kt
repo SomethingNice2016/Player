@@ -76,9 +76,9 @@ internal fun PlayerControl(
     val sliderValue = if (isDragging) dragValue else progress.div(DIVIDER).toFloat()
 
     val shuffleButtonColor = if (isShuffle)
-        PlayerTheme.colorScheme.menuEnableButton
-    else
         PlayerTheme.colorScheme.iconsMain
+    else
+        PlayerTheme.colorScheme.menuDisableButton
 
     val repeatButtonRes: DrawableResource
     val repeatButtonColor: Color
@@ -87,17 +87,17 @@ internal fun PlayerControl(
     when (repeatMode) {
         PlaybackController.RepeatMode.OFF -> {
             repeatButtonRes = Res.drawable.ic_repeat
-            repeatButtonColor = PlayerTheme.colorScheme.iconsMain
+            repeatButtonColor = PlayerTheme.colorScheme.menuDisableButton
         }
 
         PlaybackController.RepeatMode.ALL -> {
             repeatButtonRes = Res.drawable.ic_repeat
-            repeatButtonColor = PlayerTheme.colorScheme.menuEnableButton
+            repeatButtonColor = PlayerTheme.colorScheme.iconsMain
         }
 
         PlaybackController.RepeatMode.ONE -> {
             repeatButtonRes = Res.drawable.ic_repeat_one
-            repeatButtonColor = PlayerTheme.colorScheme.menuEnableButton
+            repeatButtonColor = PlayerTheme.colorScheme.iconsMain
         }
     }
 
@@ -259,9 +259,7 @@ internal fun PlayerControl(
     }
 }
 
-@Preview(
-    showBackground = true,
-)
+@Preview
 @Composable
 private fun PlayerControlPreview() {
     Box(
@@ -272,7 +270,7 @@ private fun PlayerControlPreview() {
         PlayerControl(
             title = "Never fade away",
             artist = "SAMURAI",
-            displayDuration = "2:11",
+            displayDuration = "2:28",
             displayProgress = "1:22",
             duration = 100000,
             progress = 69000,

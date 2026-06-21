@@ -132,7 +132,7 @@ private fun MiniPlayerPreview() {
         MiniPlayer(
             title = "Never fade away",
             artist = "SAMURAI",
-            progress = 100L,
+            progress = 69L,
             duration = 228L,
             isPlaying = true,
             onPlayPause = {},

@@ -42,6 +42,8 @@ interface PlaybackController {
 
     fun setRepeatMode(mode: RepeatMode)
 
+    fun release()
+
     fun playPause()
 
     fun forward()

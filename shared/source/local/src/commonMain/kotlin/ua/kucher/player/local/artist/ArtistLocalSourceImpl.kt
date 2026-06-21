@@ -31,8 +31,8 @@ internal class ArtistLocalSourceImpl(
     override suspend fun fetchArtists() = runCatching {
         val artistsInDevice = localStorageSource.getArtists()
         artistEntityQueries.deleteAllArtists()
-        artistsInDevice.map { artist ->
-            coroutineScope {
+        coroutineScope {
+            artistsInDevice.map { artist ->
                 launch { artistEntityQueries.insertArtist(artist) }
             }
         }.joinAll()

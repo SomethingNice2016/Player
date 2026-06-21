@@ -27,6 +27,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import kotlinx.coroutines.Job
@@ -37,6 +38,8 @@ import player.app.common.generated.resources.default_song_artwork
 import player.app.common.generated.resources.ic_arrow_down
 import player.app.common.generated.resources.ic_cast
 import player.app.common.generated.resources.ic_options
+import ua.kucher.player.SongUi
+import ua.kucher.player.playback.PlaybackController
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.AudioVisualizer
 import ua.kucher.player.theme.components.FrostedGlass
@@ -82,11 +85,11 @@ internal fun MusicPlayerScreen(
     }
 
     val expandPlayerProgress = remember {
-        Animatable(0f)
+        Animatable(0F)
     }
 
     var dragPlayerStartProgress by remember {
-        mutableFloatStateOf(0f)
+        mutableFloatStateOf(0F)
     }
 
     var isPlayerExpanding by remember {
@@ -346,5 +349,43 @@ internal fun MusicPlayerScreen(
                 )
             }
         }
+    }
+}
+
+@Preview()
+@Composable
+private fun PlayerScreenPreview() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PlayerTheme.colorScheme.primaryBackground)
+    ) {
+        MusicPlayerScreen(
+            Modifier.fillMaxSize(),
+            state = MusicPlayerUiState(
+                previousSong = null,
+                nextSong = null,
+                currentSong = SongUi(
+                    id = 12,
+                    title = "Never fade away",
+                    artistName = "SAMURAI",
+                    displayDuration = "3:33",
+                    duration = 10000L,
+                    artwork = ""
+                ),
+                displayProgress = "2:30",
+                progress = 69000L,
+                isPlaying = true,
+                isShuffle = false,
+                repeatMode = PlaybackController.RepeatMode.OFF
+            ),
+            onForward = {},
+            onPrevious = {},
+            onPlayPause = {},
+            onShuffle = {},
+            onRepeat = {},
+            onSeek = {},
+            content = {}
+        )
     }
 }

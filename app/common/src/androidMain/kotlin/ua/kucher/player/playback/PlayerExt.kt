@@ -101,3 +101,11 @@ internal fun PlaybackController.RepeatMode.Companion.fromPlayerRepeatMode(mode: 
         Player.REPEAT_MODE_ALL -> PlaybackController.RepeatMode.ALL
         else -> PlaybackController.RepeatMode.OFF
     }
+
+fun PlaybackController.RepeatMode.toPlayerRepeatMode(): Int {
+    return when (this) {
+        PlaybackController.RepeatMode.OFF -> Player.REPEAT_MODE_OFF
+        PlaybackController.RepeatMode.ALL -> Player.REPEAT_MODE_ALL
+        PlaybackController.RepeatMode.ONE -> Player.REPEAT_MODE_ONE
+    }
+}

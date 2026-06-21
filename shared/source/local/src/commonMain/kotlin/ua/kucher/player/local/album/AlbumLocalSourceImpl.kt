@@ -37,8 +37,8 @@ internal class AlbumLocalSourceImpl(
     override suspend fun fetchAlbums() = runCatching {
         val albumsInDevice = localStorageSource.getAlbums()
         albumEntityQueries.deleteAllAlbums()
-        albumsInDevice.map { album ->
-            coroutineScope {
+        coroutineScope {
+            albumsInDevice.map { album ->
                 launch { albumEntityQueries.insertAlbum(album) }
             }
         }.joinAll()

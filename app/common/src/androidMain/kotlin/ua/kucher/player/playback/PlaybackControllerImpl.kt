@@ -1,109 +1,90 @@
 package ua.kucher.player.playback
 
-import android.os.Handler
-import android.os.Looper
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
-import androidx.media3.common.Timeline
 import androidx.media3.session.MediaController
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
+import kotlinx.coroutines.launch
+import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
 import ua.kucher.player.entity.Playlist
 import ua.kucher.player.entity.PlaylistItem
+import kotlin.time.Duration.Companion.milliseconds
 
-internal class PlaybackControllerImpl : PlaybackController {
+internal class PlaybackControllerImpl(
+    private val dispatcherProvider: DispatcherProvider
+) : PlaybackController {
 
     companion object {
-        private const val DELAY = 200L
+        private const val PROGRESS_UPDATE_DELAY = 200L
     }
 
     private var controller: MediaController? = null
 
-    private val handler = Handler(Looper.getMainLooper())
+    private val scope = CoroutineScope(
+        context = SupervisorJob() + dispatcherProvider.main.immediate
+    )
+
+    private var progressJob: Job? = null
 
     private val _currentItemId = MutableStateFlow<Long?>(null)
-
     private val _nextItemId = MutableStateFlow<Long?>(null)
-
     private val _previousItemId = MutableStateFlow<Long?>(null)
-
     private val _isPlaying = MutableStateFlow(false)
-
     private val _isShuffle = MutableStateFlow(false)
-
     private val _repeatMode = MutableStateFlow(PlaybackController.RepeatMode.OFF)
-
     private val _progress = MutableStateFlow(0L)
-
     private val _currentPlaylistId = MutableStateFlow<Long?>(null)
 
-    override val currentItemId: Flow<Long?>
-        get() = _currentItemId
+    override val currentItemId: Flow<Long?> =
+        _currentItemId.asStateFlow()
 
-    override val nextItemId: Flow<Long?>
-        get() = _nextItemId
+    override val nextItemId: Flow<Long?> =
+        _nextItemId.asStateFlow()
 
-    override val previousItemId: Flow<Long?>
-        get() = _previousItemId
+    override val previousItemId: Flow<Long?> =
+        _previousItemId.asStateFlow()
 
-    override val progress: Flow<Long>
-        get() = _progress
+    override val progress: Flow<Long> =
+        _progress.asStateFlow()
 
-    override val isPlaying: Flow<Boolean>
-        get() = _isPlaying
+    override val isPlaying: Flow<Boolean> =
+        _isPlaying.asStateFlow()
 
-    override val isShuffle: Flow<Boolean>
-        get() = _isShuffle
+    override val isShuffle: Flow<Boolean> =
+        _isShuffle.asStateFlow()
 
-    override val repeatMode: Flow<PlaybackController.RepeatMode>
-        get() = _repeatMode
+    override val repeatMode: Flow<PlaybackController.RepeatMode> =
+        _repeatMode.asStateFlow()
 
     private val playerListener = object : Player.Listener {
-
-        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            _currentItemId.value = mediaItem?.mediaId?.toLongOrNull()
-            _previousItemId.value = controller?.previousMediaItemId
-            _nextItemId.value = controller?.nextMediaItemId
-        }
-
-        override fun onTimelineChanged(
-            timeline: Timeline,
-            reason: Int
+        override fun onEvents(
+            player: Player,
+            events: Player.Events
         ) {
-            if (timeline.isEmpty) {
-                _currentPlaylistId.value = null
-                return
+            syncState()
+            if (player.isPlaying) {
+                startProgressUpdates()
+            } else {
+                stopProgressUpdates()
             }
-            _currentPlaylistId.value = controller?.currentMediaItem?.playlistId
-        }
-
-        override fun onShuffleModeEnabledChanged(shuffleModeEnabled: Boolean) {
-            _isShuffle.value = shuffleModeEnabled
-        }
-
-        override fun onRepeatModeChanged(repeatMode: Int) {
-            _repeatMode.value = PlaybackController.RepeatMode.fromPlayerRepeatMode(repeatMode)
-        }
-    }
-
-    private val playbackStateRunnable = object : Runnable {
-        override fun run() {
-            withController {
-                _progress.value = currentPosition
-                _isPlaying.value = isPlaying
-            }
-            handler.postDelayed(this, DELAY)
         }
     }
 
     fun setController(controller: MediaController?) {
+        stopProgressUpdates()
         this.controller?.removeListener(playerListener)
         this.controller = controller
-        this.controller?.addListener(playerListener)
-        setupState()
-        handler.removeCallbacks(playbackStateRunnable)
-        if (controller != null) {
-            handler.postDelayed(playbackStateRunnable, DELAY)
+        controller?.addListener(playerListener)
+        syncState()
+        if (controller?.isPlaying == true) {
+            startProgressUpdates()
         }
     }
 
@@ -112,6 +93,8 @@ internal class PlaybackControllerImpl : PlaybackController {
         clearMediaItems()
         setMediaItems(playlist.toMediaItems())
         prepare()
+        _currentPlaylistId.value = playlist.id
+        syncState()
     }
 
     override fun play(item: PlaylistItem) = withController {
@@ -119,76 +102,98 @@ internal class PlaybackControllerImpl : PlaybackController {
             playPause()
             return@withController
         }
-
-        val index = controller?.mediaItems?.indexOfFirst {
+        val existingIndex = mediaItems.indexOfFirst {
             it.mediaId.toLongOrNull() == item.id
-        } ?: run {
+        }
+        if (existingIndex >= 0) {
+            seekToDefaultPosition(existingIndex)
+        } else {
             _currentPlaylistId.value = null
             setMediaItem(item.toMediaItem())
-            0
         }
-
-        if (index == -1) return@withController
-
-        seekToDefaultPosition(index)
-        _currentItemId.value = item.id
         play()
+        syncState()
     }
 
     override fun seekToPosition(position: Long) = withController {
-        withoutStateHandler {
-            seekTo(position)
-            _progress.value = position
-        }
+        seekTo(position)
+        _progress.value = currentPosition
     }
 
     override fun setShuffleMode(isShuffle: Boolean) {
         controller?.shuffleModeEnabled = isShuffle
     }
 
-    override fun setRepeatMode(mode: PlaybackController.RepeatMode) = withController {
-        repeatMode = when (mode) {
-            PlaybackController.RepeatMode.OFF -> Player.REPEAT_MODE_OFF
-            PlaybackController.RepeatMode.ALL -> Player.REPEAT_MODE_ALL
-            PlaybackController.RepeatMode.ONE -> Player.REPEAT_MODE_ONE
+    override fun setRepeatMode(
+        mode: PlaybackController.RepeatMode
+    ) = withController {
+        repeatMode = mode.toPlayerRepeatMode()
+    }
+
+    override fun playPause() = withController {
+        if (isPlaying) {
+            pause()
+        } else {
+            play()
         }
     }
 
-    override fun playPause() {
-        controller?.playPause()
-    }
-
-    override fun forward() = withoutStateHandler {
+    override fun forward() {
         controller?.seekToNextMediaItem()
     }
 
-    override fun back() = withoutStateHandler {
+    override fun back() {
         controller?.seekToPrevious()
     }
 
-    private fun setupState() {
-        _currentItemId.value = controller?.currentMediaItem?.mediaId?.toLongOrNull()
-        _previousItemId.value = controller?.previousMediaItemId
-        _nextItemId.value = controller?.nextMediaItemId
-        _currentPlaylistId.value = controller?.currentMediaItem?.playlistId
-        withController {
-            _repeatMode.value = PlaybackController.RepeatMode.fromPlayerRepeatMode(repeatMode)
-            _isShuffle.value = shuffleModeEnabled
-            _isPlaying.value = isPlaying
+    override fun release() {
+        stopProgressUpdates()
+        controller?.removeListener(playerListener)
+        controller = null
+    }
+
+    private fun syncState() {
+        val nonNullController = controller ?: run {
+            _currentItemId.value = null
+            _previousItemId.value = null
+            _nextItemId.value = null
+            _currentPlaylistId.value = null
+            _isPlaying.value = false
+            _progress.value = 0L
+            return
+        }
+        _currentItemId.value = nonNullController.currentMediaItem?.mediaId?.toLongOrNull()
+        _previousItemId.value = nonNullController.previousMediaItemId
+        _nextItemId.value = nonNullController.nextMediaItemId
+        _currentPlaylistId.value = nonNullController.currentMediaItem?.playlistId
+        _repeatMode.value = PlaybackController.RepeatMode.fromPlayerRepeatMode(nonNullController.repeatMode)
+        _isShuffle.value = nonNullController.shuffleModeEnabled
+        _isPlaying.value = nonNullController.isPlaying
+        _progress.value = nonNullController.currentPosition
+    }
+
+    private fun startProgressUpdates() {
+        progressJob?.cancel()
+        progressJob = scope.launch {
+            while (currentCoroutineContext().isActive) {
+                val controller = controller ?: break
+                if (!controller.isPlaying) {
+                    break
+                }
+                _progress.value = controller.currentPosition
+                delay(PROGRESS_UPDATE_DELAY.milliseconds)
+            }
         }
     }
 
-    private fun withController(action: MediaController.() -> Unit) {
-        _previousItemId.value = controller?.previousMediaItemId
-        _nextItemId.value = controller?.nextMediaItemId
-        controller?.let { nonNullController ->
-            action.invoke(nonNullController)
-        }
+    private fun stopProgressUpdates() {
+        progressJob?.cancel()
+        progressJob = null
     }
 
-    private fun withoutStateHandler(block: () -> Unit) {
-        handler.removeCallbacks(playbackStateRunnable)
-        block()
-        handler.postDelayed(playbackStateRunnable, DELAY)
+    private inline fun withController(
+        action: MediaController.() -> Unit
+    ) {
+        controller?.action()
     }
 }
