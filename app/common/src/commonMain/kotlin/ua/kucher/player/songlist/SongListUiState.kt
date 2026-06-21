@@ -1,6 +1,6 @@
 package ua.kucher.player.songlist
 
-import ua.kucher.player.SongUi
+import ua.kucher.player.common.SongUi
 
 internal data class SongListUiState(
     val songs: List<SongUi> = emptyList(),

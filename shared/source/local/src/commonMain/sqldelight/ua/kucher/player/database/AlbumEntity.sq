@@ -25,5 +25,8 @@ insertAlbum:
 INSERT OR REPLACE INTO AlbumEntity(id, title, artistId, artwork)
 VALUES ?;
 
+deleteAlbum:
+DELETE FROM AlbumEntity WHERE id=?;
+
 deleteAllAlbums:
 DELETE FROM AlbumEntity;

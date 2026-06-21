@@ -106,17 +106,15 @@ fun <T0, T1, T2, T3, T4, T5, T6, T7, R> combine(
     )
 }
 
-fun <T1, T2, T3, R> combineNotNull(
+
+fun <T1, T2, R> combineNotNull(
     flow0: Flow<T1?>,
     flow1: Flow<T2?>,
-    flow2: Flow<T3?>,
-    transform: suspend (T1, T2, T3) -> R
-): Flow<R?> = combine(flow0, flow1, flow2) { p0, p1, p2 ->
+    transform: suspend (T1, T2) -> R
+): Flow<R?> = combine(flow0, flow1) { p0, p1 ->
     p0?.let { notNullP0 ->
         p1?.let { notNullP1 ->
-            p2?.let { notNullP2 ->
-                transform(notNullP0, notNullP1, notNullP2)
-            }
+            transform(notNullP0, notNullP1)
         }
     }
 }

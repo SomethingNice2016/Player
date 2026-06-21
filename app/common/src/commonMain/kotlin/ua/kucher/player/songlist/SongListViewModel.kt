@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
-import ua.kucher.player.SongUi
+import ua.kucher.player.common.SongUi
 import ua.kucher.player.core.common.datetime.TimeFormatter
 import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.playback.PlaybackController
@@ -20,9 +20,8 @@ internal class SongListViewModel(
 
     val uiState = combine(
         songRepository.getAllSongs(),
-        playbackController.currentItemId,
-        playbackController.isPlaying
-    ) { songs, currentItemId, isPlaying ->
+        playbackController.state,
+    ) { songs, playbackState ->
         SongListUiState(
             songs = songs.items.map { song ->
                 SongUi(
@@ -34,9 +33,9 @@ internal class SongListViewModel(
                     displayDuration = timeFormatter.toFormatDuration(song.duration)
                 )
             },
-            playingSongId = currentItemId,
-            isPlaying = isPlaying,
-            isPlayerShowed = currentItemId != null
+            playingSongId = playbackState.currentItemId,
+            isPlaying = playbackState.isPlaying,
+            isPlayerShowed = playbackState.currentItemId != null
         )
     }.stateIn(
         scope = viewModelScope,
@@ -46,15 +45,12 @@ internal class SongListViewModel(
 
     fun playSong(id: Long) {
         viewModelScope.launch {
-            combine(
-                songRepository.getAllSongs(),
-                songRepository.getSongById(id)
-            ) { songs, song ->
-                Pair(songs, song)
-            }.firstOrNull()?.let { (songs, song) ->
+            val songs = songRepository.getAllSongs().firstOrNull() ?: return@launch
+            val song = songRepository.getSongById(id).firstOrNull() ?: return@launch
+            if (playbackController.state.value.currentPlaylistId != songs.id) {
                 playbackController.prepare(songs)
-                playbackController.play(song)
             }
+            playbackController.play(song)
         }
     }
 }

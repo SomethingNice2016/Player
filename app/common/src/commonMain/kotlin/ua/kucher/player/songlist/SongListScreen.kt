@@ -1,6 +1,5 @@
 package ua.kucher.player.songlist
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -38,37 +37,35 @@ internal fun SongListScreen(
 
     val scrollBehavior = PlayerTopAppBarDefaults.scrollBehavior()
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Scaffold(
-            modifier = Modifier
-                .fillMaxSize()
-                .nestedScroll(scrollBehavior.nestedScrollConnection),
-            contentWindowInsets = WindowInsets(0),
-            containerColor = Color.Transparent,
-            topBar = {
-                PlayerTopAppBar(
-                    modifier = Modifier.fillMaxWidth(),
-                    titleRes = Res.string.music_label,
-                    navigationIcon = {},
-                    showDivider = { false },
-                    scrollBehavior = scrollBehavior,
-                    actions = {
-                        PlayerMenuIconButton(
-                            painter = painterResource(Res.drawable.ic_search),
-                            contentDescription = stringResource(Res.string.search),
-                            onClick = {}
-                        )
-                    }
-                )
-            }
-        ) { paddingValues ->
-            SongsListContent(
-                modifier = Modifier.padding(paddingValues),
-                uiState = uiState,
-                lazyListState = lazyListState,
-                onSongClick = onSongClick
+    Scaffold(
+        modifier = Modifier
+            .fillMaxSize()
+            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        contentWindowInsets = WindowInsets(0),
+        containerColor = Color.Transparent,
+        topBar = {
+            PlayerTopAppBar(
+                modifier = Modifier.fillMaxWidth(),
+                titleRes = Res.string.music_label,
+                navigationIcon = {},
+                showDivider = { false },
+                scrollBehavior = scrollBehavior,
+                actions = {
+                    PlayerMenuIconButton(
+                        painter = painterResource(Res.drawable.ic_search),
+                        contentDescription = stringResource(Res.string.search),
+                        onClick = {}
+                    )
+                }
             )
         }
+    ) { paddingValues ->
+        SongsListContent(
+            modifier = Modifier.padding(paddingValues),
+            uiState = uiState,
+            lazyListState = lazyListState,
+            onSongClick = onSongClick
+        )
     }
 }
 
@@ -85,7 +82,8 @@ private fun SongsListContent(
     ) {
         items(
             items = uiState.songs,
-            key = { song -> song.id.toString() + song.artwork }
+            key = { song -> song.id },
+            contentType = { "song" }
         ) { song ->
             SongItem(
                 modifier = Modifier.fillMaxWidth(),

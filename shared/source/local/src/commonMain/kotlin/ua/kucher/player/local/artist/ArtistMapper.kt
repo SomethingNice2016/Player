@@ -16,3 +16,4 @@ internal fun Artist.toEntity() = ArtistEntity(
     numberOfAlbums = numberOfAlbums,
     numberOfSongs = numberOfSongs,
 )
+

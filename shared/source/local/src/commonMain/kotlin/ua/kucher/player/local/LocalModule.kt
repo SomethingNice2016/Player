@@ -39,8 +39,6 @@ val localModule = module {
             dispatcherProvider = get(),
             artworkCache = get(),
             songEntityQueries = get(),
-            artisEntityQueries = get(),
-            albumEntityQueries = get(),
         )
     }
 }

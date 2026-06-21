@@ -2,25 +2,24 @@ package ua.kucher.player.local.song
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOne
+import app.cash.sqldelight.coroutines.mapToOneOrNull
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
-import ua.kucher.player.database.AlbumEntity
-import ua.kucher.player.database.AlbumEntityQueries
-import ua.kucher.player.database.ArtisEntityQueries
-import ua.kucher.player.database.ArtistEntity
+import ua.kucher.player.database.GetSongsByAlbumWithRelations
+import ua.kucher.player.database.GetSongsByArtistWithRelations
+import ua.kucher.player.database.GetSongsWithRelations
 import ua.kucher.player.database.SongEntity
 import ua.kucher.player.database.SongEntityQueries
 import ua.kucher.player.entity.Song
 import ua.kucher.player.local.ArtworkCache
 import ua.kucher.player.local.LocalStorageSource
-import ua.kucher.player.local.mapToOneOrNull
+
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class SongLocalSourceImpl(
@@ -28,136 +27,117 @@ internal class SongLocalSourceImpl(
     private val dispatcherProvider: DispatcherProvider,
     private val localStorageSource: LocalStorageSource,
     private val songEntityQueries: SongEntityQueries,
-    private val artisEntityQueries: ArtisEntityQueries,
-    private val albumEntityQueries: AlbumEntityQueries,
 ) : SongLocalSource {
 
-    private fun songsFlow(
-        songsFlow: Flow<List<SongEntity>>
-    ): Flow<List<Song>> {
-        val albumsFlow = albumEntityQueries.getAlbums()
-            .asFlow()
-            .mapToList(dispatcherProvider.io)
+    private val io: CoroutineDispatcher
+        get() = dispatcherProvider.io
 
-        val artistsFlow = artisEntityQueries.getArtists()
+    override fun getSongs(): Flow<List<Song>> =
+        songEntityQueries
+            .getSongsWithRelations()
             .asFlow()
-            .mapToList(dispatcherProvider.io)
-
-        return combine(
-            songsFlow,
-            albumsFlow,
-            artistsFlow
-        ) { songs, albums, artists ->
-            val albumsById: Map<Long, AlbumEntity> = albums.associateBy { album -> album.id }
-            val artistsById: Map<Long, ArtistEntity> = artists.associateBy { artist -> artist.id }
-            songs.map { song ->
-                SongDto(
-                    song = song,
-                    album = albumsById[song.albumId],
-                    artist = artistsById[song.artistId]
-                ).toDomain()
+            .mapToList(io)
+            .map { entities ->
+                entities.map(GetSongsWithRelations::toDomain)
             }
-        }
-    }
 
-    override fun getSongById(id: Long) = songEntityQueries.getSongById(id)
-        .asFlow()
-        .mapToOne(dispatcherProvider.io)
-        .flatMapLatest { song ->
-            combine(
-                artisEntityQueries.getArtistById(song.artistId).asFlow().mapToOneOrNull(),
-                albumEntityQueries.getAlbumById(song.albumId).asFlow().mapToOneOrNull(),
-            ) { artist, album ->
-                SongDto(
-                    song = song,
-                    album = album,
-                    artist = artist,
-                ).toDomain()
+    override fun getSongsByAlbum(albumId: Long): Flow<List<Song>> =
+        songEntityQueries
+            .getSongsByAlbumWithRelations(albumId)
+            .asFlow()
+            .mapToList(io)
+            .map { entities ->
+                entities.map(GetSongsByAlbumWithRelations::toDomain)
             }
-        }
 
-    override fun getSongs(): Flow<List<Song>> = songsFlow(
-        songEntityQueries.getSongs()
+    override fun getSongsByArtist(artistId: Long): Flow<List<Song>> =
+        songEntityQueries
+            .getSongsByArtistWithRelations(artistId)
             .asFlow()
-            .mapToList(dispatcherProvider.io)
-    )
+            .mapToList(io)
+            .map { entities ->
+                entities.map(GetSongsByArtistWithRelations::toDomain)
+            }
 
-    override fun getSongsByAlbum(albumId: Long) = songsFlow(
-        songEntityQueries.getSongsByAlbum(albumId)
+    override fun getSongById(id: Long): Flow<Song?> =
+        songEntityQueries
+            .getSongByIdWithRelations(id)
             .asFlow()
-            .mapToList(dispatcherProvider.io)
-    )
-
-    override fun getSongsByArtist(artistId: Long) = songsFlow(
-        songEntityQueries.getSongsByArtist(artistId)
-            .asFlow()
-            .mapToList(dispatcherProvider.io)
-    )
+            .mapToOneOrNull(io)
+            .map { entity ->
+                entity?.toDomain()
+            }
 
     override suspend fun fetchSongs(): Result<Unit> = runCatching {
 
-        val songsInDevice = localStorageSource.getSongs()
+        val deviceSongs = localStorageSource.getSongs()
 
-        val mediaStoreIds = songsInDevice
-            .map { song -> song.id }
+        val deviceIds = deviceSongs
+            .asSequence()
+            .map(SongEntity::id)
             .toSet()
 
-        val existingSongs = songEntityQueries
+        val dbSongs = songEntityQueries
             .getSongs()
             .executeAsList()
-            .associateBy { song -> song.id }
 
-        val dbIds = existingSongs.keys
-        val removedSongIds = dbIds - mediaStoreIds
-
-        val newSongs = mutableListOf<SongEntity>()
+        val dbSongsById = dbSongs.associateBy(SongEntity::id)
+        val removedIds = dbSongsById.keys - deviceIds
+        val insertedSongs = mutableListOf<SongEntity>()
 
         songEntityQueries.transaction {
-
-            removedSongIds.forEach { id ->
-                songEntityQueries.deleteSongById(id)
-            }
-
-            songsInDevice.forEach { song ->
-                val existingSong = existingSongs[song.id]
+            removedIds.forEach(songEntityQueries::deleteSongById)
+            deviceSongs.forEach { newSong ->
+                val oldSong = dbSongsById[newSong.id]
                 when {
-                    existingSong == null -> {
-                        songEntityQueries.insertSong(song)
-                        newSongs.add(song)
+                    oldSong == null -> {
+                        songEntityQueries.insertSong(newSong)
+                        insertedSongs += newSong
                     }
 
-                    existingSong.lastModified != song.lastModified -> {
+                    oldSong.lastModified != newSong.lastModified -> {
                         songEntityQueries.updateSong(
-                            title = song.title,
-                            duration = song.duration,
-                            uri = song.uri,
-                            albumId = song.albumId,
-                            artistId = song.artistId,
-                            lastModified = song.lastModified,
-                            id = song.id
+                            title = newSong.title,
+                            duration = newSong.duration,
+                            uri = newSong.uri,
+                            albumId = newSong.albumId,
+                            artistId = newSong.artistId,
+                            lastModified = newSong.lastModified,
+                            id = newSong.id,
                         )
                     }
                 }
             }
         }
 
-        coroutineScope {
-            val deleteArtworkJobs = removedSongIds.map { songId ->
-                async(dispatcherProvider.io) {
-                    artworkCache.deleteArtworkFromCache(songId)
-                }
+        syncArtwork(
+            removedIds = removedIds,
+            insertedSongs = insertedSongs,
+        )
+    }
+
+    private suspend fun syncArtwork(
+        removedIds: Set<Long>,
+        insertedSongs: List<SongEntity>,
+    ) = coroutineScope {
+
+        val deleteJobs = removedIds.map { id ->
+            async(io) {
+                artworkCache.deleteArtworkFromCache(id)
             }
-            val cacheArtworkJobs = newSongs.map { song ->
-                async(dispatcherProvider.io) {
-                    artworkCache.getAndCacheArtwork(song.id)?.also { artwork ->
-                        songEntityQueries.insertArtwork(
-                            id = song.id,
-                            artwork = artwork,
-                        )
-                    }
-                }
-            }
-            (deleteArtworkJobs + cacheArtworkJobs).awaitAll()
         }
+
+        val cacheJobs = insertedSongs.map { song ->
+            async(io) {
+                val artwork = artworkCache
+                    .getAndCacheArtwork(song.id)
+                    ?: return@async
+                songEntityQueries.insertArtwork(
+                    id = song.id,
+                    artwork = artwork,
+                )
+            }
+        }
+        (deleteJobs + cacheJobs).awaitAll()
     }
 }

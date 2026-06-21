@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,8 +13,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -38,10 +43,9 @@ import player.app.common.generated.resources.default_song_artwork
 import player.app.common.generated.resources.ic_arrow_down
 import player.app.common.generated.resources.ic_cast
 import player.app.common.generated.resources.ic_options
-import ua.kucher.player.SongUi
+import ua.kucher.player.common.SongUi
 import ua.kucher.player.playback.PlaybackController
 import ua.kucher.player.theme.PlayerTheme
-import ua.kucher.player.theme.components.AudioVisualizer
 import ua.kucher.player.theme.components.FrostedGlass
 import ua.kucher.player.theme.components.MiniPlayer
 import ua.kucher.player.theme.components.PlayerControl
@@ -59,6 +63,7 @@ private const val ANIMATION_DURATION_MILLIS = 500
 internal fun MusicPlayerScreen(
     modifier: Modifier = Modifier,
     state: MusicPlayerUiState?,
+    onPlay: (Long) -> Unit,
     onForward: () -> Unit,
     onPrevious: () -> Unit,
     onPlayPause: () -> Unit,
@@ -114,8 +119,14 @@ internal fun MusicPlayerScreen(
         fraction = expandPlayerProgress.value
     )
 
+    val artworkPagerSize = lerp(
+        start = artworkSmallSize + PlayerTheme.dimens.dimens16Px * 2,
+        stop = screenWidth,
+        fraction = expandPlayerProgress.value
+    )
+
     val artworkCorner = lerp(
-        start = PlayerTheme.dimens.dimens8Px,
+        start = PlayerTheme.dimens.dimens4Px,
         stop = PlayerTheme.dimens.dimens16Px,
         fraction = expandPlayerProgress.value
     )
@@ -127,22 +138,8 @@ internal fun MusicPlayerScreen(
     )
 
     val artworkStartPadding = lerp(
-        start = PlayerTheme.dimens.dimens12Px,
+        start = PlayerTheme.dimens.dimens16Px,
         stop = (screenWidth / 2) - (artworkBigSize / 2),
-        fraction = expandPlayerProgress.value
-    )
-
-    val visualizerAlpha = expandPlayerProgress.value
-
-    val visualizerFractionCount = lerp(
-        start = 5,
-        stop = 16,
-        fraction = expandPlayerProgress.value
-    )
-
-    val visualizerPadding = lerp(
-        start = PlayerTheme.dimens.dimens8Px,
-        stop = PlayerTheme.dimens.dimens60Px,
         fraction = expandPlayerProgress.value
     )
 
@@ -190,7 +187,38 @@ internal fun MusicPlayerScreen(
 
         content()
 
+        val pages = remember(state?.artworks) {
+            state?.artworks?.entries?.sortedBy { it.key } ?: emptyList()
+        }
+
+        val currentIndexMap: Map<Long, Int> = remember(pages) {
+            pages.mapIndexed { index, item ->
+                item.key to index
+            }.toMap()
+        }
+
+        val currentIndex = state?.currentSong?.id?.let { nonNullId ->
+            currentIndexMap[nonNullId]
+        } ?: 0
+
+        val pagerState = rememberPagerState(
+            pageCount = { pages.size },
+        )
+
+        LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
+            if (pagerState.currentPage == currentIndex) return@LaunchedEffect
+            if (pagerState.isScrollInProgress) return@LaunchedEffect
+            onPlay(pages[pagerState.currentPage].key)
+        }
+
+        LaunchedEffect(currentIndex) {
+            if (pagerState.currentPage != currentIndex) {
+                pagerState.scrollToPage(currentIndex)
+            }
+        }
+
         state?.let { nonNullState ->
+
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -228,22 +256,25 @@ internal fun MusicPlayerScreen(
                         }
                     )
             ) {
-                FrostedGlass(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .alpha(imageBackgroundAlpha),
-                    blurRadius = 150F,
-                    enabled = true,
-                    tint = Color.Black.copy(alpha = 0.70F)
-                ) {
-                    AsyncImage(
-                        modifier = Modifier.fillMaxSize(),
-                        model = nonNullState.currentSong.artwork,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        placeholder = painterResource(Res.drawable.default_song_artwork),
-                        error = painterResource(Res.drawable.default_song_artwork)
-                    )
+
+                println(nonNullState.currentSong.artwork)
+
+                if (!nonNullState.currentSong.artwork.isNullOrBlank()) {
+                    FrostedGlass(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .alpha(imageBackgroundAlpha),
+                        blurRadius = 150F,
+                        enabled = true,
+                        tint = Color.Black.copy(alpha = 0.70F)
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier.fillMaxSize(),
+                            model = nonNullState.currentSong.artwork,
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
                 }
                 Row(
                     modifier = Modifier
@@ -275,40 +306,25 @@ internal fun MusicPlayerScreen(
                     )
                 }
 
-                Box(
+                HorizontalPager(
                     modifier = Modifier
-                        .padding(
-                            top = artworkTopPadding,
-                            start = artworkStartPadding
-                        )
-                        .size(artworkSize)
-                        .clip(RoundedCornerShape(artworkCorner))
-                ) {
-                    FrostedGlass(
+                        .padding(top = artworkTopPadding)
+                        .width(artworkPagerSize)
+                        .height(artworkSize),
+                    state = pagerState,
+                    userScrollEnabled = expandPlayerProgress.value >= 1F,
+                    pageSpacing = artworkStartPadding,
+                    contentPadding = PaddingValues(horizontal = artworkStartPadding),
+                ) { page ->
+                    AsyncImage(
                         modifier = Modifier
-                            .fillMaxSize()
+                            .size(artworkSize)
                             .clip(RoundedCornerShape(artworkCorner)),
-                        blurRadius = 0F,
-                        enabled = nonNullState.isPlaying,
-                        tint = Color.Black.copy(alpha = visualizerAlpha.coerceIn(0F, 0.35F))
-                    ) {
-                        AsyncImage(
-                            modifier = Modifier.fillMaxSize(),
-                            model = nonNullState.currentSong.artwork,
-                            contentDescription = "",
-                            contentScale = ContentScale.Crop,
-                            placeholder = painterResource(Res.drawable.default_song_artwork),
-                            error = painterResource(Res.drawable.default_song_artwork)
-                        )
-                    }
-                    AudioVisualizer(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(visualizerPadding)
-                            .alpha(alpha = if (nonNullState.isPlaying) visualizerAlpha else 0F),
-                        isPlaying = true,
-                        barsCount = visualizerFractionCount,
-                        color = PlayerTheme.colorScheme.iconsMain
+                        model = pages[page].value,
+                        contentDescription = "",
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(Res.drawable.default_song_artwork),
+                        error = painterResource(Res.drawable.default_song_artwork)
                     )
                 }
 
@@ -363,8 +379,6 @@ private fun PlayerScreenPreview() {
         MusicPlayerScreen(
             Modifier.fillMaxSize(),
             state = MusicPlayerUiState(
-                previousSong = null,
-                nextSong = null,
                 currentSong = SongUi(
                     id = 12,
                     title = "Never fade away",
@@ -377,8 +391,10 @@ private fun PlayerScreenPreview() {
                 progress = 69000L,
                 isPlaying = true,
                 isShuffle = false,
-                repeatMode = PlaybackController.RepeatMode.OFF
+                repeatMode = PlaybackController.RepeatMode.OFF,
+                artworks = mapOf()
             ),
+            onPlay = {},
             onForward = {},
             onPrevious = {},
             onPlayPause = {},

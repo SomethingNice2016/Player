@@ -5,7 +5,7 @@ import ua.kucher.player.entity.Song
 
 interface SongLocalSource {
 
-    fun getSongById(id: Long): Flow<Song>
+    fun getSongById(id: Long): Flow<Song?>
 
     fun getSongs(): Flow<List<Song>>
 

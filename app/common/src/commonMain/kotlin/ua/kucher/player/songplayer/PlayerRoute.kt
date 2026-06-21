@@ -20,11 +20,12 @@ internal fun PlayerRoute(
         modifier = modifier,
         content = content,
         state = state,
+        onPlay = viewModel::playById,
         onForward = viewModel::forward,
         onPrevious = viewModel::back,
         onPlayPause = viewModel::playPause,
         onShuffle = viewModel::shuffle,
         onRepeat = viewModel::repeat,
-        onSeek = viewModel::seekToPosition
+        onSeek = viewModel::seekToPosition,
     )
 }

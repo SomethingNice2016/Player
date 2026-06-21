@@ -3,11 +3,11 @@ package ua.kucher.player.songplayer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
-import ua.kucher.player.SongUi
-import ua.kucher.player.core.common.coroutines.combine
+import ua.kucher.player.common.SongUi
 import ua.kucher.player.core.common.coroutines.combineNotNull
 import ua.kucher.player.core.common.coroutines.flatMapNotNullLatest
 import ua.kucher.player.core.common.datetime.TimeFormatter
@@ -20,11 +20,12 @@ internal class MusicPlayerViewModel(
     private val timeFormatter: TimeFormatter,
     private val songRepository: SongRepository
 ) : ViewModel() {
-
-    //TODO Add a view pager later so you can swipe between tracks.
-    private val currentSong = playbackController.currentItemId
-        .flatMapNotNullLatest { id ->
-            songRepository.getSongById(id).map { song ->
+    private val currentSong = playbackController.state.map { playbackState ->
+        playbackState.currentItemId
+    }.flatMapNotNullLatest { id ->
+        songRepository.getSongById(id)
+            .filterNotNull()
+            .map { song ->
                 SongUi(
                     id = song.id,
                     title = song.title,
@@ -34,60 +35,20 @@ internal class MusicPlayerViewModel(
                     artwork = song.artwork
                 )
             }
-        }
-
-    private val previousSong = playbackController.previousItemId
-        .flatMapNotNullLatest { id ->
-            songRepository.getSongById(id).map { song ->
-                SongUi(
-                    id = song.id,
-                    title = song.title,
-                    artistName = song.artistTitle ?: "",
-                    displayDuration = timeFormatter.toFormatDuration(song.duration),
-                    duration = song.duration,
-                    artwork = song.artwork
-                )
-            }
-        }
-
-    private val nextSong = playbackController.nextItemId
-        .flatMapNotNullLatest { id ->
-            songRepository.getSongById(id).map { song ->
-                SongUi(
-                    id = song.id,
-                    title = song.title,
-                    artistName = song.artistTitle ?: "",
-                    displayDuration = timeFormatter.toFormatDuration(song.duration),
-                    duration = song.duration,
-                    artwork = song.artwork
-                )
-            }
-        }
+    }
 
     val uiState = combineNotNull(
         currentSong,
-        playbackController.progress,
-        playbackController.isPlaying,
-        playbackController.isShuffle,
-        playbackController.repeatMode
-    ) { song, progress, isPlaying, isShuffle, repeatMode ->
+        playbackController.state
+    ) { song, playbackState ->
         MusicPlayerUiState(
             currentSong = song,
-            displayProgress = timeFormatter.toFormatDuration(progress),
-            progress = progress,
-            isPlaying = isPlaying,
-            isShuffle = isShuffle,
-            repeatMode = repeatMode,
-            previousSong = null,
-            nextSong = null
-        )
-    }.combine(
-        nextSong,
-        previousSong
-    ) { state, next, previous ->
-        state?.copy(
-            nextSong = next,
-            previousSong = previous
+            displayProgress = timeFormatter.toFormatDuration(playbackState.progress),
+            progress = playbackState.progress,
+            isPlaying = playbackState.isPlaying,
+            isShuffle = playbackState.isShuffle,
+            repeatMode = playbackState.repeatMode,
+            artworks = playbackState.artworks
         )
     }
 
@@ -101,6 +62,17 @@ internal class MusicPlayerViewModel(
 
     fun playPause() {
         playbackController.playPause()
+    }
+
+    fun playById(id: Long) {
+        viewModelScope.launch {
+            uiState.firstOrNull()?.let { state ->
+                if (id != state.currentSong.id)
+                    songRepository.getSongById(id).firstOrNull()?.let { song ->
+                        playbackController.play(song)
+                    }
+            }
+        }
     }
 
     fun seekToPosition(position: Long) {

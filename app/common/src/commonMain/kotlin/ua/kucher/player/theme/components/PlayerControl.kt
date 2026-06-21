@@ -78,7 +78,7 @@ internal fun PlayerControl(
     val shuffleButtonColor = if (isShuffle)
         PlayerTheme.colorScheme.iconsMain
     else
-        PlayerTheme.colorScheme.menuDisableButton
+        PlayerTheme.colorScheme.iconsMain.copy(alpha = 0.5F)
 
     val repeatButtonRes: DrawableResource
     val repeatButtonColor: Color
@@ -87,7 +87,7 @@ internal fun PlayerControl(
     when (repeatMode) {
         PlaybackController.RepeatMode.OFF -> {
             repeatButtonRes = Res.drawable.ic_repeat
-            repeatButtonColor = PlayerTheme.colorScheme.menuDisableButton
+            repeatButtonColor = PlayerTheme.colorScheme.iconsMain.copy(alpha = 0.5F)
         }
 
         PlaybackController.RepeatMode.ALL -> {

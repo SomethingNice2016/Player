@@ -7,7 +7,7 @@ import ua.kucher.player.playback.PlaybackControllerImpl
 
 internal actual val mainPlatformModule: Module = module {
 
-    single { PlaybackControllerImpl(get()) }
+    single { PlaybackControllerImpl() }
 
     factory<PlaybackController> { get<PlaybackControllerImpl>() }
 }

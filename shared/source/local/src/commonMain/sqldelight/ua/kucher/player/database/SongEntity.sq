@@ -24,6 +24,65 @@ SELECT *
 FROM SongEntity
 WHERE id=?;
 
+getSongsWithRelations:
+SELECT
+    song.*,
+    album.id AS albumId,
+    album.title AS albumTitle,
+    album.artwork AS albumArtwork,
+    artist.id AS artistId,
+    artist.name AS artistName,
+    artist.numberOfSongs AS artistNumberOfSongs,
+    artist.numberOfAlbums AS artistNumberOfAlbums
+FROM SongEntity song
+LEFT JOIN AlbumEntity album ON album.id = song.albumId
+LEFT JOIN ArtistEntity artist ON artist.id = song.artistId;
+
+getSongsByAlbumWithRelations:
+SELECT
+    song.*,
+    album.id AS albumId,
+    album.title AS albumTitle,
+    album.artwork AS albumArtwork,
+    artist.id AS artistId,
+    artist.name AS artistName,
+    artist.numberOfSongs AS artistNumberOfSongs,
+    artist.numberOfAlbums AS artistNumberOfAlbums
+FROM SongEntity song
+LEFT JOIN AlbumEntity album ON album.id = song.albumId
+LEFT JOIN ArtistEntity artist ON artist.id = song.artistId
+WHERE song.albumId = ?;
+
+getSongsByArtistWithRelations:
+SELECT
+    song.*,
+    album.id AS albumId,
+    album.title AS albumTitle,
+    album.artwork AS albumArtwork,
+    artist.id AS artistId,
+    artist.name AS artistName,
+    artist.numberOfSongs AS artistNumberOfSongs,
+    artist.numberOfAlbums AS artistNumberOfAlbums
+FROM SongEntity song
+LEFT JOIN AlbumEntity album ON album.id = song.albumId
+LEFT JOIN ArtistEntity artist ON artist.id = song.artistId
+WHERE song.artistId = ?;
+
+getSongByIdWithRelations:
+SELECT
+    song.*,
+    album.id AS albumId,
+    album.title AS albumTitle,
+    album.artwork AS albumArtwork,
+    artist.id AS artistId,
+    artist.name AS artistName,
+    artist.numberOfSongs AS artistNumberOfSongs,
+    artist.numberOfAlbums AS artistNumberOfAlbums
+FROM SongEntity song
+LEFT JOIN AlbumEntity album ON album.id = song.albumId
+LEFT JOIN ArtistEntity artist ON artist.id = song.artistId
+WHERE song.id = ?;
+
 getSongsByAlbum:
 SELECT *
 FROM SongEntity

@@ -83,17 +83,6 @@ internal fun List<MediaItem>.asPlaylistItems(): List<PlaylistItem> =
 internal val MediaItem.playlistId: Long
     get() = mediaMetadata.extras?.getLong(PLAYLIST_ID_KEY) ?: -1
 
-
-internal fun Player.playPause() {
-    if (isPlaying)
-        pause()
-    else {
-        if (!playWhenReady)
-            prepare()
-        play()
-    }
-}
-
 internal fun PlaybackController.RepeatMode.Companion.fromPlayerRepeatMode(mode: Int) =
     when (mode) {
         Player.REPEAT_MODE_OFF -> PlaybackController.RepeatMode.OFF

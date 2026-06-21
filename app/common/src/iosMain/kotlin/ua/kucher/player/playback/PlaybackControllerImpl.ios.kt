@@ -1,25 +1,13 @@
 package ua.kucher.player.playback
 
-import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.StateFlow
 import ua.kucher.player.entity.Playlist
 import ua.kucher.player.entity.PlaylistItem
 
 @Suppress(names = ["EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING"])
 internal class PlaybackControllerImpl : PlaybackController {
 
-    override val isPlaying: Flow<Boolean>
-        get() = TODO("Not yet implemented")
-
-    override val isShuffle: Flow<Boolean>
-        get() = TODO("Not yet implemented")
-
-    override val currentItem: Flow<PlaylistItem?>
-        get() = TODO("Not yet implemented")
-
-    override val currentPlaylist: Flow<Playlist?>
-        get() = TODO("Not yet implemented")
-
-    override val progress: Flow<Long>
+    override val state: StateFlow<PlaybackState>
         get() = TODO("Not yet implemented")
 
     override fun prepare(playlist: Playlist) {
@@ -35,6 +23,14 @@ internal class PlaybackControllerImpl : PlaybackController {
     }
 
     override fun setShuffleMode(isShuffle: Boolean) {
+        TODO("Not yet implemented")
+    }
+
+    override fun setRepeatMode(mode: PlaybackController.RepeatMode) {
+        TODO("Not yet implemented")
+    }
+
+    override fun release() {
         TODO("Not yet implemented")
     }
 

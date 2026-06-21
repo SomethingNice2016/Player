@@ -1,4 +1,4 @@
-package ua.kucher.player
+package ua.kucher.player.common
 
 import androidx.compose.runtime.Stable
 
