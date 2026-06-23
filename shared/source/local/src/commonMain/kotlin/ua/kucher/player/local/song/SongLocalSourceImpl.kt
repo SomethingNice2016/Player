@@ -1,9 +1,5 @@
 package ua.kucher.player.local.song
 
-import app.cash.sqldelight.coroutines.asFlow
-import app.cash.sqldelight.coroutines.mapToList
-import app.cash.sqldelight.coroutines.mapToOneOrNull
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -11,108 +7,52 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
-import ua.kucher.player.database.GetSongsByAlbumWithRelations
-import ua.kucher.player.database.GetSongsByArtistWithRelations
-import ua.kucher.player.database.GetSongsWithRelations
-import ua.kucher.player.database.SongEntity
-import ua.kucher.player.database.SongEntityQueries
 import ua.kucher.player.entity.Song
 import ua.kucher.player.local.ArtworkCache
 import ua.kucher.player.local.LocalStorageSource
+import ua.kucher.player.local.song.entity.SongDto
+import ua.kucher.player.local.song.entity.SongEntity
+import ua.kucher.player.local.song.entity.SongWithArtwork
+import ua.kucher.player.local.song.entity.toDomain
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class SongLocalSourceImpl(
     private val artworkCache: ArtworkCache,
-    private val dispatcherProvider: DispatcherProvider,
     private val localStorageSource: LocalStorageSource,
-    private val songEntityQueries: SongEntityQueries,
+    private val dispatcherProvider: DispatcherProvider,
+    private val songDao: SongDao,
 ) : SongLocalSource {
 
-    private val io: CoroutineDispatcher
-        get() = dispatcherProvider.io
-
     override fun getSongs(): Flow<List<Song>> =
-        songEntityQueries
-            .getSongsWithRelations()
-            .asFlow()
-            .mapToList(io)
+        songDao.getSongs()
             .map { entities ->
-                entities.map(GetSongsWithRelations::toDomain)
+                entities.map(SongDto::toDomain)
             }
 
     override fun getSongsByAlbum(albumId: Long): Flow<List<Song>> =
-        songEntityQueries
-            .getSongsByAlbumWithRelations(albumId)
-            .asFlow()
-            .mapToList(io)
+        songDao.getSongsByAlbum(albumId)
             .map { entities ->
-                entities.map(GetSongsByAlbumWithRelations::toDomain)
+                entities.map(SongDto::toDomain)
             }
 
     override fun getSongsByArtist(artistId: Long): Flow<List<Song>> =
-        songEntityQueries
-            .getSongsByArtistWithRelations(artistId)
-            .asFlow()
-            .mapToList(io)
+        songDao.getSongsByArtist(artistId)
             .map { entities ->
-                entities.map(GetSongsByArtistWithRelations::toDomain)
+                entities.map(SongDto::toDomain)
             }
 
     override fun getSongById(id: Long): Flow<Song?> =
-        songEntityQueries
-            .getSongByIdWithRelations(id)
-            .asFlow()
-            .mapToOneOrNull(io)
+        songDao.getSongById(id)
             .map { entity ->
                 entity?.toDomain()
             }
 
     override suspend fun fetchSongs(): Result<Unit> = runCatching {
-
-        val deviceSongs = localStorageSource.getSongs()
-
-        val deviceIds = deviceSongs
-            .asSequence()
-            .map(SongEntity::id)
-            .toSet()
-
-        val dbSongs = songEntityQueries
-            .getSongs()
-            .executeAsList()
-
-        val dbSongsById = dbSongs.associateBy(SongEntity::id)
-        val removedIds = dbSongsById.keys - deviceIds
-        val insertedSongs = mutableListOf<SongEntity>()
-
-        songEntityQueries.transaction {
-            removedIds.forEach(songEntityQueries::deleteSongById)
-            deviceSongs.forEach { newSong ->
-                val oldSong = dbSongsById[newSong.id]
-                when {
-                    oldSong == null -> {
-                        songEntityQueries.insertSong(newSong)
-                        insertedSongs += newSong
-                    }
-
-                    oldSong.lastModified != newSong.lastModified -> {
-                        songEntityQueries.updateSong(
-                            title = newSong.title,
-                            duration = newSong.duration,
-                            uri = newSong.uri,
-                            albumId = newSong.albumId,
-                            artistId = newSong.artistId,
-                            lastModified = newSong.lastModified,
-                            id = newSong.id,
-                        )
-                    }
-                }
-            }
-        }
-
+        val result = songDao.mergeSongs(localStorageSource.getSongs())
         syncArtwork(
-            removedIds = removedIds,
-            insertedSongs = insertedSongs,
+            removedIds = result.removedSongIds,
+            insertedSongs = result.insertedSongs,
         )
     }
 
@@ -120,24 +60,22 @@ internal class SongLocalSourceImpl(
         removedIds: Set<Long>,
         insertedSongs: List<SongEntity>,
     ) = coroutineScope {
-
-        val deleteJobs = removedIds.map { id ->
-            async(io) {
+        removedIds.map { id ->
+            async {
                 artworkCache.deleteArtworkFromCache(id)
             }
-        }
+        }.awaitAll()
 
-        val cacheJobs = insertedSongs.map { song ->
-            async(io) {
-                val artwork = artworkCache
-                    .getAndCacheArtwork(song.id)
-                    ?: return@async
-                songEntityQueries.insertArtwork(
-                    id = song.id,
-                    artwork = artwork,
-                )
+        val songsWithArtworks = insertedSongs.map { song ->
+            async(dispatcherProvider.artworkCache) {
+                artworkCache.getAndCacheArtwork(song.id)?.let { artwork ->
+                    SongWithArtwork(
+                        songId = song.id,
+                        artwork = artwork
+                    )
+                }
             }
-        }
-        (deleteJobs + cacheJobs).awaitAll()
+        }.awaitAll().filterNotNull()
+        songDao.insertArtworks(songsWithArtworks)
     }
 }

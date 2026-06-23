@@ -1,6 +1,5 @@
 package ua.kucher.player.local.artist
 
-import ua.kucher.player.database.ArtistEntity
 import ua.kucher.player.entity.Artist
 
 internal fun ArtistEntity.toDomain() = Artist(

@@ -1,7 +1,7 @@
 package ua.kucher.player.local
 
+import androidx.room.RoomDatabase
 import org.koin.dsl.module
-import ua.kucher.player.database.KucherPlayerDatabase
 import ua.kucher.player.local.album.AlbumLocalSource
 import ua.kucher.player.local.album.AlbumLocalSourceImpl
 import ua.kucher.player.local.artist.ArtistLocalSource
@@ -13,23 +13,22 @@ val localModule = module {
 
     includes(localPlatformModule)
 
-    single { KucherPlayerDatabase(get<DatabaseDriverFactory>().createDriver()) }
-
-    factory { get<KucherPlayerDatabase>().songEntityQueries }
-    factory { get<KucherPlayerDatabase>().albumEntityQueries }
-    factory { get<KucherPlayerDatabase>().artisEntityQueries }
+    single { get<RoomDatabase.Builder<PlayerDatabase>>().build() }
+    factory { get<PlayerDatabase>().getSongDao() }
+    factory { get<PlayerDatabase>().getAlbumDao() }
+    factory { get<PlayerDatabase>().getArtistDao() }
 
     single<AlbumLocalSource> {
         AlbumLocalSourceImpl(
             localStorageSource = get(),
-            albumEntityQueries = get()
+            albumDao = get()
         )
     }
 
     single<ArtistLocalSource> {
         ArtistLocalSourceImpl(
             localStorageSource = get(),
-            artistEntityQueries = get()
+            artistDao = get()
         )
     }
 
@@ -38,7 +37,7 @@ val localModule = module {
             localStorageSource = get(),
             dispatcherProvider = get(),
             artworkCache = get(),
-            songEntityQueries = get(),
+            songDao = get(),
         )
     }
 }

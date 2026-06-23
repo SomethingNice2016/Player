@@ -7,7 +7,7 @@ interface ArtistRepository {
 
     fun getArtists(): Flow<List<Artist>>
 
-    fun getArtistById(id: Long): Flow<Artist>
+    fun getArtistById(id: Long): Flow<Artist?>
 
     suspend fun fetchArtists(): Result<Unit>
 

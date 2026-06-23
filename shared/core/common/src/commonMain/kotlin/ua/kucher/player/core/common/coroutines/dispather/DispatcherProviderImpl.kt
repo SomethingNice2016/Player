@@ -7,13 +7,12 @@ import kotlinx.coroutines.MainCoroutineDispatcher
 
 internal class DispatcherProviderImpl : DispatcherProvider {
 
-    override val io: CoroutineDispatcher
-        get() = Dispatchers.IO
+    override val io: CoroutineDispatcher = Dispatchers.IO
 
-    override val main: MainCoroutineDispatcher
-        get() = Dispatchers.Main
+    override val main: MainCoroutineDispatcher = Dispatchers.Main
 
-    override val default: CoroutineDispatcher
-        get() = Dispatchers.Default
+    override val default: CoroutineDispatcher = Dispatchers.Default
+
+    override val artworkCache: CoroutineDispatcher = io.limitedParallelism(4)
 
 }
