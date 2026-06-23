@@ -5,7 +5,7 @@ import ua.kucher.player.entity.Artist
 
 interface ArtistLocalSource {
 
-    fun getArtistById(id: Long): Flow<Artist>
+    fun getArtistById(id: Long): Flow<Artist?>
 
     fun getArtists(): Flow<List<Artist>>
 

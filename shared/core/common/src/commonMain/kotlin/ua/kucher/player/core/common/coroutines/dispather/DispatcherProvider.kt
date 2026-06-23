@@ -15,4 +15,6 @@ interface DispatcherProvider {
 
     val default: CoroutineDispatcher
 
+    val artworkCache: CoroutineDispatcher
+
 }

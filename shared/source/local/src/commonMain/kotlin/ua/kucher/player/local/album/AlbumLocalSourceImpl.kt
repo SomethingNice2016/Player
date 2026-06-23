@@ -1,38 +1,28 @@
 package ua.kucher.player.local.album
 
-import app.cash.sqldelight.coroutines.asFlow
-import ua.kucher.player.database.AlbumEntity
-import ua.kucher.player.database.AlbumEntityQueries
+import kotlinx.coroutines.flow.map
 import ua.kucher.player.local.LocalStorageSource
-import ua.kucher.player.local.mapToList
-import ua.kucher.player.local.mapToOne
 
 internal class AlbumLocalSourceImpl(
     private val localStorageSource: LocalStorageSource,
-    private val albumEntityQueries: AlbumEntityQueries
+    private val albumDao: AlbumDao
 ) : AlbumLocalSource {
 
-    override fun getAlbumById(id: Long) =
-        albumEntityQueries
-            .getAlbumById(id)
-            .asFlow()
-            .mapToOne(AlbumEntity::toDomain)
+    override fun getAlbumById(id: Long) = albumDao.getAlbumById(id).map { entity ->
+        entity?.toDomain()
+    }
 
-    override fun getAlbums() =
-        albumEntityQueries
-            .getAlbums()
-            .asFlow()
-            .mapToList(AlbumEntity::toDomain)
+    override fun getAlbums() = albumDao.getAlbums().map { entities ->
+        entities.map(AlbumEntity::toDomain)
+    }
 
-    override fun getAlbumsByArtist(artistId: Long) =
-        albumEntityQueries
-            .getAlbumByArtist(artistId)
-            .asFlow()
-            .mapToList(AlbumEntity::toDomain)
+    override fun getAlbumsByArtist(artistId: Long) = albumDao.getAlbumsByArtist(artistId).map { entities ->
+        entities.map(AlbumEntity::toDomain)
+    }
 
     override suspend fun fetchAlbums() = runCatching {
         val albumsInDevice = localStorageSource.getAlbums()
-        val dbAlbums = albumEntityQueries.getAlbums().executeAsList()
+        val dbAlbums = albumDao.getAlbumsSnapshot()
 
         val deviceMap = albumsInDevice.associateBy { it.id }
         val dbMap = dbAlbums.associateBy { it.id }
@@ -59,11 +49,10 @@ internal class AlbumLocalSourceImpl(
                 toDelete += db.id
             }
         }
-
-        albumEntityQueries.transaction {
-            toInsert.forEach(albumEntityQueries::insertAlbum)
-            toUpdate.forEach(albumEntityQueries::insertAlbum) // upsert
-            toDelete.forEach(albumEntityQueries::deleteAlbum)
-        }
+        albumDao.mergeAlbum(
+            insert = toInsert,
+            upsert = toUpdate,
+            deleteIds = toDelete
+        )
     }
 }
