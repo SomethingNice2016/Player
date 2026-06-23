@@ -3,9 +3,9 @@ package ua.kucher.player.local
 import android.content.ContentUris
 import android.content.Context
 import android.provider.MediaStore
-import ua.kucher.player.database.AlbumEntity
-import ua.kucher.player.database.ArtistEntity
-import ua.kucher.player.database.SongEntity
+import ua.kucher.player.local.album.AlbumEntity
+import ua.kucher.player.local.artist.ArtistEntity
+import ua.kucher.player.local.song.entity.SongEntity
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 internal actual class LocalStorageSource(
@@ -158,8 +158,8 @@ internal actual class LocalStorageSource(
                 result += ArtistEntity(
                     id = artistId,
                     name = cursor.getString(nameCol),
-                    numberOfAlbums = cursor.getLong(albumsCol),
-                    numberOfSongs = cursor.getLong(tracksCol),
+                    numberOfAlbums = cursor.getInt(albumsCol),
+                    numberOfSongs = cursor.getInt(tracksCol),
                 )
             }
         }

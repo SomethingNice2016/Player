@@ -2,6 +2,7 @@ package ua.kucher.player.data.song
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -31,7 +32,7 @@ internal class SongRepositoryImpl(
 
     override fun getSongsByAlbum(albumId: Long) = combine(
         songLocalSource.getSongsByAlbum(albumId),
-        albumLocalSource.getAlbumById(albumId)
+        albumLocalSource.getAlbumById(albumId).filterNotNull()
     ) { songs, album ->
         SongPlaylist.ByAlbum(
             items = songs,
@@ -41,7 +42,7 @@ internal class SongRepositoryImpl(
 
     override fun getSongsByArtist(artistId: Long) = combine(
         songLocalSource.getSongsByArtist(artistId),
-        artistLocalSource.getArtistById(artistId)
+        artistLocalSource.getArtistById(artistId).filterNotNull()
     ) { songs, artist ->
         SongPlaylist.ByArtist(
             items = songs,

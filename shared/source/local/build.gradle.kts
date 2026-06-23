@@ -1,8 +1,9 @@
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.android.kmp.library)
+    alias(libs.plugins.androidx.room)
     alias(libs.plugins.android.lint)
-    alias(libs.plugins.sqlDelight)
+    alias(libs.plugins.ksp)
 }
 
 kotlin {
@@ -20,6 +21,10 @@ kotlin {
         }.configure {
             instrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         }
+    }
+
+    room {
+        schemaDirectory("$projectDir/schemas")
     }
 
     val xcfName = "localKit"
@@ -47,8 +52,8 @@ kotlin {
             dependencies {
                 implementation(libs.koin.core)
                 implementation(libs.kotlin.stdlib)
-                implementation(libs.sql.delight.runtime)
-                implementation(libs.sql.delight.coroutines)
+                implementation(libs.androidx.room.runtime)
+                implementation(libs.androidx.sqlite.bundled)
 
                 //Project modules
                 implementation(projects.shared.core.common)
@@ -59,24 +64,22 @@ kotlin {
         androidMain {
             dependencies {
                 implementation(libs.koin.android)
-                implementation(libs.sql.delight.android)
                 implementation(libs.androidx.ktx.core)
+                implementation(libs.androidx.room.sqlite.wrapper)
             }
         }
 
         iosMain {
             dependencies {
-               implementation(libs.sql.delight.native)
-            }
-        }
-    }
 
-    sqldelight {
-        databases {
-            create(name = "KucherPlayerDatabase") {
-                packageName.set("ua.kucher.player.database")
             }
-            linkSqlite = true
         }
     }
+}
+
+dependencies {
+    add("kspAndroid", libs.androidx.room.compiler)
+    add("kspIosSimulatorArm64", libs.androidx.room.compiler)
+    add("kspIosX64", libs.androidx.room.compiler)
+    add("kspIosArm64", libs.androidx.room.compiler)
 }

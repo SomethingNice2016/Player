@@ -5,7 +5,7 @@ import ua.kucher.player.entity.Album
 
 interface AlbumLocalSource {
 
-    fun getAlbumById(id: Long): Flow<Album>
+    fun getAlbumById(id: Long): Flow<Album?>
 
     fun getAlbums(): Flow<List<Album>>
 
