@@ -24,40 +24,50 @@ internal class SongLocalSourceImpl(
     private val songDao: SongDao,
 ) : SongLocalSource {
 
-    override fun getSongs(): Flow<List<Song>> =
-        songDao.getSongs()
-            .map { entities ->
-                entities.map(SongDto::toDomain)
-            }
+    override fun getSongs(): Flow<List<Song>> = songDao.getSongs().map { entities ->
+        entities.map(SongDto::toDomain)
+    }
 
-    override fun getSongsByAlbum(albumId: Long): Flow<List<Song>> =
-        songDao.getSongsByAlbum(albumId)
-            .map { entities ->
-                entities.map(SongDto::toDomain)
-            }
+    override fun getSongsByAlbum(albumId: Long) = songDao.getSongsByAlbum(albumId).map { entities ->
+        entities.map(SongDto::toDomain)
+    }
 
-    override fun getSongsByArtist(artistId: Long): Flow<List<Song>> =
-        songDao.getSongsByArtist(artistId)
-            .map { entities ->
-                entities.map(SongDto::toDomain)
-            }
+    override fun getSongsByArtist(artistId: Long) = songDao.getSongsByArtist(artistId).map { entities ->
+        entities.map(SongDto::toDomain)
+    }
 
-    override fun getSongById(id: Long): Flow<Song?> =
-        songDao.getSongById(id)
-            .map { entity ->
-                entity?.toDomain()
-            }
+    override fun getSongById(id: Long) = songDao.getSongById(id).map { entity ->
+        entity?.toDomain()
+    }
 
     override suspend fun fetchSongs(): Result<Unit> = runCatching {
-        val result = songDao.mergeSongs(localStorageSource.getSongs())
+        val songsInDevice = localStorageSource.getSongs()
+        val deviceMap = songsInDevice.associateBy { it.id }
+        val dbSongs = songDao.getSongsSnapshot()
+        val dbMap = dbSongs.associateBy { it.id }
+
+        val toInsert = songsInDevice.filter { it.id !in dbMap }
+        val toUpdate = songsInDevice.filter { device ->
+            val db = dbMap[device.id] ?: return@filter false
+            db.lastModified != device.lastModified
+        }
+
+        val toDelete = dbSongs.filter { it.id !in deviceMap }
+
+        songDao.mergeSongs(
+            insert = toInsert,
+            upsert = toUpdate,
+            delete = toDelete.map { it }
+        )
+
         syncArtwork(
-            removedIds = result.removedSongIds,
-            insertedSongs = result.insertedSongs,
+            removedIds = toDelete.map { it.id },
+            insertedSongs = toInsert,
         )
     }
 
     private suspend fun syncArtwork(
-        removedIds: Set<Long>,
+        removedIds: List<Long>,
         insertedSongs: List<SongEntity>,
     ) = coroutineScope {
         removedIds.map { id ->

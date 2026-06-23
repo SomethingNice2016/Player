@@ -9,6 +9,8 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +25,7 @@ import ua.kucher.player.theme.components.PlayerTopAppBar
 import ua.kucher.player.theme.components.PlayerTopAppBarDefaults
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 import ua.kucher.player.theme.components.items.SongItem
+import ua.kucher.player.theme.components.rememberPlayerTopAppBarState
 import ua.kucher.player.theme.extensions.BottomNavSpacer
 import ua.kucher.player.theme.extensions.MiniPlayerSpacer
 
@@ -30,12 +33,17 @@ import ua.kucher.player.theme.extensions.MiniPlayerSpacer
 @Composable
 internal fun SongListScreen(
     uiState: SongListUiState,
-    onSongClick: (songId: Long) -> Unit
+    onSongClick: (songId: Long) -> Unit,
+    onRefresh: () -> Unit
 ) {
 
     val lazyListState = rememberLazyListState()
 
     val scrollBehavior = PlayerTopAppBarDefaults.scrollBehavior()
+
+    val topAppBarState = rememberPlayerTopAppBarState(scrollBehavior)
+
+    val pullToRefreshState = rememberPullToRefreshState()
 
     Scaffold(
         modifier = Modifier
@@ -60,12 +68,21 @@ internal fun SongListScreen(
             )
         }
     ) { paddingValues ->
-        SongsListContent(
-            modifier = Modifier.padding(paddingValues),
-            uiState = uiState,
-            lazyListState = lazyListState,
-            onSongClick = onSongClick
-        )
+        PullToRefreshBox(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            state = pullToRefreshState,
+            isRefreshing = uiState.isRefreshing,
+            onRefresh = onRefresh,
+            enabled = topAppBarState.isExpanded
+        ) {
+            SongsListContent(
+                uiState = uiState,
+                lazyListState = lazyListState,
+                onSongClick = onSongClick
+            )
+        }
     }
 }
 

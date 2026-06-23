@@ -1,14 +1,44 @@
 package ua.kucher.player.theme.components
 
-import androidx.compose.animation.core.*
+import androidx.compose.animation.core.AnimationSpec
+import androidx.compose.animation.core.AnimationState
+import androidx.compose.animation.core.CubicBezierEasing
+import androidx.compose.animation.core.DecayAnimationSpec
+import androidx.compose.animation.core.animateDecay
+import androidx.compose.animation.core.animateTo
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.gestures.rememberDraggableState
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBarColors
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.Stable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clipToBounds
@@ -22,8 +52,15 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.unit.*
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.Velocity
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.isFinite
+import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.util.fastFirst
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import ua.kucher.player.theme.PlayerTheme
@@ -32,6 +69,54 @@ import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.roundToInt
 
+enum class TopAppBarExpandState {
+    EXPANDED,
+    COLLAPSED,
+    INTERMEDIATE,
+}
+
+@Stable
+class PlayerTopAppBarState internal constructor(
+    private val scrollBehavior: TopAppBarScrollBehavior?,
+) {
+
+    val collapsedFraction: Float
+        get() = scrollBehavior?.state?.collapsedFraction ?: 0f
+
+    val isExpanded: Boolean
+        get() = collapsedFraction <= 0.01f
+
+    val isCollapsed: Boolean
+        get() = collapsedFraction >= 0.99f
+
+    val expandState: TopAppBarExpandState
+        get() = when {
+            isExpanded -> TopAppBarExpandState.EXPANDED
+            isCollapsed -> TopAppBarExpandState.COLLAPSED
+            else -> TopAppBarExpandState.INTERMEDIATE
+        }
+}
+
+@Composable
+fun rememberPlayerTopAppBarState(
+    scrollBehavior: TopAppBarScrollBehavior?,
+): PlayerTopAppBarState {
+    return remember(scrollBehavior) {
+        PlayerTopAppBarState(scrollBehavior)
+    }
+}
+
+@Composable
+fun PlayerTopAppBarState.ObserveExpandState(
+    onStateChanged: suspend (TopAppBarExpandState) -> Unit,
+) {
+    LaunchedEffect(this) {
+        snapshotFlow { expandState }
+            .filterNotNull()
+            .distinctUntilChanged()
+            .collect(onStateChanged)
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -40,16 +125,20 @@ fun PlayerTopAppBar(
     modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
-    collapsedHeight: Dp = PlayerTopAppBarDefaults.TopAppBarCollapsedHeight,
-    expandedHeight: Dp = PlayerTopAppBarDefaults.TopAppBarExpandedHeight,
+    collapsedHeight: Dp = PlayerTopAppBarDefaults.topAppBarCollapsedHeight,
+    expandedHeight: Dp = PlayerTopAppBarDefaults.topAppBarExpandedHeight,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors = PlayerTopAppBarDefaults.topAppBarColors(),
     scrollBehavior: TopAppBarScrollBehavior? = null,
     showDivider: () -> Boolean = { true },
 ) {
+
     val title = @Composable {
-        Text(text = stringResource(titleRes))
+        androidx.compose.material3.Text(
+            text = stringResource(titleRes)
+        )
     }
+
     PlayerTopAppBar(
         title = title,
         modifier = modifier,
@@ -61,40 +150,7 @@ fun PlayerTopAppBar(
         colors = colors,
         scrollBehavior = scrollBehavior,
         expandedTitle = title,
-        showDivider = showDivider
-    )
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun PlayerTopAppBar(
-    titleRes: StringResource,
-    modifier: Modifier = Modifier,
-    navigationIcon: @Composable () -> Unit = {},
-    actions: @Composable RowScope.() -> Unit = {},
-    collapsedHeight: Dp = PlayerTopAppBarDefaults.TopAppBarCollapsedHeight,
-    expandedHeight: Dp = PlayerTopAppBarDefaults.TopAppBarExpandedHeight,
-    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
-    colors: TopAppBarColors = PlayerTopAppBarDefaults.topAppBarColors(),
-    scrollBehavior: TopAppBarScrollBehavior? = null,
-    expandedTitle: @Composable () -> Unit,
-    showDivider: () -> Boolean = { true },
-) {
-    val title = @Composable {
-        Text(text = stringResource(titleRes))
-    }
-    PlayerTopAppBar(
-        title = title,
-        modifier = modifier,
-        navigationIcon = navigationIcon,
-        actions = actions,
-        collapsedHeight = collapsedHeight,
-        expandedHeight = expandedHeight,
-        windowInsets = windowInsets,
-        colors = colors,
-        scrollBehavior = scrollBehavior,
-        expandedTitle = expandedTitle,
-        showDivider = showDivider
+        showDivider = showDivider,
     )
 }
 
@@ -105,85 +161,48 @@ fun PlayerTopAppBar(
     modifier: Modifier = Modifier,
     navigationIcon: @Composable () -> Unit = {},
     actions: @Composable RowScope.() -> Unit = {},
-    collapsedHeight: Dp = PlayerTopAppBarDefaults.TopAppBarCollapsedHeight,
-    expandedHeight: Dp = PlayerTopAppBarDefaults.TopAppBarExpandedHeight,
+    collapsedHeight: Dp = PlayerTopAppBarDefaults.topAppBarCollapsedHeight,
+    expandedHeight: Dp = PlayerTopAppBarDefaults.topAppBarExpandedHeight,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors = PlayerTopAppBarDefaults.topAppBarColors(),
     scrollBehavior: TopAppBarScrollBehavior? = null,
     expandedTitle: @Composable () -> Unit = title,
     showDivider: () -> Boolean = { true },
+    state: PlayerTopAppBarState =
+        rememberPlayerTopAppBarState(scrollBehavior),
 ) {
+
     TwoRowsTopAppBar(
         modifier = modifier,
         title = expandedTitle,
         titleTextStyle = PlayerTheme.typography.h2,
-        smallTitleTextStyle = PlayerTheme.typography.mediumTitle,
         smallTitle = title,
+        smallTitleTextStyle = PlayerTheme.typography.mediumTitle,
         navigationIcon = navigationIcon,
         actions = actions,
-        collapsedHeight = if (collapsedHeight == Dp.Unspecified || collapsedHeight == Dp.Infinity) {
-            PlayerTopAppBarDefaults.TopAppBarCollapsedHeight
-        } else {
-            collapsedHeight
-        },
-        expandedHeight = if (expandedHeight == Dp.Unspecified || expandedHeight == Dp.Infinity) {
-            PlayerTopAppBarDefaults.TopAppBarExpandedHeight
-        } else {
-            expandedHeight
-        },
+        collapsedHeight = collapsedHeight,
+        expandedHeight = expandedHeight,
         windowInsets = windowInsets,
         colors = colors,
         scrollBehavior = scrollBehavior,
         showDivider = showDivider,
-    )
-}
-
-@Composable
-fun PlayerTopAppBarDivider(
-    alpha: () -> Float,
-    isVisible: () -> Boolean,
-) {
-    if (isVisible()) {
-        val color = PlayerTheme.colorScheme.borderMain
-        Box(
-            modifier = Modifier
-                .drawBehind {
-                    drawRect(color = color, alpha = alpha())
-                }
-                .fillMaxWidth()
-                .height(1.dp)
-                .layoutId(DividerId)
-        )
-    }
-}
-
-@Composable
-fun PlayerTopAppBarDivider(
-    scrollBehavior: TopAppBarScrollBehavior,
-) {
-    val alpha = TopTitleAlphaEasing.transform(scrollBehavior.state.collapsedFraction)
-    val color = PlayerTheme.colorScheme.borderMain
-    Box(
-        modifier = Modifier
-            .drawBehind {
-                drawRect(color = color, alpha = alpha)
-            }
-            .fillMaxWidth()
-            .height(1.dp)
-            .layoutId(DividerId)
+        state = state,
     )
 }
 
 object PlayerTopAppBarDefaults {
 
     @Composable
-    fun topAppBarColors() = PlayerTheme.colorScheme.defaultTopAppBarColors
+    fun topAppBarColors() =
+        PlayerTheme.colorScheme.defaultTopAppBarColors
 
     @Composable
-    fun scrollBehavior() = TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
+    fun scrollBehavior() =
+        TopAppBarDefaults.exitUntilCollapsedScrollBehavior()
 
-    val TopAppBarCollapsedHeight = 64.dp
-    val TopAppBarExpandedHeight = 120.dp
+    val topAppBarCollapsedHeight = 64.dp
+
+    val topAppBarExpandedHeight = 120.dp
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -201,111 +220,176 @@ private fun TwoRowsTopAppBar(
     windowInsets: WindowInsets,
     colors: TopAppBarColors,
     scrollBehavior: TopAppBarScrollBehavior?,
-    showDivider: () -> Boolean = { true },
+    showDivider: () -> Boolean,
+    state: PlayerTopAppBarState,
 ) {
-    require(collapsedHeight.isSpecified && collapsedHeight.isFinite) {
-        "The collapsedHeight is expected to be specified and finite"
-    }
-    require(expandedHeight.isSpecified && expandedHeight.isFinite) {
-        "The expandedHeight is expected to be specified and finite"
-    }
-    require(expandedHeight >= collapsedHeight) {
-        "The expandedHeight is expected to be greater or equal to the collapsedHeight"
-    }
-    val expandedHeightPx: Float
-    val collapsedHeightPx: Float
-    val titleBottomPaddingPx: Int
-    LocalDensity.current.run {
-        expandedHeightPx = expandedHeight.toPx()
-        collapsedHeightPx = collapsedHeight.toPx()
-        titleBottomPaddingPx = ExpandedTitleBottomPadding.roundToPx()
+
+    require(collapsedHeight.isSpecified && collapsedHeight.isFinite)
+
+    require(expandedHeight.isSpecified && expandedHeight.isFinite)
+
+    require(expandedHeight >= collapsedHeight)
+
+    val density = LocalDensity.current
+
+    val expandedHeightPx = with(density) {
+        expandedHeight.toPx()
     }
 
-    // Sets the app bar's height offset limit to hide just the bottom title area and keep top title
-    // visible when collapsed.
+    val collapsedHeightPx = with(density) {
+        collapsedHeight.toPx()
+    }
+
+    val titleBottomPaddingPx = with(density) {
+        expandedTitleBottomPadding.roundToPx()
+    }
+
     SideEffect {
-        if (scrollBehavior?.state?.heightOffsetLimit != collapsedHeightPx - expandedHeightPx) {
-            scrollBehavior?.state?.heightOffsetLimit = collapsedHeightPx - expandedHeightPx
+        val limit = collapsedHeightPx - expandedHeightPx
+
+        if (scrollBehavior?.state?.heightOffsetLimit != limit) {
+            scrollBehavior?.state?.heightOffsetLimit = limit
         }
     }
 
-    val colorTransitionFraction = scrollBehavior?.state?.collapsedFraction ?: 0f
-    val appBarContainerColor = colors.containerColor
-
-    // Wrap the given actions in a Row.
-    val actionsRow = @Composable {
-        Row(
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically,
-            content = actions
-        )
-    }
-    val topTitleAlpha = TopTitleAlphaEasing.transform(colorTransitionFraction)
-    val bottomTitleAlpha = 1f - colorTransitionFraction
-    val hideTopRowSemantics = colorTransitionFraction < 0.5f
-    val hideBottomRowSemantics = !hideTopRowSemantics
-
-    val appBarDragModifier = if (scrollBehavior != null && !scrollBehavior.isPinned) {
-        Modifier.draggable(
-            orientation = Orientation.Vertical,
-            state =
-                rememberDraggableState { delta -> scrollBehavior.state.heightOffset += delta },
-            onDragStopped = { velocity ->
-                settleAppBar(
-                    scrollBehavior.state,
-                    velocity,
-                    scrollBehavior.flingAnimationSpec,
-                    scrollBehavior.snapAnimationSpec
-                )
-            }
-        )
-    } else {
-        Modifier
+    val topTitleAlpha by remember(state.collapsedFraction) {
+        derivedStateOf {
+            topTitleAlphaEasing.transform(state.collapsedFraction)
+        }
     }
 
-    Surface(modifier = modifier.then(appBarDragModifier), color = appBarContainerColor) {
+    val bottomTitleAlpha by remember(state.collapsedFraction) {
+        derivedStateOf {
+            1f - state.collapsedFraction
+        }
+    }
+
+    val appBarDragModifier =
+        if (scrollBehavior != null && !scrollBehavior.isPinned) {
+
+            Modifier.draggable(
+                orientation = Orientation.Vertical,
+                state = rememberDraggableState { delta ->
+                    scrollBehavior.state.heightOffset += delta
+                },
+                onDragStopped = { velocity ->
+                    settleAppBar(
+                        state = scrollBehavior.state,
+                        velocity = velocity,
+                        flingAnimationSpec = scrollBehavior.flingAnimationSpec,
+                        snapAnimationSpec = scrollBehavior.snapAnimationSpec,
+                    )
+                }
+            )
+        } else {
+            Modifier
+        }
+
+    Surface(
+        modifier = modifier.then(appBarDragModifier),
+        color = colors.containerColor,
+    ) {
+
         Column {
+
             TopAppBarLayout(
                 modifier = Modifier
                     .windowInsetsPadding(windowInsets)
                     .clipToBounds()
                     .heightIn(max = collapsedHeight),
+
                 scrolledOffset = { 0f },
-                navigationIconContentColor = colors.navigationIconContentColor,
-                titleContentColor = colors.titleContentColor,
-                actionIconContentColor = colors.actionIconContentColor,
+
+                navigationIconContentColor =
+                    colors.navigationIconContentColor,
+
+                titleContentColor =
+                    colors.titleContentColor,
+
+                actionIconContentColor =
+                    colors.actionIconContentColor,
+
                 title = smallTitle,
+
                 titleTextStyle = smallTitleTextStyle,
+
                 titleAlpha = topTitleAlpha,
+
                 titleVerticalArrangement = Arrangement.Center,
-                titleHorizontalArrangement = Arrangement.Start,
+
                 titleBottomPadding = 0,
-                hideTitleSemantics = hideTopRowSemantics,
+
+                hideTitleSemantics =
+                    state.expandState ==
+                            TopAppBarExpandState.EXPANDED,
+
                 navigationIcon = navigationIcon,
-                actions = actionsRow,
+
+                actions = {
+                    Row(
+                        horizontalArrangement = Arrangement.End,
+                        verticalAlignment = Alignment.CenterVertically,
+                        content = actions,
+                    )
+                },
+
                 showDivider = showDivider,
-                dividerAlpha = { if (expandedHeight == collapsedHeight) 1f else topTitleAlpha }
+
+                dividerAlpha = {
+                    if (expandedHeight == collapsedHeight) {
+                        1f
+                    } else {
+                        topTitleAlpha
+                    }
+                }
             )
+
             TopAppBarLayout(
                 modifier = Modifier
-                    .windowInsetsPadding(windowInsets.only(WindowInsetsSides.Horizontal))
+                    .windowInsetsPadding(
+                        windowInsets.only(
+                            WindowInsetsSides.Horizontal
+                        )
+                    )
                     .clipToBounds()
-                    .heightIn(max = expandedHeight - collapsedHeight),
-                scrolledOffset = { scrollBehavior?.state?.heightOffset ?: 0f },
-                navigationIconContentColor = colors.navigationIconContentColor,
-                titleContentColor = colors.titleContentColor,
-                actionIconContentColor = colors.actionIconContentColor,
+                    .heightIn(
+                        max = expandedHeight - collapsedHeight
+                    ),
+
+                scrolledOffset = {
+                    scrollBehavior?.state?.heightOffset ?: 0f
+                },
+
+                navigationIconContentColor =
+                    colors.navigationIconContentColor,
+
+                titleContentColor =
+                    colors.titleContentColor,
+
+                actionIconContentColor =
+                    colors.actionIconContentColor,
+
                 title = title,
+
                 titleTextStyle = titleTextStyle,
+
                 titleAlpha = bottomTitleAlpha,
+
                 titleVerticalArrangement = Arrangement.Top,
-                titleHorizontalArrangement = Arrangement.Start,
+
                 titleBottomPadding = titleBottomPaddingPx,
-                hideTitleSemantics = hideBottomRowSemantics,
+
+                hideTitleSemantics =
+                    state.expandState ==
+                            TopAppBarExpandState.COLLAPSED,
+
                 navigationIcon = {},
+
                 actions = {},
+
                 showDivider = { false },
-                dividerAlpha = { 0f }
+
+                dividerAlpha = { 0f },
             )
         }
     }
@@ -322,7 +406,6 @@ private fun TopAppBarLayout(
     titleTextStyle: TextStyle,
     titleAlpha: Float,
     titleVerticalArrangement: Arrangement.Vertical,
-    titleHorizontalArrangement: Arrangement.Horizontal,
     titleBottomPadding: Int,
     hideTitleSemantics: Boolean,
     navigationIcon: @Composable () -> Unit,
@@ -330,146 +413,202 @@ private fun TopAppBarLayout(
     showDivider: () -> Boolean,
     dividerAlpha: () -> Float,
 ) {
+
     Layout(
-        {
+        content = {
+
             Box(
-                Modifier
-                    .layoutId(NavigationIconId)
-                    .padding(start = TopAppBarHorizontalPadding)
+                modifier = Modifier
+                    .layoutId(navigationIconId)
+                    .padding(start = topAppBarHorizontalPadding)
             ) {
+
                 CompositionLocalProvider(
                     LocalContentColor provides navigationIconContentColor,
-                    content = navigationIcon
+                    content = navigationIcon,
                 )
             }
+
             Box(
-                Modifier
-                    .layoutId(TitleId)
-                    .padding(horizontal = TopAppBarHorizontalPadding)
-                    .then(if (hideTitleSemantics) Modifier.clearAndSetSemantics {} else Modifier)
+                modifier = Modifier
+                    .layoutId(titleId)
+                    .padding(horizontal = topAppBarHorizontalPadding)
+                    .then(
+                        if (hideTitleSemantics) {
+                            Modifier.clearAndSetSemantics {}
+                        } else {
+                            Modifier
+                        }
+                    )
                     .graphicsLayer {
                         alpha = titleAlpha
                     }
             ) {
+
                 ProvideContentColorTextStyle(
                     contentColor = titleContentColor,
                     textStyle = titleTextStyle,
-                    content = title
+                    content = title,
                 )
             }
+
             Box(
-                Modifier
-                    .layoutId(ActionIconsId)
-                    .padding(end = TopAppBarHorizontalPadding)
+                modifier = Modifier
+                    .layoutId(actionIconsId)
+                    .padding(end = topAppBarHorizontalPadding)
             ) {
+
                 CompositionLocalProvider(
                     LocalContentColor provides actionIconContentColor,
-                    content = actions
+                    content = actions,
                 )
             }
-            PlayerTopAppBarDivider(alpha = dividerAlpha, isVisible = showDivider)
+
+            PlayerTopAppBarDivider(
+                alpha = dividerAlpha,
+                isVisible = showDivider,
+            )
         },
-        modifier = modifier
+        modifier = modifier,
     ) { measurables, constraints ->
-        val navigationIconPlaceable = measurables
-            .fastFirst { it.layoutId == NavigationIconId }
-            .measure(constraints.copy(minWidth = 0))
-        val actionIconsPlaceable = measurables
-            .fastFirst { it.layoutId == ActionIconsId }
-            .measure(constraints.copy(minWidth = 0))
 
-        val maxTitleWidth = if (constraints.maxWidth == Constraints.Infinity) {
-            constraints.maxWidth
-        } else {
-            (constraints.maxWidth - navigationIconPlaceable.width - actionIconsPlaceable.width)
-                .coerceAtLeast(0)
-        }
-        val titlePlaceable = measurables
-            .fastFirst { it.layoutId == TitleId }
-            .measure(constraints.copy(minWidth = 0, maxWidth = maxTitleWidth))
+        val navigationIconPlaceable =
+            measurables
+                .fastFirst { it.layoutId == navigationIconId }
+                .measure(constraints.copy(minWidth = 0))
 
-        val titleBaseline = if (titlePlaceable[LastBaseline] != AlignmentLine.Unspecified) {
-            titlePlaceable[LastBaseline]
-        } else {
-            0
-        }
+        val actionIconsPlaceable =
+            measurables
+                .fastFirst { it.layoutId == actionIconsId }
+                .measure(constraints.copy(minWidth = 0))
 
-        val scrolledOffsetValue = scrolledOffset.offset()
-        val heightOffset = if (scrolledOffsetValue.isNaN()) 0 else scrolledOffsetValue.roundToInt()
+        val maxTitleWidth =
+            if (constraints.maxWidth == Constraints.Infinity) {
+                constraints.maxWidth
+            } else {
+                (
+                        constraints.maxWidth -
+                                navigationIconPlaceable.width -
+                                actionIconsPlaceable.width
+                        )
+                    .coerceAtLeast(0)
+            }
 
-        val layoutHeight = if (constraints.maxHeight == Constraints.Infinity) {
-            constraints.maxHeight
-        } else {
-            constraints.maxHeight + heightOffset
-        }
+        val titlePlaceable =
+            measurables
+                .fastFirst { it.layoutId == titleId }
+                .measure(
+                    constraints.copy(
+                        minWidth = 0,
+                        maxWidth = maxTitleWidth,
+                    )
+                )
 
-        val dividerPlaceable = measurables.firstOrNull { it.layoutId == DividerId }
-            ?.measure(constraints.copy(minHeight = 0))
+        val titleBaseline =
+            if (
+                titlePlaceable[LastBaseline] !=
+                AlignmentLine.Unspecified
+            ) {
+                titlePlaceable[LastBaseline]
+            } else {
+                0
+            }
 
-        layout(constraints.maxWidth, layoutHeight) {
+        val heightOffset =
+            scrolledOffset
+                .offset()
+                .takeIf { !it.isNaN() }
+                ?.roundToInt()
+                ?: 0
+
+        val layoutHeight =
+            if (constraints.maxHeight == Constraints.Infinity) {
+                constraints.maxHeight
+            } else {
+                constraints.maxHeight + heightOffset
+            }
+
+        val dividerPlaceable =
+            measurables
+                .firstOrNull { it.layoutId == dividerId }
+                ?.measure(constraints.copy(minHeight = 0))
+
+        layout(
+            width = constraints.maxWidth,
+            height = layoutHeight,
+        ) {
+
             navigationIconPlaceable.placeRelative(
                 x = 0,
-                y = (layoutHeight - navigationIconPlaceable.height) / 2
+                y = (layoutHeight - navigationIconPlaceable.height) / 2,
             )
 
             titlePlaceable.placeRelative(
-                x = when (titleHorizontalArrangement) {
+                x = max(
+                    topAppBarTitleInset.roundToPx(),
+                    navigationIconPlaceable.width,
+                ),
+                y = when (titleVerticalArrangement) {
+
                     Arrangement.Center -> {
-                        var baseX = (constraints.maxWidth - titlePlaceable.width) / 2
-                        if (baseX < navigationIconPlaceable.width) {
-                            baseX += (navigationIconPlaceable.width - baseX)
-                        } else if (
-                            baseX + titlePlaceable.width >
-                            constraints.maxWidth - actionIconsPlaceable.width
-                        ) {
-                            baseX += ((constraints.maxWidth - actionIconsPlaceable.width) -
-                                    (baseX + titlePlaceable.width))
-                        }
-                        baseX
+                        (layoutHeight - titlePlaceable.height) / 2
                     }
 
-                    Arrangement.End ->
-                        constraints.maxWidth - titlePlaceable.width - actionIconsPlaceable.width
+                    else -> {
 
-                    else -> max(TopAppBarTitleInset.roundToPx(), navigationIconPlaceable.width)
-                },
-                y = when (titleVerticalArrangement) {
-                    Arrangement.Center -> (layoutHeight - titlePlaceable.height) / 2
-                    Arrangement.Bottom ->
-                        if (titleBottomPadding == 0) {
-                            layoutHeight - titlePlaceable.height
-                        } else {
-                            val paddingFromBottom =
-                                titleBottomPadding - (titlePlaceable.height - titleBaseline)
-                            val heightWithPadding = paddingFromBottom + titlePlaceable.height
-                            val adjustedBottomPadding =
-                                if (heightWithPadding > constraints.maxHeight) {
-                                    paddingFromBottom -
-                                            (heightWithPadding - constraints.maxHeight)
-                                } else {
-                                    paddingFromBottom
-                                }
-                            layoutHeight - titlePlaceable.height - max(0, adjustedBottomPadding)
-                        }
+                        val paddingFromBottom =
+                            titleBottomPadding -
+                                    (
+                                            titlePlaceable.height -
+                                                    titleBaseline
+                                            )
 
-                    else -> ExpandedTitleTopPadding.roundToPx()
+                        layoutHeight -
+                                titlePlaceable.height -
+                                max(0, paddingFromBottom)
+                    }
                 }
             )
 
             actionIconsPlaceable.placeRelative(
                 x = constraints.maxWidth - actionIconsPlaceable.width,
-                y = (layoutHeight - actionIconsPlaceable.height) / 2
+                y = (layoutHeight - actionIconsPlaceable.height) / 2,
             )
 
             dividerPlaceable?.placeRelative(
                 x = 0,
-                y = layoutHeight - dividerPlaceable.height
+                y = layoutHeight - dividerPlaceable.height,
             )
         }
     }
 }
 
+@Composable
+fun PlayerTopAppBarDivider(
+    alpha: () -> Float,
+    isVisible: () -> Boolean,
+) {
+
+    if (!isVisible()) return
+
+    val color = PlayerTheme.colorScheme.borderMain
+
+    Box(
+        modifier = Modifier
+            .drawBehind {
+                drawRect(
+                    color = color,
+                    alpha = alpha(),
+                )
+            }
+            .fillMaxWidth()
+            .height(1.dp)
+            .layoutId(dividerId)
+    )
+}
+
 private fun interface ScrolledOffset {
+
     fun offset(): Float
 }
 
@@ -480,37 +619,66 @@ private suspend fun settleAppBar(
     flingAnimationSpec: DecayAnimationSpec<Float>?,
     snapAnimationSpec: AnimationSpec<Float>?,
 ): Velocity {
-    if (state.collapsedFraction < 0.01f || state.collapsedFraction == 1f) {
+
+    if (
+        state.collapsedFraction < 0.01f ||
+        state.collapsedFraction >= 1f
+    ) {
         return Velocity.Zero
     }
+
     var remainingVelocity = velocity
-    if (flingAnimationSpec != null && abs(velocity) > 1f) {
+
+    if (
+        flingAnimationSpec != null &&
+        abs(velocity) > 1f
+    ) {
+
         var lastValue = 0f
+
         AnimationState(
             initialValue = 0f,
             initialVelocity = velocity,
         ).animateDecay(flingAnimationSpec) {
+
             val delta = value - lastValue
+
             val initialHeightOffset = state.heightOffset
-            state.heightOffset = initialHeightOffset + delta
-            val consumed = abs(initialHeightOffset - state.heightOffset)
+
+            state.heightOffset =
+                initialHeightOffset + delta
+
+            val consumed =
+                abs(initialHeightOffset - state.heightOffset)
+
             lastValue = value
+
             remainingVelocity = this.velocity
-            if (abs(delta - consumed) > 0.5f) this.cancelAnimation()
+
+            if (abs(delta - consumed) > 0.5f) {
+                cancelAnimation()
+            }
         }
     }
-    if (snapAnimationSpec != null) {
-        if (state.heightOffset < 0 && state.heightOffset > state.heightOffsetLimit) {
-            AnimationState(initialValue = state.heightOffset).animateTo(
+
+    if (
+        snapAnimationSpec != null &&
+        state.heightOffset < 0 &&
+        state.heightOffset > state.heightOffsetLimit
+    ) {
+
+        AnimationState(
+            initialValue = state.heightOffset
+        ).animateTo(
+            targetValue =
                 if (state.collapsedFraction < 0.5f) {
                     0f
                 } else {
                     state.heightOffsetLimit
                 },
-                animationSpec = snapAnimationSpec
-            ) {
-                state.heightOffset = value
-            }
+            animationSpec = snapAnimationSpec,
+        ) {
+            state.heightOffset = value
         }
     }
 
@@ -518,20 +686,20 @@ private suspend fun settleAppBar(
 }
 
 @Composable
-internal fun ProvideContentColorTextStyle(
+private fun ProvideContentColorTextStyle(
     contentColor: Color,
     textStyle: TextStyle,
     content: @Composable () -> Unit,
 ) {
-    val mergedStyle = LocalTextStyle.current.merge(textStyle)
+
     CompositionLocalProvider(
         LocalContentColor provides contentColor,
-        LocalTextStyle provides mergedStyle,
-        content = content
+        androidx.compose.material3.LocalTextStyle provides
+                MaterialTheme.typography.bodyLarge.merge(textStyle),
+        content = content,
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 internal val PlayerColorScheme.defaultTopAppBarColors: TopAppBarColors
     get() {
         return TopAppBarColors(
@@ -544,15 +712,18 @@ internal val PlayerColorScheme.defaultTopAppBarColors: TopAppBarColors
         )
     }
 
-internal val TopTitleAlphaEasing = CubicBezierEasing(.8f, 0f, .8f, .15f)
-private val ExpandedTitleBottomPadding = 16.dp
-private val TopAppBarHorizontalPadding = 4.dp
-private val ExpandedTitleTopPadding = 4.dp
+private val topTitleAlphaEasing = CubicBezierEasing(.8f, 0f, .8f, .15f)
 
-// A title inset when the App-Bar is a Medium or Large one. Also used to size a spacer when the
-// navigation icon is missing.
-private val TopAppBarTitleInset = 16.dp - TopAppBarHorizontalPadding
-private const val NavigationIconId = "navigationIcon"
-private const val TitleId = "title"
-private const val ActionIconsId = "actionIcons"
-private const val DividerId = "divider"
+private val expandedTitleBottomPadding = 16.dp
+
+private val topAppBarHorizontalPadding = 4.dp
+
+private val topAppBarTitleInset = 16.dp - topAppBarHorizontalPadding
+
+private const val navigationIconId = "navigationIcon"
+
+private const val titleId = "title"
+
+private const val actionIconsId = "actionIcons"
+
+private const val dividerId = "divider"
