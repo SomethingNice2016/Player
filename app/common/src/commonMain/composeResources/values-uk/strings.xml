@@ -1,0 +1,12 @@
+<resources>
+    <string name="music_label">Музика</string>
+    <string name="home_label">Головна</string>
+    <string name="setting_label">Налаштування</string>
+    <string name="setting_item_source_code">Вихідний код</string>
+    <string name="setting_item_about">Про застосунок</string>
+    <string name="setting_item_rate_app">Оцінити застосунок</string>
+    <string name="github_url">https://github.com/SomethingNice2016/Player</string>
+    <string name="song_item_description">%1$s • %2$s</string>
+    <string name="search">Пошук</string>
+    <string name="search_song_hint">Введіть назву пісні</string>
+</resources>

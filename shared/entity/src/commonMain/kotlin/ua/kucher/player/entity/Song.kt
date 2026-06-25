@@ -9,6 +9,7 @@ data class Song(
     val lastModified: Long,
     val album: Album?,
     val artist: Artist?,
+    val playlistIds: Set<Long>
 ) : PlaylistItem {
 
     override val artwork: String?

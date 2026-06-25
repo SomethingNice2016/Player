@@ -31,8 +31,6 @@ val dataModule = module {
         SongRepositoryImpl(
             dispatcherProvider = get(),
             songLocalSource = get(),
-            artistLocalSource = get(),
-            albumLocalSource = get()
         )
     }
 }

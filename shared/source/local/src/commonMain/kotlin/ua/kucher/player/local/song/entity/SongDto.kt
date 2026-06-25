@@ -1,14 +1,15 @@
 package ua.kucher.player.local.song.entity
 
 import androidx.room.Embedded
+import androidx.room.Junction
 import androidx.room.Relation
 import ua.kucher.player.entity.Song
 import ua.kucher.player.local.album.AlbumEntity
 import ua.kucher.player.local.album.toDomain
-import ua.kucher.player.local.album.toEntity
 import ua.kucher.player.local.artist.ArtistEntity
 import ua.kucher.player.local.artist.toDomain
-import ua.kucher.player.local.artist.toEntity
+import ua.kucher.player.local.playlist.PlaylistEntity
+import ua.kucher.player.local.playlist.SongWithPlaylistEntity
 
 internal data class SongDto(
     @Embedded
@@ -17,6 +18,17 @@ internal data class SongDto(
     val artist: ArtistEntity?,
     @Relation(parentColumn = "albumId", entityColumn = "id")
     val album: AlbumEntity?,
+    @Relation(
+        parentColumn = "id",
+        entity = PlaylistEntity::class,
+        entityColumn = "id",
+        associateBy = Junction(
+            value = SongWithPlaylistEntity::class,
+            parentColumn = "songId",
+            entityColumn = "playlistId"
+        )
+    )
+    val playlists: List<PlaylistEntity>
 )
 
 internal fun SongDto.toDomain() = Song(
@@ -27,22 +39,10 @@ internal fun SongDto.toDomain() = Song(
     album = album?.toDomain(),
     artist = artist?.toDomain(),
     songArtwork = song.artwork,
-    lastModified = song.lastModified
-)
-
-internal fun Song.toDto() = SongDto(
-    song = SongEntity(
-        id = id,
-        title = title,
-        duration = duration,
-        uri = uri,
-        albumId = album?.id ?: -1L,
-        artistId = artist?.id ?: -1L,
-        artwork = songArtwork,
-        lastModified = lastModified
-    ),
-    artist = artist?.toEntity(),
-    album = album?.toEntity(),
+    lastModified = song.lastModified,
+    playlistIds = playlists.map { playlist ->
+        playlist.id
+    }.toSet()
 )
 
 

@@ -1,25 +1,25 @@
-package ua.kucher.player.songlist
+package ua.kucher.player.search
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavController
-import ua.kucher.player.navigation.AppRoute
 
 @Composable
-internal fun SongListRoute(
-    navController: NavController,
-    viewModel: SongListViewModel
+internal fun SearchRoute(
+    viewModel: SearchViewModel,
+    navController: NavController
 ) {
 
     val uiState by viewModel.uiState.collectAsState()
 
-    SongListScreen(
+    SearchScreen(
         uiState = uiState,
+        onSearch = viewModel::search,
         onSongClick = viewModel::playSong,
-        onRefresh = viewModel::refresh,
-        onSearch = {
-            navController.navigate(AppRoute.Search.path)
+        onBack = {
+            navController.popBackStack()
         }
     )
+
 }

@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 
 @OptIn(ExperimentalCoroutinesApi::class)
 inline fun <T, R> Flow<T?>.flatMapNotNullLatest(crossinline transform: suspend (value: T) -> Flow<R?>) =
@@ -13,6 +14,14 @@ inline fun <T, R> Flow<T?>.flatMapNotNullLatest(crossinline transform: suspend (
             transform(value)
         else
             MutableStateFlow(null)
+    }
+
+@OptIn(ExperimentalCoroutinesApi::class)
+inline fun <T, R> Flow<T?>.mapNotNull(crossinline transform: suspend (value: T) -> R) =
+    map { value ->
+        value?.let { notNullValue ->
+            transform(notNullValue)
+        }
     }
 
 
@@ -125,12 +134,22 @@ fun <T0, T1, T2, T3, R> combineNotNull(
     flow2: Flow<T2?>,
     flow3: Flow<T3?>,
     transform: suspend (T0, T1, T2, T3) -> R
-): Flow<R?> = combine(flow0, flow1, flow2, flow3) { p0, p1, p2, p3 ->
+): Flow<R?> = combine(
+    flow0,
+    flow1,
+    flow2,
+    flow3
+) { p0, p1, p2, p3 ->
     p0?.let { notNullP0 ->
         p1?.let { notNullP1 ->
             p2?.let { notNullP2 ->
                 p3?.let { notNullP3 ->
-                    transform(notNullP0, notNullP1, notNullP2, notNullP3)
+                    transform(
+                        notNullP0,
+                        notNullP1,
+                        notNullP2,
+                        notNullP3
+                    )
                 }
             }
         }
@@ -294,4 +313,21 @@ fun <T1, T2, T3, R> Flow<T1>.combine(
     }
 ) { p1, (p2, p3) ->
     transform(p1, p2, p3)
+}
+
+fun <T1, T2, T3, T4, R> Flow<T1>.combine(
+    flow1: Flow<T2>,
+    flow2: Flow<T3>,
+    flow3: Flow<T4>,
+    transform: suspend (a: T1, b: T2, c: T3, d: T4) -> R
+): Flow<R> = this.combine(
+    combine(
+        flow1,
+        flow2,
+        flow3
+    ) { p2, p3, p4 ->
+        Triple(p2, p3, p4)
+    }
+) { p1, (p2, p3, p4) ->
+    transform(p1, p2, p3, p4)
 }

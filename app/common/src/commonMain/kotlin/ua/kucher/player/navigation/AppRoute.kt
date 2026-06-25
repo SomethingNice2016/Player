@@ -22,7 +22,10 @@ internal sealed class AppRoute(
         )
 
         fun values() = listOf(
-            Home, SongList, Settings
+            Home,
+            SongList,
+            Settings,
+            Search
         )
 
         fun getByPath(path: String) = values().find { value ->
@@ -46,5 +49,11 @@ internal sealed class AppRoute(
         path = "settings",
         label = Res.string.setting_label,
         icon = Res.drawable.ic_setting
+    )
+
+    data object Search : AppRoute(
+        path = "search",
+        label = null,
+        icon = null
     )
 }

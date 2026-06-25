@@ -1,10 +1,13 @@
 package ua.kucher.player.setting
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
@@ -46,6 +50,7 @@ internal fun SettingScreen(
         modifier = Modifier
             .fillMaxSize()
             .nestedScroll(scrollBehavior.nestedScrollConnection),
+        contentWindowInsets = WindowInsets(0),
         containerColor = PlayerTheme.colorScheme.primaryBackground,
         topBar = {
             PlayerTopAppBar(
@@ -110,6 +115,23 @@ private fun SettingItem(
             text = text,
             color = PlayerTheme.colorScheme.primaryTextColor,
             fontStyle = PlayerTheme.typography.h5.fontStyle,
+        )
+    }
+}
+
+
+@Preview
+@Composable
+private fun SettingScreenPreview() {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PlayerTheme.colorScheme.primaryBackground)
+    ) {
+        SettingScreen(
+            onRateAppClick = {},
+            onSourceCodeClick = {},
+            onAboutClick = {}
         )
     }
 }

@@ -1,12 +1,11 @@
 package ua.kucher.player.songlist
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -15,26 +14,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.ic_search
 import player.app.common.generated.resources.music_label
 import player.app.common.generated.resources.search
+import ua.kucher.player.common.SongUi
+import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
 import ua.kucher.player.theme.components.PlayerTopAppBarDefaults
+import ua.kucher.player.theme.components.SongsList
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
-import ua.kucher.player.theme.components.items.SongItem
 import ua.kucher.player.theme.components.rememberPlayerTopAppBarState
-import ua.kucher.player.theme.extensions.BottomNavSpacer
-import ua.kucher.player.theme.extensions.MiniPlayerSpacer
 
 
 @Composable
 internal fun SongListScreen(
     uiState: SongListUiState,
     onSongClick: (songId: Long) -> Unit,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onSearch: () -> Unit
 ) {
 
     val lazyListState = rememberLazyListState()
@@ -62,7 +63,7 @@ internal fun SongListScreen(
                     PlayerMenuIconButton(
                         painter = painterResource(Res.drawable.ic_search),
                         contentDescription = stringResource(Res.string.search),
-                        onClick = {}
+                        onClick = onSearch
                     )
                 }
             )
@@ -77,8 +78,11 @@ internal fun SongListScreen(
             onRefresh = onRefresh,
             enabled = topAppBarState.isExpanded
         ) {
-            SongsListContent(
-                uiState = uiState,
+            SongsList(
+                songs = uiState.songs,
+                isPlayerShowed = uiState.isPlayerShowed,
+                isPlaying = uiState.isPlaying,
+                playingSongId = uiState.playingSongId,
                 lazyListState = lazyListState,
                 onSongClick = onSongClick
             )
@@ -86,36 +90,39 @@ internal fun SongListScreen(
     }
 }
 
+@Preview
 @Composable
-private fun SongsListContent(
-    modifier: Modifier = Modifier,
-    uiState: SongListUiState,
-    lazyListState: LazyListState,
-    onSongClick: (songId: Long) -> Unit
-) {
-    LazyColumn(
-        modifier = modifier,
-        state = lazyListState,
+private fun SongListScreenPreview() {
+
+    val songUi = SongUi(
+        id = 12,
+        title = "Never fade away",
+        artistName = "SAMURAI",
+        displayDuration = "3:33",
+        duration = 69000L,
+        artwork = ""
+    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(PlayerTheme.colorScheme.primaryBackground)
     ) {
-        items(
-            items = uiState.songs,
-            key = { song -> song.id },
-            contentType = { "song" }
-        ) { song ->
-            SongItem(
-                modifier = Modifier.fillMaxWidth(),
-                title = song.title,
-                artist = song.artistName,
-                artwork = song.artwork,
-                duration = song.displayDuration,
-                isSongPlaying = song.id == uiState.playingSongId,
-                isPlaying = uiState.isPlaying,
-                onClick = { onSongClick(song.id) }
-            )
-        }
-        if (uiState.isPlayerShowed) {
-            item { MiniPlayerSpacer() }
-        }
-        item { BottomNavSpacer() }
+        SongListScreen(
+            uiState = SongListUiState(
+                songs = listOf(
+                    songUi,
+                    songUi.copy(id = 13),
+                    songUi.copy(id = 14),
+                    songUi.copy(id = 15),
+                ),
+                isPlaying = true,
+                isPlayerShowed = true,
+                playingSongId = 12L
+            ),
+            onSongClick = {},
+            onRefresh = {},
+            onSearch = {}
+        )
     }
 }
