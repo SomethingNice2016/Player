@@ -3,13 +3,13 @@ package ua.kucher.player.songplayer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ua.kucher.player.common.SongUi
 import ua.kucher.player.core.common.coroutines.combineNotNull
 import ua.kucher.player.core.common.coroutines.flatMapNotNullLatest
+import ua.kucher.player.core.common.coroutines.mapNotNull
 import ua.kucher.player.core.common.datetime.TimeFormatter
 import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.playback.PlaybackController
@@ -23,18 +23,16 @@ internal class MusicPlayerViewModel(
     private val currentSong = playbackController.state.map { playbackState ->
         playbackState.currentItemId
     }.flatMapNotNullLatest { id ->
-        songRepository.getSongById(id)
-            .filterNotNull()
-            .map { song ->
-                SongUi(
-                    id = song.id,
-                    title = song.title,
-                    artistName = song.artistTitle ?: "",
-                    displayDuration = timeFormatter.toFormatDuration(song.duration),
-                    duration = song.duration,
-                    artwork = song.artwork
-                )
-            }
+        songRepository.getSongById(id).mapNotNull { song ->
+            SongUi(
+                id = song.id,
+                title = song.title,
+                artistName = song.artistTitle ?: "",
+                displayDuration = timeFormatter.toFormatDuration(song.duration),
+                duration = song.duration,
+                artwork = song.artwork
+            )
+        }
     }
 
     val uiState = combineNotNull(

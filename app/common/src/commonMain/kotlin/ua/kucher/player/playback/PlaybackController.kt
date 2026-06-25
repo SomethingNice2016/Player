@@ -1,7 +1,6 @@
 package ua.kucher.player.playback
 
 import kotlinx.coroutines.flow.StateFlow
-import ua.kucher.player.entity.Playlist
 import ua.kucher.player.entity.PlaylistItem
 
 interface PlaybackController {
@@ -20,15 +19,19 @@ interface PlaybackController {
 
     val state: StateFlow<PlaybackState>
 
-    fun prepare(playlist: Playlist)
+    fun prepare(playlist: List<PlaylistItem>)
 
     fun play(item: PlaylistItem)
+
+    fun playNext(item: PlaylistItem)
 
     fun seekToPosition(position: Long)
 
     fun setShuffleMode(isShuffle: Boolean)
 
     fun setRepeatMode(mode: RepeatMode)
+
+    fun inQueue(id: Long): Boolean
 
     fun release()
 

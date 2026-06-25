@@ -16,9 +16,9 @@ internal fun PlayerMenuIconButton(
     modifier: Modifier = Modifier,
     tint: Color = PlayerTheme.colorScheme.iconsMain,
     backgroundColor: Color = Color.Transparent,
-    contentDescription: String = "",
+    contentDescription: String? = null,
     painter: Painter,
-    onClick: () -> Unit
+    onClick: (() -> Unit)? = null
 ) {
     IconButton(
         modifier = modifier
@@ -27,7 +27,7 @@ internal fun PlayerMenuIconButton(
                 color = backgroundColor,
                 shape = CircleShape
             ),
-        onClick = onClick
+        onClick = { onClick?.invoke() }
     ) {
         Icon(
             painter = painter,

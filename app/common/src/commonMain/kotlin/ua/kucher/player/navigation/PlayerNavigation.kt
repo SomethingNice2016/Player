@@ -8,6 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import org.koin.compose.viewmodel.koinViewModel
 import ua.kucher.player.home.HomeRoute
+import ua.kucher.player.search.SearchRoute
 import ua.kucher.player.setting.SettingRoute
 import ua.kucher.player.songlist.SongListRoute
 
@@ -38,6 +39,13 @@ internal fun PlayerNavigation(
 
         composable(route = AppRoute.Settings.path) { navBackStackEntry ->
             SettingRoute(
+                navController = navController,
+                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
+            )
+        }
+
+        composable(route = AppRoute.Search.path) { navBackStackEntry ->
+            SearchRoute(
                 navController = navController,
                 viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
             )

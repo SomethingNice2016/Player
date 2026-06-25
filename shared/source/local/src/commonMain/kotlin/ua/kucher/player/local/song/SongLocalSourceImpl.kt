@@ -28,11 +28,19 @@ internal class SongLocalSourceImpl(
         entities.map(SongDto::toDomain)
     }
 
+    override fun getSongsByPlaylist(playlistId: Long) = songDao.getSongsByPlaylist(playlistId).map { entities ->
+        entities.map(SongDto::toDomain)
+    }
+
     override fun getSongsByAlbum(albumId: Long) = songDao.getSongsByAlbum(albumId).map { entities ->
         entities.map(SongDto::toDomain)
     }
 
     override fun getSongsByArtist(artistId: Long) = songDao.getSongsByArtist(artistId).map { entities ->
+        entities.map(SongDto::toDomain)
+    }
+
+    override fun searchSongsByTitle(title: String) = songDao.searchSongsByTitle(title).map { entities ->
         entities.map(SongDto::toDomain)
     }
 

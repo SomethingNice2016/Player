@@ -13,14 +13,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import ua.kucher.player.entity.Playlist
 import ua.kucher.player.entity.PlaylistItem
 import kotlin.time.Duration.Companion.milliseconds
 
 internal class PlaybackControllerImpl : PlaybackController {
 
     companion object {
-        private const val PROGRESS_UPDATE_DELAY = 200L
+        private const val PROGRESS_UPDATE_DELAY = 300L
     }
 
     private var controller: MediaController? = null
@@ -61,15 +60,10 @@ internal class PlaybackControllerImpl : PlaybackController {
         }
     }
 
-    override fun prepare(playlist: Playlist) = withController {
-        if (state.value.currentPlaylistId == playlist.id) return@withController
+    override fun prepare(playlist: List<PlaylistItem>) = withController {
         clearMediaItems()
-        setMediaItems(playlist.toMediaItems())
+        setMediaItems(playlist.map { it.toMediaItem() })
         prepare()
-        _state.update { value ->
-            value.copy(currentPlaylistId = playlist.id)
-        }
-        syncState()
     }
 
     override fun play(item: PlaylistItem) = withController {
@@ -77,18 +71,29 @@ internal class PlaybackControllerImpl : PlaybackController {
             playPause()
             return@withController
         }
-        val existingIndex = mediaItems.indexOfFirst {
-            it.mediaId.toLongOrNull() == item.id
+        val existingIndex = mediaItems.indexOfFirst { mediaItem ->
+            mediaItem.mediaId.toLongOrNull() == item.id
         }
         if (existingIndex >= 0) {
             seekToDefaultPosition(existingIndex)
         } else {
-            _state.update { value ->
-                value.copy(currentPlaylistId = null)
-            }
             setMediaItem(item.toMediaItem())
         }
         play()
+        syncState()
+    }
+
+    override fun playNext(item: PlaylistItem) = withController {
+        val currentIndex = currentMediaItemIndex
+        val insertIndex = (currentIndex + 1).coerceAtMost(mediaItems.size)
+        val existingIndex = mediaItems.indexOfFirst { mediaItem ->
+            mediaItem.mediaId.toLongOrNull() == item.id
+        }
+        if (existingIndex >= 0) {
+            moveMediaItem(existingIndex, insertIndex)
+        } else {
+            addMediaItem(insertIndex, item.toMediaItem())
+        }
         syncState()
     }
 
@@ -105,6 +110,12 @@ internal class PlaybackControllerImpl : PlaybackController {
         mode: PlaybackController.RepeatMode
     ) = withController {
         repeatMode = mode.toPlayerRepeatMode()
+    }
+
+    override fun inQueue(id: Long): Boolean {
+        return !controller?.mediaItems?.filter { item ->
+            item.mediaId.toLongOrNull() == id
+        }.isNullOrEmpty()
     }
 
     override fun playPause() = withController {
@@ -134,7 +145,6 @@ internal class PlaybackControllerImpl : PlaybackController {
             _state.update {
                 PlaybackState(
                     currentItemId = null,
-                    currentPlaylistId = null,
                     isPlaying = false,
                     isShuffle = false,
                     repeatMode = PlaybackController.RepeatMode.OFF,
@@ -147,7 +157,6 @@ internal class PlaybackControllerImpl : PlaybackController {
         _state.update {
             PlaybackState(
                 currentItemId = nonNullController.currentMediaItem?.mediaId?.toLongOrNull(),
-                currentPlaylistId = nonNullController.currentMediaItem?.playlistId,
                 isPlaying = nonNullController.isPlaying,
                 isShuffle = nonNullController.shuffleModeEnabled,
                 repeatMode = PlaybackController.RepeatMode.fromPlayerRepeatMode(nonNullController.repeatMode),

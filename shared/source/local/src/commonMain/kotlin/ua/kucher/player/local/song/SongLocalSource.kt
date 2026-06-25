@@ -9,9 +9,13 @@ interface SongLocalSource {
 
     fun getSongs(): Flow<List<Song>>
 
+    fun getSongsByPlaylist(playlistId: Long): Flow<List<Song>>
+
     fun getSongsByAlbum(albumId: Long): Flow<List<Song>>
 
     fun getSongsByArtist(artistId: Long): Flow<List<Song>>
+
+    fun searchSongsByTitle(title: String): Flow<List<Song>>
 
     suspend fun fetchSongs(): Result<Unit>
 

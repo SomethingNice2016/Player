@@ -5,5 +5,7 @@ internal object TableName {
     const val SONG_TABLE_NAME = "SongEntity"
     const val ARTIST_TABLE_NAME = "ArtistEntity"
     const val ALBUM_TABLE_NAME = "AlbumEntity"
+    const val PLAYLIST_TABLE_NAME = "PlaylistEntity"
+    const val SONG_WITH_PLAYLIST_TABLE_NAME = "SongWithPlaylistEntity"
 
 }

@@ -1,0 +1,12 @@
+<resources>
+    <string name="music_label">Музыка</string>
+    <string name="home_label">Главная</string>
+    <string name="setting_label">Настройки</string>
+    <string name="setting_item_source_code">Исходный код</string>
+    <string name="setting_item_about">О приложении</string>
+    <string name="setting_item_rate_app">Оценить приложение</string>
+    <string name="github_url">https://github.com/SomethingNice2016/Player</string>
+    <string name="song_item_description">%1$s • %2$s</string>
+    <string name="search">Поиск</string>
+    <string name="search_song_hint">Введите название песни</string>
+</resources>

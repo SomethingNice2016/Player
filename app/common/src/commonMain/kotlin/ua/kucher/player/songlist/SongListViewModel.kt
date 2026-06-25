@@ -31,7 +31,7 @@ internal class SongListViewModel(
         isRefreshing
     ) { songs, playbackState, refreshing ->
         SongListUiState(
-            songs = songs.items.map { song ->
+            songs = songs.map { song ->
                 SongUi(
                     id = song.id,
                     title = song.title,
@@ -55,10 +55,8 @@ internal class SongListViewModel(
     fun playSong(id: Long) {
         viewModelScope.launch {
             val songs = songRepository.getAllSongs().firstOrNull() ?: return@launch
-            val song = songRepository.getSongById(id).firstOrNull() ?: return@launch
-            if (playbackController.state.value.currentPlaylistId != songs.id) {
-                playbackController.prepare(songs)
-            }
+            val song = songs.findLast { song -> song.id == id } ?: return@launch
+            playbackController.prepare(songs)
             playbackController.play(song)
         }
     }

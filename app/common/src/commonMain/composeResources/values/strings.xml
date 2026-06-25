@@ -1,9 +1,4 @@
 <resources>
-    <string name="cyclone">Cyclone</string>
-    <string name="open_github">Open github</string>
-    <string name="run">Run</string>
-    <string name="stop">Stop</string>
-    <string name="theme">Theme</string>
     <string name="music_label">Music</string>
     <string name="home_label">Home</string>
     <string name="setting_label">Setting</string>
@@ -13,4 +8,5 @@
     <string name="github_url">https://github.com/SomethingNice2016/Player</string>
     <string name="song_item_description">%1$s • %2$s</string>
     <string name="search">Search</string>
+    <string name="search_song_hint">Enter the song title</string>
 </resources>

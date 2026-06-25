@@ -45,6 +45,8 @@ import player.app.common.generated.resources.ic_cast
 import player.app.common.generated.resources.ic_options
 import ua.kucher.player.common.SongUi
 import ua.kucher.player.playback.PlaybackController
+import ua.kucher.player.songlist.SongListScreen
+import ua.kucher.player.songlist.SongListUiState
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.FrostedGlass
 import ua.kucher.player.theme.components.MiniPlayer
@@ -256,9 +258,6 @@ internal fun MusicPlayerScreen(
                         }
                     )
             ) {
-
-                println(nonNullState.currentSong.artwork)
-
                 if (!nonNullState.currentSong.artwork.isNullOrBlank()) {
                     FrostedGlass(
                         modifier = Modifier
@@ -371,6 +370,15 @@ internal fun MusicPlayerScreen(
 @Preview()
 @Composable
 private fun PlayerScreenPreview() {
+    val songUi = SongUi(
+        id = 12,
+        title = "Never fade away",
+        artistName = "SAMURAI",
+        displayDuration = "3:33",
+        duration = 69000L,
+        artwork = ""
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -379,20 +387,13 @@ private fun PlayerScreenPreview() {
         MusicPlayerScreen(
             Modifier.fillMaxSize(),
             state = MusicPlayerUiState(
-                currentSong = SongUi(
-                    id = 12,
-                    title = "Never fade away",
-                    artistName = "SAMURAI",
-                    displayDuration = "3:33",
-                    duration = 10000L,
-                    artwork = ""
-                ),
+                currentSong = songUi,
                 displayProgress = "2:30",
-                progress = 69000L,
+                progress = 20000,
                 isPlaying = true,
                 isShuffle = false,
                 repeatMode = PlaybackController.RepeatMode.OFF,
-                artworks = mapOf()
+                artworks = mapOf(12L to "")
             ),
             onPlay = {},
             onForward = {},
@@ -401,7 +402,24 @@ private fun PlayerScreenPreview() {
             onShuffle = {},
             onRepeat = {},
             onSeek = {},
-            content = {}
+            content = {
+                SongListScreen(
+                    uiState = SongListUiState(
+                        songs = listOf(
+                            songUi,
+                            songUi.copy(id = 13),
+                            songUi.copy(id = 14),
+                            songUi.copy(id = 15),
+                        ),
+                        isPlaying = true,
+                        isPlayerShowed = true,
+                        playingSongId = 12L
+                    ),
+                    onSongClick = {},
+                    onRefresh = {},
+                    onSearch = {}
+                )
+            }
         )
     }
 }

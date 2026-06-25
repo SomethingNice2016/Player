@@ -13,7 +13,6 @@ import ua.kucher.player.local.song.entity.SongWithArtwork
 @Dao
 internal interface SongDao {
 
-
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME}")
     suspend fun getSongsSnapshot(): List<SongEntity>
 
@@ -26,6 +25,12 @@ internal interface SongDao {
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE artistId=:artistId")
     fun getSongsByArtist(artistId: Long): Flow<List<SongDto>>
 
+    @Query("SELECT s.* FROM ${TableName.SONG_TABLE_NAME} s INNER JOIN ${TableName.SONG_WITH_PLAYLIST_TABLE_NAME} sp ON s.id = sp.songId WHERE sp.playlistId=:playlistId")
+    fun getSongsByPlaylist(playlistId: Long): Flow<List<SongDto>>
+
+    @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE LOWER(title) LIKE '%' || LOWER(:title) || '%'")
+    fun searchSongsByTitle(title: String): Flow<List<SongDto>>
+
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE id=:id")
     fun getSongById(id: Long): Flow<SongDto?>
 
@@ -34,6 +39,7 @@ internal interface SongDao {
 
     @Query("UPDATE ${TableName.SONG_TABLE_NAME} SET artwork=:artworkUri WHERE id=:id")
     suspend fun insertArtwork(id: Long, artworkUri: String)
+
     @Upsert
     suspend fun upsertSongs(list: List<SongEntity>)
 

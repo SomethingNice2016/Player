@@ -1,7 +1,6 @@
 package ua.kucher.player.playback
 
 import kotlinx.coroutines.flow.StateFlow
-import ua.kucher.player.entity.Playlist
 import ua.kucher.player.entity.PlaylistItem
 
 @Suppress(names = ["EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING"])
@@ -10,11 +9,15 @@ internal class PlaybackControllerImpl : PlaybackController {
     override val state: StateFlow<PlaybackState>
         get() = TODO("Not yet implemented")
 
-    override fun prepare(playlist: Playlist) {
+    override fun prepare(playlist: List<PlaylistItem>) {
         TODO("Not yet implemented")
     }
 
     override fun play(item: PlaylistItem) {
+        TODO("Not yet implemented")
+    }
+
+    override fun playNext(item: PlaylistItem) {
         TODO("Not yet implemented")
     }
 
@@ -27,6 +30,10 @@ internal class PlaybackControllerImpl : PlaybackController {
     }
 
     override fun setRepeatMode(mode: PlaybackController.RepeatMode) {
+        TODO("Not yet implemented")
+    }
+
+    override fun inQueue(id: Long): Boolean {
         TODO("Not yet implemented")
     }
 
@@ -45,4 +52,5 @@ internal class PlaybackControllerImpl : PlaybackController {
     override fun back() {
         TODO("Not yet implemented")
     }
+
 }
