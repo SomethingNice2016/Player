@@ -62,7 +62,7 @@ internal fun SearchScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .padding(vertical = PlayerTheme.dimens.dimens16Px)
+                    .padding(vertical = PlayerTheme.dimens.dimens8Px)
                     .padding(end = PlayerTheme.dimens.dimens16Px)
             ) {
 
