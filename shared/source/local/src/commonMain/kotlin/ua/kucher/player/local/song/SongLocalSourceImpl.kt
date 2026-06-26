@@ -94,6 +94,6 @@ internal class SongLocalSourceImpl(
                 }
             }
         }.awaitAll().filterNotNull()
-        songDao.insertArtworks(songsWithArtworks)
+        songDao.setArtworks(songsWithArtworks)
     }
 }
