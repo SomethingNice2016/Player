@@ -38,7 +38,7 @@ internal interface SongDao {
     suspend fun deleteSongById(id: Long)
 
     @Query("UPDATE ${TableName.SONG_TABLE_NAME} SET artwork=:artworkUri WHERE id=:id")
-    suspend fun insertArtwork(id: Long, artworkUri: String)
+    suspend fun setArtwork(id: Long, artworkUri: String)
 
     @Upsert
     suspend fun upsertSongs(list: List<SongEntity>)
@@ -47,9 +47,9 @@ internal interface SongDao {
     suspend fun deleteSongs(ids: List<Long>)
 
     @Transaction
-    suspend fun insertArtworks(songsWithArtworks: List<SongWithArtwork>) {
+    suspend fun setArtworks(songsWithArtworks: List<SongWithArtwork>) {
         songsWithArtworks.forEach { entry ->
-            insertArtwork(entry.songId, entry.artwork)
+            setArtwork(entry.songId, entry.artwork)
         }
     }
 
