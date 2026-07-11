@@ -46,6 +46,12 @@ internal interface SongDao {
     @Query("UPDATE ${TableName.SONG_TABLE_NAME} SET artwork=:artworkUri WHERE id=:id")
     suspend fun setArtwork(id: Long, artworkUri: String)
 
+    @Query("UPDATE ${TableName.SONG_TABLE_NAME} SET listenCount=:count WHERE id=:id")
+    suspend fun updateListenCount(id: Long, count: Int)
+
+    @Query("SELECT listenCount FROM ${TableName.SONG_TABLE_NAME} WHERE id=:id")
+    suspend fun getListenCount(id: Long): Int
+
     @Upsert
     suspend fun upsertSongs(list: List<SongEntity>)
 

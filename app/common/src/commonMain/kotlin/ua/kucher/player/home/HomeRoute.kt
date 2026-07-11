@@ -20,5 +20,8 @@ internal fun HomeRoute(
         onSearch = {
             navController.navigate(AppRoute.Search.path)
         },
+        onSeeAllArtists = {
+
+        }
     )
 }

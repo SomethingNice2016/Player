@@ -15,5 +15,7 @@ internal data class ArtistEntity(
     @ColumnInfo(name = "numberOfAlbums")
     val numberOfAlbums: Int,
     @ColumnInfo(name = "numberOfSongs")
-    val numberOfSongs: Int
+    val numberOfSongs: Int,
+    @ColumnInfo(name = "listenCount")
+    val listenCount: Int = 0
 )

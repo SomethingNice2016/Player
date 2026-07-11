@@ -17,7 +17,6 @@ expect fun rememberScreenSizeWidth(): Dp
 @Composable
 fun rememberStatusBarHeight(): Dp {
     val density = LocalDensity.current
-
     return with(density) {
         WindowInsets.statusBars
             .getTop(density)
@@ -28,7 +27,6 @@ fun rememberStatusBarHeight(): Dp {
 @Composable
 fun rememberNavigationBarHeight(): Dp {
     val density = LocalDensity.current
-
     return with(density) {
         WindowInsets.navigationBars
             .getBottom(this)

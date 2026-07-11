@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
-import androidx.activity.SystemBarStyle
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -46,7 +45,7 @@ class MainActivity : ComponentActivity() {
     private val dispatcherProvider: DispatcherProvider by inject()
 
 
-    private val androidPlaybackController: AndroidPlaybackController by inject()
+    private val playbackController: AndroidPlaybackController by inject()
 
     private val requestAudioPermission =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
@@ -69,11 +68,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
-        enableEdgeToEdge(
-            statusBarStyle = SystemBarStyle.dark(
-                android.graphics.Color.TRANSPARENT,
-            ),
-        )
+        enableEdgeToEdge()
         setContent { App() }
         checkPermission()
     }
@@ -141,7 +136,7 @@ class MainActivity : ComponentActivity() {
             controller = withContext(dispatcherProvider.io) {
                 controllerFuture.get()
             }
-            androidPlaybackController.setController(controller)
+            playbackController.setController(controller)
         } catch (t: Throwable) {
             return
         }

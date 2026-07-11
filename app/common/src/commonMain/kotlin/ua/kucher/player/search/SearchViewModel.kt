@@ -64,15 +64,18 @@ internal class SearchViewModel(
 
     fun playSong(id: Long) {
         viewModelScope.launch {
-            val song = if (playbackController.inQueue(id)) {
-                songRepository.getSongById(id).firstOrNull() ?: return@launch
+            if (playbackController.inQueue(id)) {
+                songRepository.getSongById(id).firstOrNull()?.let { song ->
+                    playbackController.play(song)
+                }
             } else {
                 val songs = songRepository.getAllSongs().firstOrNull() ?: return@launch
-                playbackController.prepare(songs)
-                songs.findLast { song -> song.id == id } ?: return@launch
+                val song = songs.findLast { song -> song.id == id } ?: return@launch
+                playbackController.play(
+                    playlist = songs,
+                    item = song
+                )
             }
-            playbackController.play(song)
         }
     }
-
 }

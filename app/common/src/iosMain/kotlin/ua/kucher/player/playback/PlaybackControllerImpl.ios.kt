@@ -36,6 +36,10 @@ internal class IOSPlaybackController : PlaybackController {
         TODO("Not yet implemented")
     }
 
+    override fun setItemChangeListener(listener: ((id: Long) -> Unit)?) {
+        TODO("Not yet implemented")
+    }
+
     override fun release() {
         TODO("Not yet implemented")
     }

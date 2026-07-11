@@ -19,9 +19,9 @@ interface PlaybackController {
 
     val state: StateFlow<PlaybackState>
 
-    fun prepare(playlist: List<PlaylistItem>)
-
     fun play(item: PlaylistItem)
+
+    fun play(playlist: List<PlaylistItem>, item: PlaylistItem)
 
     fun playNext(item: PlaylistItem)
 
@@ -32,6 +32,8 @@ interface PlaybackController {
     fun setRepeatMode(mode: RepeatMode)
 
     fun inQueue(id: Long): Boolean
+
+    fun setItemChangeListener(listener: ((id: Long) -> Unit)?)
 
     fun release()
 

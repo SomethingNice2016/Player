@@ -60,6 +60,14 @@ internal class SongLocalSourceImpl(
             entity?.toDomain()
         }
 
+    override suspend fun getListenCountById(id: Long) = runCatching {
+        songDao.getListenCount(id)
+    }
+
+    override suspend fun updateListenCountById(id: Long, count: Int) = runCatching {
+        songDao.updateListenCount(id, count)
+    }
+
     override suspend fun fetchSongs(): Result<Unit> = runCatching {
         val songsInDevice = localStorageSource.getSongs()
         val deviceMap = songsInDevice.associateBy { it.id }

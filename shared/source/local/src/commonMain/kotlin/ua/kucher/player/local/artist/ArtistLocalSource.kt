@@ -11,6 +11,10 @@ interface ArtistLocalSource {
 
     fun getArtistsCount(): Flow<Int>
 
+    suspend fun getListenCountById(id: Long): Result<Int>
+
+    suspend fun updateListenCountById(id: Long, count: Int): Result<Unit>
+
     suspend fun fetchArtists(): Result<Unit>
 
 }

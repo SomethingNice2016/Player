@@ -23,7 +23,8 @@ internal val viewModelModule = module {
         MusicPlayerViewModel(
             playbackController = get(),
             timeFormatter = get(),
-            songRepository = get()
+            songRepository = get(),
+            artistRepository = get()
         )
     }
 

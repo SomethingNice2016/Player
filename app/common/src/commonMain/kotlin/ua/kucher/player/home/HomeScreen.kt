@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
@@ -17,6 +18,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -29,8 +33,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import coil3.compose.SubcomposeAsyncImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
@@ -50,7 +56,10 @@ import player.app.common.generated.resources.ic_search
 import player.app.common.generated.resources.playlists
 import player.app.common.generated.resources.playlists_count
 import player.app.common.generated.resources.search
+import player.app.common.generated.resources.see_all
+import player.app.common.generated.resources.top_artists
 import player.app.common.generated.resources.tracks_count
+import ua.kucher.player.common.ArtistUi
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
 import ua.kucher.player.theme.components.PlayerTopAppBarDefaults
@@ -59,10 +68,11 @@ import ua.kucher.player.theme.components.rememberPlayerTopAppBarState
 
 @OptIn(ExperimentalGridApi::class)
 @Composable
-fun HomeScreen(
+internal fun HomeScreen(
     uiState: HomeScreenUiState,
     onSearch: () -> Unit,
-    onRefresh: () -> Unit
+    onRefresh: () -> Unit,
+    onSeeAllArtists: () -> Unit
 ) {
 
     val scrollBehavior = PlayerTopAppBarDefaults.scrollBehavior()
@@ -103,12 +113,11 @@ fun HomeScreen(
             onRefresh = onRefresh,
             enabled = topAppBarState.isExpanded
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = PlayerTheme.dimens.dimens16Px)
-            ) {
+            Column(modifier = Modifier.fillMaxSize()) {
                 Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = PlayerTheme.dimens.dimens16Px),
                     text = stringResource(
                         Res.string.home_screen_items_count,
                         uiState.songsCount,
@@ -122,6 +131,7 @@ fun HomeScreen(
                 Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens16Px))
 
                 FlowRow(
+                    modifier = Modifier.padding(horizontal = PlayerTheme.dimens.dimens16Px),
                     maxItemsInEachRow = 2,
                     horizontalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens8Px),
                     verticalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens8Px)
@@ -158,8 +168,88 @@ fun HomeScreen(
                         onClick = {}
                     )
                 }
+
+                Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens16Px))
+
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = PlayerTheme.dimens.dimens16Px),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(Res.string.top_artists),
+                        style = PlayerTheme.typography.mediumTitle,
+                        color = PlayerTheme.colorScheme.primaryTextColor
+                    )
+                    Spacer(modifier = Modifier.weight(1F))
+                    Text(
+                        text = stringResource(Res.string.see_all),
+                        style = PlayerTheme.typography.smallTitle,
+                        color = PlayerTheme.colorScheme.menuEnableButton,
+                        modifier = Modifier.clickable {
+                            onSeeAllArtists()
+                        },
+                    )
+                }
+                LazyRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentPadding = PaddingValues(
+                        horizontal = PlayerTheme.dimens.dimens8Px
+                    ),
+                ) {
+                    items(
+                        items = uiState.topArtists,
+                        key = { artist -> artist.id }
+                    ) { artist ->
+                        ArtistGridItem(
+                            name = artist.name,
+                            artwork = artist.artwork
+                        )
+                    }
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun ArtistGridItem(
+    modifier: Modifier = Modifier,
+    name: String,
+    artwork: String?
+) {
+    Column(
+        modifier = modifier.padding(PlayerTheme.dimens.dimens8Px),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        SubcomposeAsyncImage(
+            modifier = Modifier
+                .size(PlayerTheme.dimens.dimens80Px)
+                .clip(CircleShape)
+                .background(PlayerTheme.colorScheme.menuEnableButton),
+            model = artwork,
+            contentDescription = name,
+            contentScale = ContentScale.Crop,
+            error = {
+                Image(
+                    painter = painterResource(Res.drawable.ic_artist),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(PlayerTheme.dimens.dimens16Px),
+                    contentScale = ContentScale.Fit
+                )
+            }
+        )
+
+        Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens8Px))
+
+        Text(
+            text = name,
+            color = PlayerTheme.colorScheme.primaryTextColor,
+            style = PlayerTheme.typography.smallBody
+        )
     }
 }
 
@@ -236,10 +326,38 @@ private fun HomeScreenPreview() {
                 isRefreshing = false,
                 songsCount = 123,
                 artistsCount = 33,
-                albumCount = 3
+                albumCount = 3,
+                topArtists = listOf(
+                    ArtistUi(
+                        id = 1L,
+                        name = "Samurai",
+                        artwork = ""
+                    ),
+                    ArtistUi(
+                        id = 2L,
+                        name = "Samurai",
+                        artwork = ""
+                    ),
+                    ArtistUi(
+                        id = 3L,
+                        name = "Samurai",
+                        artwork = ""
+                    ),
+                    ArtistUi(
+                        id = 4L,
+                        name = "Samurai",
+                        artwork = ""
+                    ),
+                    ArtistUi(
+                        id = 5L,
+                        name = "Samurai",
+                        artwork = ""
+                    )
+                )
             ),
             onSearch = {},
-            onRefresh = {}
+            onRefresh = {},
+            onSeeAllArtists = {}
         )
     }
 }

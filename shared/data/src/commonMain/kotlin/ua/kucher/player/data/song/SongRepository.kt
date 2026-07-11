@@ -23,6 +23,8 @@ interface SongRepository {
 
     fun getFavouriteSongsCount(): Flow<Int>
 
+    suspend fun incListenCount(id: Long): Result<Unit>
+
     suspend fun fetchSongs(): Result<Unit>
 
 }
