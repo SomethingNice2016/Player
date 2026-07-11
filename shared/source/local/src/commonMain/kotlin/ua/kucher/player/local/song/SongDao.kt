@@ -34,6 +34,12 @@ internal interface SongDao {
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE id=:id")
     fun getSongById(id: Long): Flow<SongDto?>
 
+    @Query("SELECT COUNT(*) FROM ${TableName.SONG_TABLE_NAME}")
+    fun getSongsCount(): Flow<Int>
+
+    @Query("SELECT COUNT(*) FROM ${TableName.SONG_TABLE_NAME} s INNER JOIN ${TableName.SONG_WITH_PLAYLIST_TABLE_NAME} sp ON s.id = sp.songId WHERE sp.playlistId=:playlistId")
+    fun getSongsCountByPlaylist(playlistId: Long): Flow<Int>
+
     @Query("DELETE FROM ${TableName.SONG_TABLE_NAME} WHERE id=:id")
     suspend fun deleteSongById(id: Long)
 

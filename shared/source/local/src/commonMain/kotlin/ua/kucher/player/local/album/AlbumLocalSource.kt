@@ -11,6 +11,8 @@ interface AlbumLocalSource {
 
     fun getAlbumsByArtist(artistId: Long): Flow<List<Album>>
 
+    fun getAlbumsCount(): Flow<Int>
+
     suspend fun fetchAlbums(): Result<Unit>
 
 }

@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 
 @Composable
-internal fun PlayerRoute(
+internal fun MusicPlayerRoute(
     modifier: Modifier = Modifier,
     navController: NavController,
     viewModel: MusicPlayerViewModel,

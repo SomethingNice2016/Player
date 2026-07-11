@@ -19,6 +19,10 @@ interface SongRepository {
 
     fun searchSongsByTitle(title: String): Flow<List<Song>>
 
+    fun getSongsCount(): Flow<Int>
+
+    fun getFavouriteSongsCount(): Flow<Int>
+
     suspend fun fetchSongs(): Result<Unit>
 
 }

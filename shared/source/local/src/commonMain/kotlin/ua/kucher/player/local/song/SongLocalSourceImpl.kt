@@ -24,29 +24,41 @@ internal class SongLocalSourceImpl(
     private val songDao: SongDao,
 ) : SongLocalSource {
 
-    override fun getSongs(): Flow<List<Song>> = songDao.getSongs().map { entities ->
-        entities.map(SongDto::toDomain)
-    }
+    override fun getSongs(): Flow<List<Song>> =
+        songDao.getSongs().map { entities ->
+            entities.map(SongDto::toDomain)
+        }
 
-    override fun getSongsByPlaylist(playlistId: Long) = songDao.getSongsByPlaylist(playlistId).map { entities ->
-        entities.map(SongDto::toDomain)
-    }
+    override fun getSongsByPlaylist(playlistId: Long) =
+        songDao.getSongsByPlaylist(playlistId).map { entities ->
+            entities.map(SongDto::toDomain)
+        }
 
-    override fun getSongsByAlbum(albumId: Long) = songDao.getSongsByAlbum(albumId).map { entities ->
-        entities.map(SongDto::toDomain)
-    }
+    override fun getSongsByAlbum(albumId: Long) =
+        songDao.getSongsByAlbum(albumId).map { entities ->
+            entities.map(SongDto::toDomain)
+        }
 
-    override fun getSongsByArtist(artistId: Long) = songDao.getSongsByArtist(artistId).map { entities ->
-        entities.map(SongDto::toDomain)
-    }
+    override fun getSongsByArtist(artistId: Long) =
+        songDao.getSongsByArtist(artistId).map { entities ->
+            entities.map(SongDto::toDomain)
+        }
 
-    override fun searchSongsByTitle(title: String) = songDao.searchSongsByTitle(title).map { entities ->
-        entities.map(SongDto::toDomain)
-    }
+    override fun searchSongsByTitle(title: String) =
+        songDao.searchSongsByTitle(title).map { entities ->
+            entities.map(SongDto::toDomain)
+        }
 
-    override fun getSongById(id: Long) = songDao.getSongById(id).map { entity ->
-        entity?.toDomain()
-    }
+    override fun getSongsCount() =
+        songDao.getSongsCount()
+
+    override fun getSongsCountByPlaylist(playlistId: Long) =
+        songDao.getSongsCountByPlaylist(playlistId)
+
+    override fun getSongById(id: Long) =
+        songDao.getSongById(id).map { entity ->
+            entity?.toDomain()
+        }
 
     override suspend fun fetchSongs(): Result<Unit> = runCatching {
         val songsInDevice = localStorageSource.getSongs()

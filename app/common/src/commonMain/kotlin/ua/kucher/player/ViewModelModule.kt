@@ -35,7 +35,13 @@ internal val viewModelModule = module {
         )
     }
 
-    viewModel { HomeViewModel() }
+    viewModel {
+        HomeViewModel(
+            songRepository = get(),
+            artistRepository = get(),
+            albumRepository = get()
+        )
+    }
 
     viewModel { SettingViewModel() }
 }

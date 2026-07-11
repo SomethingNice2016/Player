@@ -25,7 +25,7 @@ import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
 import ua.kucher.player.data.albun.AlbumRepository
 import ua.kucher.player.data.artist.ArtistRepository
 import ua.kucher.player.data.song.SongRepository
-import ua.kucher.player.playback.PlaybackControllerImpl
+import ua.kucher.player.playback.AndroidPlaybackController
 import ua.kucher.player.playback.PlaybackService
 import ua.kucher.player.playback.cancelStopPlaybackService
 import ua.kucher.player.playback.stopPlaybackService
@@ -46,7 +46,7 @@ class MainActivity : ComponentActivity() {
     private val dispatcherProvider: DispatcherProvider by inject()
 
 
-    private val playbackControllerImpl: PlaybackControllerImpl by inject()
+    private val androidPlaybackController: AndroidPlaybackController by inject()
 
     private val requestAudioPermission =
         registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { granted ->
@@ -141,7 +141,7 @@ class MainActivity : ComponentActivity() {
             controller = withContext(dispatcherProvider.io) {
                 controllerFuture.get()
             }
-            playbackControllerImpl.setController(controller)
+            androidPlaybackController.setController(controller)
         } catch (t: Throwable) {
             return
         }

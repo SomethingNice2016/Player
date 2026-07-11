@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 import ua.kucher.player.entity.PlaylistItem
 import kotlin.time.Duration.Companion.milliseconds
 
-internal class PlaybackControllerImpl : PlaybackController {
+internal class AndroidPlaybackController : PlaybackController {
 
     companion object {
         private const val PROGRESS_UPDATE_DELAY = 300L
@@ -85,7 +85,7 @@ internal class PlaybackControllerImpl : PlaybackController {
 
     override fun playNext(item: PlaylistItem) = withController {
         val currentIndex = currentMediaItemIndex
-        val insertIndex = (currentIndex + 1).coerceAtMost(mediaItems.size)
+        val insertIndex = (currentIndex.inc()).coerceAtMost(mediaItems.size)
         val existingIndex = mediaItems.indexOfFirst { mediaItem ->
             mediaItem.mediaId.toLongOrNull() == item.id
         }

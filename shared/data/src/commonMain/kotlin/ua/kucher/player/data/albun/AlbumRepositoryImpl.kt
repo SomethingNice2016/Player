@@ -17,6 +17,9 @@ internal class AlbumRepositoryImpl(
     override fun getAlbumById(id: Long) = albumLocalSource.getAlbumById(id)
         .flowOn(dispatcherProvider.io)
 
+    override fun getAlbumsCount() = albumLocalSource.getAlbumsCount()
+        .flowOn(dispatcherProvider.io)
+
     override suspend fun fetchAlbums() = withContext(dispatcherProvider.io) {
         albumLocalSource.fetchAlbums()
     }

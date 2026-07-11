@@ -1,8 +1,8 @@
 package ua.kucher.player.search
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 
 @Composable
@@ -11,7 +11,7 @@ internal fun SearchRoute(
     navController: NavController
 ) {
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     SearchScreen(
         uiState = uiState,

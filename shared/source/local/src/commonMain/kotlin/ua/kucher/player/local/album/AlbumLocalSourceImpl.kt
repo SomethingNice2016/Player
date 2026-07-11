@@ -8,17 +8,27 @@ internal class AlbumLocalSourceImpl(
     private val albumDao: AlbumDao
 ) : AlbumLocalSource {
 
-    override fun getAlbumById(id: Long) = albumDao.getAlbumById(id).map { entity ->
-        entity?.toDomain()
-    }
+    override fun getAlbumById(id: Long) =
+        albumDao.getAlbumById(id).map { entity ->
+            entity?.toDomain()
+        }
 
-    override fun getAlbums() = albumDao.getAlbums().map { entities ->
-        entities.map(AlbumEntity::toDomain)
-    }
+    override fun getAlbums() =
+        albumDao.getAlbums().map { entities ->
+            entities.map { entity ->
+                entity.toDomain()
+            }
+        }
 
-    override fun getAlbumsByArtist(artistId: Long) = albumDao.getAlbumsByArtist(artistId).map { entities ->
-        entities.map(AlbumEntity::toDomain)
-    }
+    override fun getAlbumsByArtist(artistId: Long) =
+        albumDao.getAlbumsByArtist(artistId).map { entities ->
+            entities.map { entity ->
+                entity.toDomain()
+            }
+        }
+
+    override fun getAlbumsCount() =
+        albumDao.getAlbumsCount()
 
     override suspend fun fetchAlbums() = runCatching {
         val albumsInDevice = localStorageSource.getAlbums()

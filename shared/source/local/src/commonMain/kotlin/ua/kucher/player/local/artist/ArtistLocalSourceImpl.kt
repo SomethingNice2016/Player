@@ -8,13 +8,17 @@ internal class ArtistLocalSourceImpl(
     private val artistDao: ArtistDao
 ) : ArtistLocalSource {
 
-    override fun getArtistById(id: Long) = artistDao.getArtistById(id).map { entity ->
-        entity?.toDomain()
-    }
+    override fun getArtistById(id: Long) =
+        artistDao.getArtistById(id).map { entity ->
+            entity?.toDomain()
+        }
 
-    override fun getArtists() = artistDao.getArtists().map { artists ->
-        artists.map(ArtistEntity::toDomain)
-    }
+    override fun getArtists() =
+        artistDao.getArtists().map { artists ->
+            artists.map(ArtistEntity::toDomain)
+        }
+
+    override fun getArtistsCount() = artistDao.getArtistsCount()
 
     override suspend fun fetchArtists() = runCatching {
         val artistsInDevice = localStorageSource.getArtists()

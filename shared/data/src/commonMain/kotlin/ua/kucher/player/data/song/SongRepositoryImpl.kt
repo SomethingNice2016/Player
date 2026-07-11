@@ -32,6 +32,12 @@ internal class SongRepositoryImpl(
     override fun searchSongsByTitle(title: String) = songLocalSource.searchSongsByTitle(title)
         .flowOn(dispatcherProvider.io)
 
+    override fun getSongsCount() = songLocalSource.getSongsCount()
+        .flowOn(dispatcherProvider.io)
+
+    override fun getFavouriteSongsCount() = songLocalSource.getSongsCountByPlaylist(SongPlaylist.FAVORITE_PLAYLIST_ID)
+        .flowOn(dispatcherProvider.io)
+
     override suspend fun fetchSongs() = withContext(dispatcherProvider.io) {
         songLocalSource.fetchSongs()
     }
