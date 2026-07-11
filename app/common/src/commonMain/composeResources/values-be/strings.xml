@@ -9,4 +9,13 @@
     <string name="song_item_description">%1$s • %2$s</string>
     <string name="search">Пошук</string>
     <string name="search_song_hint">Увядзіце назву песні</string>
+    <string name="home_screen_items_count">%1$s трэкаў • %2$s выканаўцаў • %3$s альбомаў</string>
+    <string name="favorites">Абранае</string>
+    <string name="tracks_count">%1$s трэкаў</string>
+    <string name="playlists">Плэйлісты</string>
+    <string name="playlists_count">%1$s плэйлістаў</string>
+    <string name="albums">Альбомы</string>
+    <string name="albums_count">%1$s альбомаў</string>
+    <string name="artists">Выканаўцы</string>
+    <string name="artists_count">%1$s выканаўцаў</string>
 </resources>

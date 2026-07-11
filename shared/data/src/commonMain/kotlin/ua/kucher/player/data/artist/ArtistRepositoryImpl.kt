@@ -13,6 +13,9 @@ internal class ArtistRepositoryImpl(
     override fun getArtistById(id: Long) = artistLocalSource.getArtistById(id)
         .flowOn(dispatcherProvider.io)
 
+    override fun getArtistsCount() = artistLocalSource.getArtistsCount()
+        .flowOn(dispatcherProvider.io)
+
     override fun getArtists() = artistLocalSource.getArtists()
         .flowOn(dispatcherProvider.io)
 

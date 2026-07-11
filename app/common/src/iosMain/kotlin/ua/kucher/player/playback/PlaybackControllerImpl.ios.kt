@@ -3,8 +3,7 @@ package ua.kucher.player.playback
 import kotlinx.coroutines.flow.StateFlow
 import ua.kucher.player.entity.PlaylistItem
 
-@Suppress(names = ["EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING"])
-internal class PlaybackControllerImpl : PlaybackController {
+internal class IOSPlaybackController : PlaybackController {
 
     override val state: StateFlow<PlaybackState>
         get() = TODO("Not yet implemented")

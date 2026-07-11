@@ -9,4 +9,13 @@
     <string name="song_item_description">%1$s • %2$s</string>
     <string name="search">Search</string>
     <string name="search_song_hint">Enter the song title</string>
+    <string name="home_screen_items_count">%1$s tracks • %2$s artists • %3$s albums</string>
+    <string name="favorites">Favorites</string>
+    <string name="tracks_count">%1$s tracks</string>
+    <string name="playlists">Playlists</string>
+    <string name="playlists_count">%1$s playlists</string>
+    <string name="albums">Albums</string>
+    <string name="albums_count">%1$s albums</string>
+    <string name="artists">Artists</string>
+    <string name="artists_count">%1$s artists</string>
 </resources>

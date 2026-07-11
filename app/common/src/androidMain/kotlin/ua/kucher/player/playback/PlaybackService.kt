@@ -148,6 +148,7 @@ class PlaybackService : MediaLibraryService(),
                     .setAudioAttributes(getAudioAttributes(), true)
                     .setSeekBackIncrementMs(SEEK_INCREMENT)
                     .setSeekForwardIncrementMs(SEEK_INCREMENT)
+                    .setHandleAudioBecomingNoisy(true)
                     .build().apply {
                         addListener(this@PlaybackService)
                         addAnalyticsListener(EventLogger())

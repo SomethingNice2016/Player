@@ -2,12 +2,12 @@ package ua.kucher.player
 
 import org.koin.core.module.Module
 import org.koin.dsl.module
+import ua.kucher.player.playback.AndroidPlaybackController
 import ua.kucher.player.playback.PlaybackController
-import ua.kucher.player.playback.PlaybackControllerImpl
 
 internal actual val mainPlatformModule: Module = module {
 
-    single { PlaybackControllerImpl() }
+    single { AndroidPlaybackController() }
 
-    factory<PlaybackController> { get<PlaybackControllerImpl>() }
+    factory<PlaybackController> { get<AndroidPlaybackController>() }
 }

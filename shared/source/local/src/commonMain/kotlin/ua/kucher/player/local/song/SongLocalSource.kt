@@ -17,6 +17,10 @@ interface SongLocalSource {
 
     fun searchSongsByTitle(title: String): Flow<List<Song>>
 
+    fun getSongsCount(): Flow<Int>
+
+    fun getSongsCountByPlaylist(playlistId: Long): Flow<Int>
+
     suspend fun fetchSongs(): Result<Unit>
 
 }

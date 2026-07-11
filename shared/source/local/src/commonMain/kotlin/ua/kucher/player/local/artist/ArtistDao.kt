@@ -21,6 +21,9 @@ internal interface ArtistDao {
     @Query("SELECT * FROM ${TableName.ARTIST_TABLE_NAME} WHERE id=:id")
     fun getArtistById(id: Long): Flow<ArtistEntity?>
 
+    @Query("SELECT COUNT(*) FROM ${TableName.ARTIST_TABLE_NAME}")
+    fun getArtistsCount(): Flow<Int>
+
     @Query("DELETE FROM ${TableName.ARTIST_TABLE_NAME} WHERE id=:id")
     suspend fun deleteArtistById(id: Long)
 

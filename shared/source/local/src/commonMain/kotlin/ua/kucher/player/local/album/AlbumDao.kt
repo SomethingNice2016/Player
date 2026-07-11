@@ -24,6 +24,9 @@ internal interface AlbumDao {
     @Query("SELECT * FROM ${TableName.ALBUM_TABLE_NAME} WHERE id=:id")
     fun getAlbumById(id: Long): Flow<AlbumEntity?>
 
+    @Query("SELECT COUNT(*) FROM ${TableName.ALBUM_TABLE_NAME}")
+    fun getAlbumsCount(): Flow<Int>
+
     @Query("DELETE FROM ${TableName.ALBUM_TABLE_NAME} WHERE id=:id")
     suspend fun deleteAlbumById(id: Long)
 

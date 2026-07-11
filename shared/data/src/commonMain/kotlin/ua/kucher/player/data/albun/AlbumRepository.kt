@@ -9,6 +9,8 @@ interface AlbumRepository {
 
     fun getAlbumById(id: Long): Flow<Album?>
 
+    fun getAlbumsCount(): Flow<Int>
+
     suspend fun fetchAlbums(): Result<Unit>
 
 }

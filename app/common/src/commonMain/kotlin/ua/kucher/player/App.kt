@@ -3,18 +3,18 @@ package ua.kucher.player
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.rememberNavController
 import org.koin.compose.viewmodel.koinViewModel
 import ua.kucher.player.navigation.AppRoute
 import ua.kucher.player.navigation.PlayerNavigation
+import ua.kucher.player.songplayer.MusicPlayerRoute
 import ua.kucher.player.songplayer.MusicPlayerViewModel
-import ua.kucher.player.songplayer.PlayerRoute
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.BottomBar
 
@@ -24,7 +24,7 @@ fun App() = PlayerTheme(useDarkTheme = true) {
 
     val navController = rememberNavController()
 
-    val navBackStackEntry by navController.currentBackStack.collectAsState()
+    val navBackStackEntry by navController.currentBackStack.collectAsStateWithLifecycle()
 
     val playerViewModel: MusicPlayerViewModel = koinViewModel()
 
@@ -40,7 +40,7 @@ fun App() = PlayerTheme(useDarkTheme = true) {
         menuItems.contains(route)
     } ?: AppRoute.Home
 
-    PlayerRoute(
+    MusicPlayerRoute(
         navController = navController,
         viewModel = playerViewModel
     ) {

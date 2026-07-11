@@ -1,8 +1,8 @@
 package ua.kucher.player.songlist
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import ua.kucher.player.navigation.AppRoute
 
@@ -12,7 +12,7 @@ internal fun SongListRoute(
     viewModel: SongListViewModel
 ) {
 
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     SongListScreen(
         uiState = uiState,

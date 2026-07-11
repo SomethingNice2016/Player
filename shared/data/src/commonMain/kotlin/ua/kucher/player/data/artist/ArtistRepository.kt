@@ -9,6 +9,8 @@ interface ArtistRepository {
 
     fun getArtistById(id: Long): Flow<Artist?>
 
+    fun getArtistsCount(): Flow<Int>
+
     suspend fun fetchArtists(): Result<Unit>
 
 }
