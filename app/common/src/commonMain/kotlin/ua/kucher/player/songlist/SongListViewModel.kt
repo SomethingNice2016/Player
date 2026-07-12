@@ -48,7 +48,7 @@ internal class SongListViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
+        started = SharingStarted.Eagerly,
         initialValue = SongListUiState()
     )
 
@@ -56,8 +56,10 @@ internal class SongListViewModel(
         viewModelScope.launch {
             val songs = songRepository.getAllSongs().firstOrNull() ?: return@launch
             val song = songs.findLast { song -> song.id == id } ?: return@launch
-            playbackController.prepare(songs)
-            playbackController.play(song)
+            playbackController.play(
+                playlist = songs,
+                item = song
+            )
         }
     }
 

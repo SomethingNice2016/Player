@@ -1,5 +1,6 @@
 package ua.kucher.player.playback
 
+import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import kotlinx.coroutines.CoroutineScope
@@ -19,10 +20,12 @@ import kotlin.time.Duration.Companion.milliseconds
 internal class AndroidPlaybackController : PlaybackController {
 
     companion object {
-        private const val PROGRESS_UPDATE_DELAY = 300L
+        private const val PROGRESS_UPDATE_DELAY = 200L
     }
 
     private var controller: MediaController? = null
+
+    private var mediaItemChangeListener: ((id: Long) -> Unit)? = null
 
     private val scope = CoroutineScope(
         context = SupervisorJob() + Dispatchers.Main.immediate
@@ -35,6 +38,13 @@ internal class AndroidPlaybackController : PlaybackController {
     override val state = _state.asStateFlow()
 
     private val playerListener = object : Player.Listener {
+
+        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+            mediaItem?.mediaId?.toLongOrNull()?.let { id ->
+                mediaItemChangeListener?.invoke(id)
+            }
+        }
+
         override fun onEvents(
             player: Player,
             events: Player.Events
@@ -60,12 +70,6 @@ internal class AndroidPlaybackController : PlaybackController {
         }
     }
 
-    override fun prepare(playlist: List<PlaylistItem>) = withController {
-        clearMediaItems()
-        setMediaItems(playlist.map { it.toMediaItem() })
-        prepare()
-    }
-
     override fun play(item: PlaylistItem) = withController {
         if (currentMediaItem?.mediaId == item.id.toString()) {
             playPause()
@@ -79,6 +83,17 @@ internal class AndroidPlaybackController : PlaybackController {
         } else {
             setMediaItem(item.toMediaItem())
         }
+        play()
+        syncState()
+    }
+
+    override fun play(playlist: List<PlaylistItem>, item: PlaylistItem) = withController {
+        val mediaItems = playlist.map { it.toMediaItem() }
+        val index = mediaItems.indexOfFirst {
+            it.mediaId == item.id.toString()
+        }
+        setMediaItems(mediaItems, index, 0L)
+        prepare()
         play()
         syncState()
     }
@@ -116,6 +131,10 @@ internal class AndroidPlaybackController : PlaybackController {
         return !controller?.mediaItems?.filter { item ->
             item.mediaId.toLongOrNull() == id
         }.isNullOrEmpty()
+    }
+
+    override fun setItemChangeListener(listener: ((id: Long) -> Unit)?) {
+        mediaItemChangeListener = listener
     }
 
     override fun playPause() = withController {

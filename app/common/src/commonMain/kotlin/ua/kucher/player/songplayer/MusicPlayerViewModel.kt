@@ -6,11 +6,14 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import ua.kucher.player.common.SongUi
 import ua.kucher.player.core.common.coroutines.combineNotNull
 import ua.kucher.player.core.common.coroutines.flatMapNotNullLatest
 import ua.kucher.player.core.common.coroutines.mapNotNull
 import ua.kucher.player.core.common.datetime.TimeFormatter
+import ua.kucher.player.data.artist.ArtistRepository
 import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.playback.PlaybackController
 
@@ -18,8 +21,12 @@ import ua.kucher.player.playback.PlaybackController
 internal class MusicPlayerViewModel(
     private val playbackController: PlaybackController,
     private val timeFormatter: TimeFormatter,
-    private val songRepository: SongRepository
+    private val songRepository: SongRepository,
+    private val artistRepository: ArtistRepository
 ) : ViewModel() {
+
+    private val mutex = Mutex()
+
     private val currentSong = playbackController.state.map { playbackState ->
         playbackState.currentItemId
     }.flatMapNotNullLatest { id ->
@@ -48,6 +55,21 @@ internal class MusicPlayerViewModel(
             repeatMode = playbackState.repeatMode,
             artworks = playbackState.artworks
         )
+    }
+
+    init {
+        playbackController.setItemChangeListener { songId ->
+            viewModelScope.launch {
+                mutex.withLock {
+                    songRepository.incListenCount(songId)
+                    songRepository.getSongById(songId).firstOrNull()?.let { song ->
+                        song.artist?.let { artist ->
+                            artistRepository.incListenCount(artist.id)
+                        }
+                    }
+                }
+            }
+        }
     }
 
     fun forward() {

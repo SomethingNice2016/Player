@@ -18,6 +18,9 @@ internal interface ArtistDao {
     @Query("SELECT * FROM ${TableName.ARTIST_TABLE_NAME}")
     fun getArtists(): Flow<List<ArtistEntity>>
 
+    @Query("SELECT * FROM ${TableName.ARTIST_TABLE_NAME} ORDER BY listenCount DESC LIMIT 10")
+    fun getTopArtists(): Flow<List<ArtistEntity>>
+
     @Query("SELECT * FROM ${TableName.ARTIST_TABLE_NAME} WHERE id=:id")
     fun getArtistById(id: Long): Flow<ArtistEntity?>
 
@@ -41,6 +44,12 @@ internal interface ArtistDao {
 
     @Query("DELETE FROM ${TableName.ARTIST_TABLE_NAME} WHERE id IN (:ids)")
     suspend fun deleteArtists(ids: List<Long>)
+
+    @Query("UPDATE ${TableName.ARTIST_TABLE_NAME} SET listenCount=:count WHERE id=:id")
+    suspend fun updateListenCount(id: Long, count: Int)
+
+    @Query("SELECT listenCount FROM ${TableName.ARTIST_TABLE_NAME} WHERE id=:id")
+    suspend fun getListenCount(id: Long): Int
 
     @Transaction
     suspend fun mergeArtist(

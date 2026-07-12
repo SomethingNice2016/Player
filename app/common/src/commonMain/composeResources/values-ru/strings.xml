@@ -8,6 +8,7 @@
     <string name="github_url">https://github.com/SomethingNice2016/Player</string>
     <string name="song_item_description">%1$s • %2$s</string>
     <string name="search">Поиск</string>
+    <string name="see_all">Показать все</string>
     <string name="search_song_hint">Введите название песни</string>
     <string name="home_screen_items_count">%1$s треков • %2$s исполнителей • %3$s альбомов</string>
     <string name="favorites">Избранное</string>
@@ -18,4 +19,6 @@
     <string name="albums_count">%1$s альбомов</string>
     <string name="artists">Исполнители</string>
     <string name="artists_count">%1$s исполнителей</string>
+    <string name="top_artists">Популярные исполнители</string>
+    <string name="recently_played">Недавно прослушанные</string>
 </resources>

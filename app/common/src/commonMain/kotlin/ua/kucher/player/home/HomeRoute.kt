@@ -16,9 +16,16 @@ internal fun HomeRoute(
 
     HomeScreen(
         uiState = uiState,
+        onSongClick = viewModel::playSong,
         onRefresh = {},
         onSearch = {
             navController.navigate(AppRoute.Search.path)
         },
+        onSeeAllArtists = {
+
+        },
+        onArtistClick = { id ->
+
+        }
     )
 }

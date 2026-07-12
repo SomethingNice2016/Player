@@ -3,6 +3,7 @@ package ua.kucher.player.data.song
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
+import ua.kucher.player.core.common.result.flatMap
 import ua.kucher.player.entity.SongPlaylist
 import ua.kucher.player.local.song.SongLocalSource
 
@@ -15,6 +16,9 @@ internal class SongRepositoryImpl(
         .flowOn(dispatcherProvider.io)
 
     override fun getAllSongs() = songLocalSource.getSongs()
+        .flowOn(dispatcherProvider.io)
+
+    override fun getTopSongs() = songLocalSource.getTopSongs()
         .flowOn(dispatcherProvider.io)
 
     override fun getFavouriteSongs() = songLocalSource.getSongsByPlaylist(SongPlaylist.FAVORITE_PLAYLIST_ID)
@@ -37,6 +41,12 @@ internal class SongRepositoryImpl(
 
     override fun getFavouriteSongsCount() = songLocalSource.getSongsCountByPlaylist(SongPlaylist.FAVORITE_PLAYLIST_ID)
         .flowOn(dispatcherProvider.io)
+
+    override suspend fun incListenCount(id: Long) = withContext(dispatcherProvider.io) {
+        songLocalSource.getListenCountById(id).flatMap { count ->
+            songLocalSource.updateListenCountById(id, count.inc())
+        }
+    }
 
     override suspend fun fetchSongs() = withContext(dispatcherProvider.io) {
         songLocalSource.fetchSongs()

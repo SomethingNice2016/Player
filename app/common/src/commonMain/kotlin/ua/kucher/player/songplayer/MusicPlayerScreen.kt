@@ -103,6 +103,10 @@ internal fun MusicPlayerScreen(
         mutableStateOf(false)
     }
 
+    var artworkTintAlpha by remember {
+        mutableFloatStateOf(0F)
+    }
+
     val backgroundHeight = lerp(
         start = artworkSmallSize + (PlayerTheme.dimens.dimens12Px * 2),
         stop = screenHeight + statusBarHeight,
@@ -258,22 +262,26 @@ internal fun MusicPlayerScreen(
                         }
                     )
             ) {
-                if (!nonNullState.currentSong.artwork.isNullOrBlank()) {
-                    FrostedGlass(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .alpha(imageBackgroundAlpha),
-                        blurRadius = 150F,
-                        enabled = true,
-                        tint = Color.Black.copy(alpha = 0.70F)
-                    ) {
-                        AsyncImage(
-                            modifier = Modifier.fillMaxSize(),
-                            model = nonNullState.currentSong.artwork,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                        )
-                    }
+                FrostedGlass(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .alpha(imageBackgroundAlpha),
+                    blurRadius = 150F,
+                    enabled = true,
+                    tint = Color.Black.copy(alpha = artworkTintAlpha)
+                ) {
+                    AsyncImage(
+                        modifier = Modifier.fillMaxSize(),
+                        model = nonNullState.currentSong.artwork,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        onError = {
+                            artworkTintAlpha = 0F
+                        },
+                        onSuccess = {
+                            artworkTintAlpha = 0.8F
+                        }
+                    )
                 }
                 Row(
                     modifier = Modifier
