@@ -8,9 +8,10 @@
     <string name="github_url">https://github.com/SomethingNice2016/Player</string>
     <string name="song_item_description">%1$s • %2$s</string>
     <string name="search">Пошук</string>
+    <string name="see_all">Переглянути всі</string>
     <string name="search_song_hint">Введіть назву пісні</string>
     <string name="home_screen_items_count">%1$s треків • %2$s виконавців • %3$s альбомів</string>
-    <string name="favorites">Улюблене</string>
+    <string name="favorites">Обране</string>
     <string name="tracks_count">%1$s треків</string>
     <string name="playlists">Плейлисти</string>
     <string name="playlists_count">%1$s плейлистів</string>
@@ -18,4 +19,6 @@
     <string name="albums_count">%1$s альбомів</string>
     <string name="artists">Виконавці</string>
     <string name="artists_count">%1$s виконавців</string>
+    <string name="top_artists">Популярні виконавці</string>
+    <string name="recently_played">Нещодавно прослухані</string>
 </resources>

@@ -48,7 +48,7 @@ internal class SongListViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
+        started = SharingStarted.Eagerly,
         initialValue = SongListUiState()
     )
 

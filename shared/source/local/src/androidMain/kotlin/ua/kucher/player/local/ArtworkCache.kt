@@ -17,7 +17,7 @@ internal actual class ArtworkCache(private val context: Context) {
         private const val ARTWORK_FORMAT = ".jpg"
     }
 
-    actual suspend fun getAndCacheArtwork(songId: Long) = runCatching {
+    actual suspend fun getAndCacheSongArtwork(songId: Long) = runCatching {
         val artworkFile = File(
             context.filesDir,
             "$SONG_ARTWORK_DIR/$songId$ARTWORK_FORMAT"
@@ -58,7 +58,7 @@ internal actual class ArtworkCache(private val context: Context) {
         return@runCatching artworkFile.toURI().toString()
     }.getOrNull()
 
-    actual suspend fun deleteArtworkFromCache(songId: Long) {
+    actual suspend fun deleteSongArtworkFromCache(songId: Long) {
         runCatching {
             val artworkFile = File(
                 context.filesDir,

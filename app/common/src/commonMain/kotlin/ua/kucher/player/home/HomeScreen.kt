@@ -3,6 +3,8 @@ package ua.kucher.player.home
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,7 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -32,11 +34,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import coil3.compose.SubcomposeAsyncImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
@@ -55,16 +54,20 @@ import player.app.common.generated.resources.ic_playlist
 import player.app.common.generated.resources.ic_search
 import player.app.common.generated.resources.playlists
 import player.app.common.generated.resources.playlists_count
+import player.app.common.generated.resources.recently_played
 import player.app.common.generated.resources.search
 import player.app.common.generated.resources.see_all
 import player.app.common.generated.resources.top_artists
 import player.app.common.generated.resources.tracks_count
 import ua.kucher.player.common.ArtistUi
+import ua.kucher.player.common.SongUi
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
-import ua.kucher.player.theme.components.PlayerTopAppBarDefaults
+import ua.kucher.player.theme.components.items.ArtistGridItem
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
-import ua.kucher.player.theme.components.rememberPlayerTopAppBarState
+import ua.kucher.player.theme.components.items.SongGridItem
+import ua.kucher.player.theme.extensions.BottomNavSpacer
+import ua.kucher.player.theme.extensions.MiniPlayerSpacer
 
 @OptIn(ExperimentalGridApi::class)
 @Composable
@@ -72,19 +75,17 @@ internal fun HomeScreen(
     uiState: HomeScreenUiState,
     onSearch: () -> Unit,
     onRefresh: () -> Unit,
-    onSeeAllArtists: () -> Unit
+    onSeeAllArtists: () -> Unit,
+    onSongClick: (id: Long) -> Unit,
+    onArtistClick: (id: Long) -> Unit
 ) {
-
-    val scrollBehavior = PlayerTopAppBarDefaults.scrollBehavior()
-
-    val topAppBarState = rememberPlayerTopAppBarState(scrollBehavior)
 
     val pullToRefreshState = rememberPullToRefreshState()
 
+    val scrollableState = rememberScrollState()
+
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = Modifier.fillMaxSize(),
         contentWindowInsets = WindowInsets(0),
         containerColor = Color.Transparent,
         topBar = {
@@ -93,7 +94,6 @@ internal fun HomeScreen(
                 titleRes = Res.string.home_label,
                 navigationIcon = {},
                 showDivider = { false },
-                scrollBehavior = scrollBehavior,
                 actions = {
                     PlayerMenuIconButton(
                         painter = painterResource(Res.drawable.ic_search),
@@ -111,9 +111,17 @@ internal fun HomeScreen(
             state = pullToRefreshState,
             isRefreshing = uiState.isRefreshing,
             onRefresh = onRefresh,
-            enabled = topAppBarState.isExpanded
+            enabled = true
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .scrollable(
+                        state = scrollableState,
+                        orientation = Orientation.Vertical,
+                        enabled = true
+                    )
+            ) {
                 Text(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -171,85 +179,106 @@ internal fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens16Px))
 
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = PlayerTheme.dimens.dimens16Px),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(Res.string.top_artists),
-                        style = PlayerTheme.typography.mediumTitle,
-                        color = PlayerTheme.colorScheme.primaryTextColor
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    Text(
-                        text = stringResource(Res.string.see_all),
-                        style = PlayerTheme.typography.smallTitle,
-                        color = PlayerTheme.colorScheme.menuEnableButton,
-                        modifier = Modifier.clickable {
-                            onSeeAllArtists()
-                        },
-                    )
-                }
-                LazyRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentPadding = PaddingValues(
-                        horizontal = PlayerTheme.dimens.dimens8Px
-                    ),
-                ) {
-                    items(
-                        items = uiState.topArtists,
-                        key = { artist -> artist.id }
-                    ) { artist ->
-                        ArtistGridItem(
-                            name = artist.name,
-                            artwork = artist.artwork
+                if (uiState.topSongs.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = PlayerTheme.dimens.dimens16Px),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.recently_played),
+                            style = PlayerTheme.typography.mediumTitle,
+                            color = PlayerTheme.colorScheme.primaryTextColor
+                        )
+                        Spacer(modifier = Modifier.weight(1F))
+                        Text(
+                            text = stringResource(Res.string.see_all),
+                            style = PlayerTheme.typography.smallTitle,
+                            color = PlayerTheme.colorScheme.menuEnableButton,
+                            modifier = Modifier.clickable {
+                                onSeeAllArtists()
+                            },
                         )
                     }
+
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(
+                            horizontal = PlayerTheme.dimens.dimens16Px,
+                            vertical = PlayerTheme.dimens.dimens8Px
+                        ),
+                        horizontalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens16Px)
+                    ) {
+                        items(
+                            items = uiState.topSongs,
+                            key = { song -> song.id }
+                        ) { song ->
+                            SongGridItem(
+                                title = song.title,
+                                artist = song.artistName,
+                                artwork = song.artwork,
+                                isSongPlaying = song.id == uiState.playingSongId,
+                                isPlaying = uiState.isPlaying,
+                                onClick = {
+                                    onSongClick(song.id)
+                                }
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens8Px))
                 }
+
+                if (uiState.topArtists.isNotEmpty()) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = PlayerTheme.dimens.dimens16Px),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.top_artists),
+                            style = PlayerTheme.typography.mediumTitle,
+                            color = PlayerTheme.colorScheme.primaryTextColor
+                        )
+                        Spacer(modifier = Modifier.weight(1F))
+                        Text(
+                            text = stringResource(Res.string.see_all),
+                            style = PlayerTheme.typography.smallTitle,
+                            color = PlayerTheme.colorScheme.menuEnableButton,
+                            modifier = Modifier.clickable {
+                                onSeeAllArtists()
+                            },
+                        )
+                    }
+                    LazyRow(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentPadding = PaddingValues(
+                            horizontal = PlayerTheme.dimens.dimens16Px,
+                            vertical = PlayerTheme.dimens.dimens8Px
+                        ),
+                        horizontalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens16Px)
+                    ) {
+                        items(
+                            items = uiState.topArtists,
+                            key = { artist -> artist.id }
+                        ) { artist ->
+                            ArtistGridItem(
+                                name = artist.name,
+                                artwork = artist.artwork,
+                                onClick = {
+                                    onArtistClick(artist.id)
+                                }
+                            )
+                        }
+                    }
+                }
+                if (uiState.isPlayerShowed) {
+                    MiniPlayerSpacer()
+                }
+                BottomNavSpacer()
             }
         }
-    }
-}
-
-@Composable
-private fun ArtistGridItem(
-    modifier: Modifier = Modifier,
-    name: String,
-    artwork: String?
-) {
-    Column(
-        modifier = modifier.padding(PlayerTheme.dimens.dimens8Px),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        SubcomposeAsyncImage(
-            modifier = Modifier
-                .size(PlayerTheme.dimens.dimens80Px)
-                .clip(CircleShape)
-                .background(PlayerTheme.colorScheme.menuEnableButton),
-            model = artwork,
-            contentDescription = name,
-            contentScale = ContentScale.Crop,
-            error = {
-                Image(
-                    painter = painterResource(Res.drawable.ic_artist),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(PlayerTheme.dimens.dimens16Px),
-                    contentScale = ContentScale.Fit
-                )
-            }
-        )
-
-        Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens8Px))
-
-        Text(
-            text = name,
-            color = PlayerTheme.colorScheme.primaryTextColor,
-            style = PlayerTheme.typography.smallBody
-        )
     }
 }
 
@@ -327,6 +356,40 @@ private fun HomeScreenPreview() {
                 songsCount = 123,
                 artistsCount = 33,
                 albumCount = 3,
+                topSongs = listOf(
+                    SongUi(
+                        id = 1L,
+                        title = "Never fade away",
+                        artistName = "Samurai",
+                        displayDuration = "2:22",
+                        duration = 100000L,
+                        artwork = ""
+                    ),
+                    SongUi(
+                        id = 2L,
+                        title = "Never fade away",
+                        artistName = "Samurai",
+                        displayDuration = "2:22",
+                        duration = 100000L,
+                        artwork = ""
+                    ),
+                    SongUi(
+                        id = 3L,
+                        title = "Never fade away",
+                        artistName = "Samurai",
+                        displayDuration = "2:22",
+                        duration = 100000L,
+                        artwork = ""
+                    ),
+                    SongUi(
+                        id = 4L,
+                        title = "Never fade away",
+                        artistName = "Samurai",
+                        displayDuration = "2:22",
+                        duration = 100000L,
+                        artwork = ""
+                    )
+                ),
                 topArtists = listOf(
                     ArtistUi(
                         id = 1L,
@@ -357,7 +420,9 @@ private fun HomeScreenPreview() {
             ),
             onSearch = {},
             onRefresh = {},
-            onSeeAllArtists = {}
+            onSeeAllArtists = {},
+            onSongClick = {},
+            onArtistClick = {}
         )
     }
 }

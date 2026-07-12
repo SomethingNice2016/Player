@@ -19,6 +19,9 @@ internal interface SongDao {
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME}")
     fun getSongs(): Flow<List<SongDto>>
 
+    @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} ORDER BY listenCount DESC LIMIT 10")
+    fun getTopSongs(): Flow<List<SongDto>>
+
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE albumId=:albumId")
     fun getSongsByAlbum(albumId: Long): Flow<List<SongDto>>
 

@@ -54,7 +54,7 @@ internal class SearchViewModel(
         )
     }.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(),
+        started = SharingStarted.Eagerly,
         initialValue = SearchUiState()
     )
 

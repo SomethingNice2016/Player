@@ -40,7 +40,8 @@ internal val viewModelModule = module {
         HomeViewModel(
             songRepository = get(),
             artistRepository = get(),
-            albumRepository = get()
+            albumRepository = get(),
+            playbackController = get()
         )
     }
 

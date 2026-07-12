@@ -18,6 +18,9 @@ internal class SongRepositoryImpl(
     override fun getAllSongs() = songLocalSource.getSongs()
         .flowOn(dispatcherProvider.io)
 
+    override fun getTopSongs() = songLocalSource.getTopSongs()
+        .flowOn(dispatcherProvider.io)
+
     override fun getFavouriteSongs() = songLocalSource.getSongsByPlaylist(SongPlaylist.FAVORITE_PLAYLIST_ID)
         .flowOn(dispatcherProvider.io)
 

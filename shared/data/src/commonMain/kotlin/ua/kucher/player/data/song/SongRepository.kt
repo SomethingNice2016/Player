@@ -9,6 +9,8 @@ interface SongRepository {
 
     fun getAllSongs(): Flow<List<Song>>
 
+    fun getTopSongs(): Flow<List<Song>>
+
     fun getFavouriteSongs(): Flow<List<Song>>
 
     fun getSongsByAlbum(albumId: Long): Flow<List<Song>>

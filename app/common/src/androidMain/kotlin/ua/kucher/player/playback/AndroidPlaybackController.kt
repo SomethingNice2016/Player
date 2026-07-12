@@ -20,7 +20,7 @@ import kotlin.time.Duration.Companion.milliseconds
 internal class AndroidPlaybackController : PlaybackController {
 
     companion object {
-        private const val PROGRESS_UPDATE_DELAY = 300L
+        private const val PROGRESS_UPDATE_DELAY = 200L
     }
 
     private var controller: MediaController? = null

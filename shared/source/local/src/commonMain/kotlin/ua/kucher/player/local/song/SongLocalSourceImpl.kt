@@ -29,6 +29,11 @@ internal class SongLocalSourceImpl(
             entities.map(SongDto::toDomain)
         }
 
+    override fun getTopSongs(): Flow<List<Song>> =
+        songDao.getTopSongs().map { entities ->
+            entities.map(SongDto::toDomain)
+        }
+
     override fun getSongsByPlaylist(playlistId: Long) =
         songDao.getSongsByPlaylist(playlistId).map { entities ->
             entities.map(SongDto::toDomain)
@@ -100,13 +105,13 @@ internal class SongLocalSourceImpl(
     ) = coroutineScope {
         removedIds.map { id ->
             async {
-                artworkCache.deleteArtworkFromCache(id)
+                artworkCache.deleteSongArtworkFromCache(id)
             }
         }.awaitAll()
 
         val songsWithArtworks = insertedSongs.map { song ->
             async(dispatcherProvider.artworkCache) {
-                artworkCache.getAndCacheArtwork(song.id)?.let { artwork ->
+                artworkCache.getAndCacheSongArtwork(song.id)?.let { artwork ->
                     SongWithArtwork(
                         songId = song.id,
                         artwork = artwork
