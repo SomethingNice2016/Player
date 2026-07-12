@@ -427,7 +427,8 @@ private fun PlayerScreenPreview() {
                     ),
                     onSongClick = {},
                     onRefresh = {},
-                    onSearch = {}
+                    onSearch = {},
+                    onMenuClick = {}
                 )
             }
         )

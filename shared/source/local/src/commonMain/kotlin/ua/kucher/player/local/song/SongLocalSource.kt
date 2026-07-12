@@ -11,6 +11,8 @@ interface SongLocalSource {
 
     fun getTopSongs(): Flow<List<Song>>
 
+    fun getRecentlyPlayedSongs(): Flow<List<Song>>
+
     fun getSongsByPlaylist(playlistId: Long): Flow<List<Song>>
 
     fun getSongsByAlbum(albumId: Long): Flow<List<Song>>
@@ -26,6 +28,8 @@ interface SongLocalSource {
     suspend fun getListenCountById(id: Long): Result<Int>
 
     suspend fun updateListenCountById(id: Long, count: Int): Result<Unit>
+
+    suspend fun updatePlayedTimeById(id: Long, timestamp: Long): Result<Unit>
 
     suspend fun fetchSongs(): Result<Unit>
 

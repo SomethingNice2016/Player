@@ -7,4 +7,5 @@ internal data class ArtistUi(
     val id: Long,
     val name: String,
     val artwork: String?,
+    val numberOfSongs: Int
 )

@@ -10,6 +10,7 @@
     <string name="search">Suchen</string>
     <string name="see_all">Alle anzeigen</string>
     <string name="search_song_hint">Songtitel eingeben</string>
+    <string name="search_artist_hint">Künstlername eingeben</string>
     <string name="home_screen_items_count">%1$s Titel • %2$s Künstler • %3$s Alben</string>
     <string name="favorites">Favoriten</string>
     <string name="tracks_count">%1$s Titel</string>

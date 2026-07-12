@@ -1,4 +1,4 @@
-package ua.kucher.player.search
+package ua.kucher.player.songsearch
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
@@ -33,10 +33,11 @@ import ua.kucher.player.theme.components.SongsList
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 
 @Composable
-internal fun SearchScreen(
-    uiState: SearchUiState,
+internal fun SongsSearchScreen(
+    uiState: SongsSearchUiState,
     onSearch: (String) -> Unit,
-    onSongClick: (songId: Long) -> Unit,
+    onSongClick: (id: Long) -> Unit,
+    onMenuClick: (id: Long) -> Unit,
     onBack: () -> Unit
 ) {
 
@@ -112,6 +113,10 @@ internal fun SearchScreen(
             onSongClick = { id ->
                 keyboardController?.hide()
                 onSongClick(id)
+            },
+            onMenuClick = { id ->
+                keyboardController?.hide()
+                onMenuClick(id)
             }
         )
     }
@@ -119,7 +124,7 @@ internal fun SearchScreen(
 
 @Preview
 @Composable
-private fun SearchScreenPreview() {
+private fun SongsSearchScreenPreview() {
     val songUi = SongUi(
         id = 12,
         title = "Never fade away",
@@ -128,8 +133,8 @@ private fun SearchScreenPreview() {
         duration = 69000L,
         artwork = ""
     )
-    SearchScreen(
-        uiState = SearchUiState(
+    SongsSearchScreen(
+        uiState = SongsSearchUiState(
             searchQuery = "Never",
             searchResult = listOf(
                 songUi,
@@ -140,6 +145,7 @@ private fun SearchScreenPreview() {
         ),
         onSearch = {},
         onSongClick = {},
+        onMenuClick = {},
         onBack = {}
     )
 }

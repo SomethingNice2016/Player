@@ -22,6 +22,9 @@ internal interface SongDao {
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} ORDER BY listenCount DESC LIMIT 10")
     fun getTopSongs(): Flow<List<SongDto>>
 
+    @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE lastPlayed != 0 ORDER BY lastPlayed DESC LIMIT 10")
+    fun getRecentlyPlayedSongs(): Flow<List<SongDto>>
+
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE albumId=:albumId")
     fun getSongsByAlbum(albumId: Long): Flow<List<SongDto>>
 
@@ -54,6 +57,9 @@ internal interface SongDao {
 
     @Query("SELECT listenCount FROM ${TableName.SONG_TABLE_NAME} WHERE id=:id")
     suspend fun getListenCount(id: Long): Int
+
+    @Query("UPDATE ${TableName.SONG_TABLE_NAME} SET lastPlayed=:timestamp WHERE id=:id")
+    suspend fun updatePlayedTime(id: Long, timestamp: Long)
 
     @Upsert
     suspend fun upsertSongs(list: List<SongEntity>)

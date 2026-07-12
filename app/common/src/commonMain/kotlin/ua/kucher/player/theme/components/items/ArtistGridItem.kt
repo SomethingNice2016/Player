@@ -45,7 +45,7 @@ internal fun ArtistGridItem(
             modifier = Modifier
                 .size(PlayerTheme.dimens.dimens80Px)
                 .clip(CircleShape)
-                .background(PlayerTheme.colorScheme.menuEnableButton),
+                .background(PlayerTheme.colorScheme.rippleColor),
             model = artwork,
             contentDescription = name,
             contentScale = ContentScale.Crop,

@@ -23,6 +23,11 @@ internal class ArtistLocalSourceImpl(
             artists.map(ArtistEntity::toDomain)
         }
 
+    override fun searchArtistsByName(name: String) =
+        artistDao.searchArtistByName(name).map { artists ->
+            artists.map(ArtistEntity::toDomain)
+        }
+
     override fun getArtistsCount() =
         artistDao.getArtistsCount()
 

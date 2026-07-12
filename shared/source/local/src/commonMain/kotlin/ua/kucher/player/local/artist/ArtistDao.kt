@@ -21,6 +21,9 @@ internal interface ArtistDao {
     @Query("SELECT * FROM ${TableName.ARTIST_TABLE_NAME} ORDER BY listenCount DESC LIMIT 10")
     fun getTopArtists(): Flow<List<ArtistEntity>>
 
+    @Query("SELECT * FROM ${TableName.ARTIST_TABLE_NAME} WHERE LOWER(name) LIKE '%' || LOWER(:name) || '%'")
+    fun searchArtistByName(name: String): Flow<List<ArtistEntity>>
+
     @Query("SELECT * FROM ${TableName.ARTIST_TABLE_NAME} WHERE id=:id")
     fun getArtistById(id: Long): Flow<ArtistEntity?>
 

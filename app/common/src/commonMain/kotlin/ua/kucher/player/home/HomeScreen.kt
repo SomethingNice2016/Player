@@ -74,6 +74,7 @@ internal fun HomeScreen(
     onSearch: () -> Unit,
     onRefresh: () -> Unit,
     onSeeAllArtists: () -> Unit,
+    onSeeAllSongs: () -> Unit,
     onSongClick: (id: Long) -> Unit,
     onArtistClick: (id: Long) -> Unit
 ) {
@@ -175,14 +176,14 @@ internal fun HomeScreen(
                             primaryText = stringResource(Res.string.artists),
                             secondaryText = stringResource(Res.string.artists_count, uiState.artistsCount),
                             painter = painterResource(Res.drawable.ic_artist),
-                            onClick = {}
+                            onClick = onSeeAllArtists
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens16Px))
 
-                if (uiState.topSongs.isNotEmpty()) {
+                if (uiState.recentlyPlayedSongs.isNotEmpty()) {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -200,7 +201,7 @@ internal fun HomeScreen(
                             style = PlayerTheme.typography.smallTitle,
                             color = PlayerTheme.colorScheme.menuEnableButton,
                             modifier = Modifier.clickable {
-                                onSeeAllArtists()
+                                onSeeAllSongs()
                             },
                         )
                     }
@@ -214,7 +215,7 @@ internal fun HomeScreen(
                         horizontalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens16Px)
                     ) {
                         items(
-                            items = uiState.topSongs,
+                            items = uiState.recentlyPlayedSongs,
                             key = { song -> song.id }
                         ) { song ->
                             SongGridItem(
@@ -348,6 +349,23 @@ private fun HomeScreenTab(
 @Preview
 @Composable
 private fun HomeScreenPreview() {
+
+    val songUi = SongUi(
+        id = 1L,
+        title = "Never fade away",
+        artistName = "Samurai",
+        displayDuration = "2:22",
+        duration = 100000L,
+        artwork = ""
+    )
+
+    val artistUi = ArtistUi(
+        id = 1L,
+        name = "Samurai",
+        artwork = "",
+        numberOfSongs = 22
+    )
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -359,71 +377,23 @@ private fun HomeScreenPreview() {
                 songsCount = 123,
                 artistsCount = 33,
                 albumCount = 3,
-                topSongs = listOf(
-                    SongUi(
-                        id = 1L,
-                        title = "Never fade away",
-                        artistName = "Samurai",
-                        displayDuration = "2:22",
-                        duration = 100000L,
-                        artwork = ""
-                    ),
-                    SongUi(
-                        id = 2L,
-                        title = "Never fade away",
-                        artistName = "Samurai",
-                        displayDuration = "2:22",
-                        duration = 100000L,
-                        artwork = ""
-                    ),
-                    SongUi(
-                        id = 3L,
-                        title = "Never fade away",
-                        artistName = "Samurai",
-                        displayDuration = "2:22",
-                        duration = 100000L,
-                        artwork = ""
-                    ),
-                    SongUi(
-                        id = 4L,
-                        title = "Never fade away",
-                        artistName = "Samurai",
-                        displayDuration = "2:22",
-                        duration = 100000L,
-                        artwork = ""
-                    )
+                recentlyPlayedSongs = listOf(
+                    songUi,
+                    songUi.copy(id = 2L),
+                    songUi.copy(id = 3L),
+                    songUi.copy(id = 4L)
                 ),
                 topArtists = listOf(
-                    ArtistUi(
-                        id = 1L,
-                        name = "Samurai",
-                        artwork = ""
-                    ),
-                    ArtistUi(
-                        id = 2L,
-                        name = "Samurai",
-                        artwork = ""
-                    ),
-                    ArtistUi(
-                        id = 3L,
-                        name = "Samurai",
-                        artwork = ""
-                    ),
-                    ArtistUi(
-                        id = 4L,
-                        name = "Samurai",
-                        artwork = ""
-                    ),
-                    ArtistUi(
-                        id = 5L,
-                        name = "Samurai",
-                        artwork = ""
-                    )
+                    artistUi,
+                    artistUi.copy(id = 2L),
+                    artistUi.copy(id = 3L),
+                    artistUi.copy(id = 4L)
                 )
             ),
             onSearch = {},
             onRefresh = {},
             onSeeAllArtists = {},
+            onSeeAllSongs = {},
             onSongClick = {},
             onArtistClick = {}
         )

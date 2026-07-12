@@ -1,16 +1,17 @@
 package ua.kucher.player.playback
 
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -25,8 +26,6 @@ internal class AndroidPlaybackController : PlaybackController {
 
     private var controller: MediaController? = null
 
-    private var mediaItemChangeListener: ((id: Long) -> Unit)? = null
-
     private val scope = CoroutineScope(
         context = SupervisorJob() + Dispatchers.Main.immediate
     )
@@ -39,21 +38,38 @@ internal class AndroidPlaybackController : PlaybackController {
 
     private val playerListener = object : Player.Listener {
 
-        override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-            mediaItem?.mediaId?.toLongOrNull()?.let { id ->
-                mediaItemChangeListener?.invoke(id)
-            }
-        }
-
         override fun onEvents(
             player: Player,
             events: Player.Events
         ) {
-            syncState()
+            handlePlaybackChanged(player, events)
+            handleStateChanged(events)
+        }
+
+        private fun handlePlaybackChanged(
+            player: Player,
+            events: Player.Events
+        ) {
+            if (!events.contains(Player.EVENT_IS_PLAYING_CHANGED)) return
+
             if (player.isPlaying) {
                 startProgressUpdates()
             } else {
                 stopProgressUpdates()
+            }
+        }
+
+        private fun handleStateChanged(
+            events: Player.Events
+        ) {
+            if (
+                events.contains(Player.EVENT_MEDIA_ITEM_TRANSITION) ||
+                events.contains(Player.EVENT_PLAYBACK_STATE_CHANGED) ||
+                events.contains(Player.EVENT_REPEAT_MODE_CHANGED) ||
+                events.contains(Player.EVENT_SHUFFLE_MODE_ENABLED_CHANGED) ||
+                events.contains(Player.EVENT_IS_PLAYING_CHANGED)
+            ) {
+                syncState()
             }
         }
     }
@@ -131,10 +147,6 @@ internal class AndroidPlaybackController : PlaybackController {
         return !controller?.mediaItems?.filter { item ->
             item.mediaId.toLongOrNull() == id
         }.isNullOrEmpty()
-    }
-
-    override fun setItemChangeListener(listener: ((id: Long) -> Unit)?) {
-        mediaItemChangeListener = listener
     }
 
     override fun playPause() = withController {

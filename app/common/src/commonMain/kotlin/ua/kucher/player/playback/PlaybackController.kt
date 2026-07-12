@@ -33,8 +33,6 @@ interface PlaybackController {
 
     fun inQueue(id: Long): Boolean
 
-    fun setItemChangeListener(listener: ((id: Long) -> Unit)?)
-
     fun release()
 
     fun playPause()

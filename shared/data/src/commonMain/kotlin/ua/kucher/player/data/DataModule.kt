@@ -30,6 +30,7 @@ val dataModule = module {
     single<SongRepository> {
         SongRepositoryImpl(
             dispatcherProvider = get(),
+            timeProvider = get(),
             songLocalSource = get(),
         )
     }

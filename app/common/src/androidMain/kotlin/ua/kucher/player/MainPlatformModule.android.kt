@@ -7,7 +7,8 @@ import ua.kucher.player.playback.PlaybackController
 
 internal actual val mainPlatformModule: Module = module {
 
+    factory<PlaybackController> { get<AndroidPlaybackController>() }
+
     single { AndroidPlaybackController() }
 
-    factory<PlaybackController> { get<AndroidPlaybackController>() }
 }

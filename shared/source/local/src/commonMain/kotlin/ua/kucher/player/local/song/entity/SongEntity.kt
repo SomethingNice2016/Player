@@ -24,6 +24,8 @@ internal data class SongEntity(
     val artistId: Long,
     @ColumnInfo(name = "lastModified")
     val lastModified: Long,
+    @ColumnInfo(name = "lastPlayed")
+    val lastPlayed: Long = 0L,
     @ColumnInfo(name = "listenCount")
-    val listenCount: Int = 0
+    val listenCount: Int = 0,
 )

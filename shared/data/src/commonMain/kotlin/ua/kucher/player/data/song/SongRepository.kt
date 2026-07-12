@@ -11,6 +11,8 @@ interface SongRepository {
 
     fun getTopSongs(): Flow<List<Song>>
 
+    fun getRecentlyPlayedSongs(): Flow<List<Song>>
+
     fun getFavouriteSongs(): Flow<List<Song>>
 
     fun getSongsByAlbum(albumId: Long): Flow<List<Song>>
@@ -25,7 +27,7 @@ interface SongRepository {
 
     fun getFavouriteSongsCount(): Flow<Int>
 
-    suspend fun incListenCount(id: Long): Result<Unit>
+    suspend fun registerPlayback(id: Long): Result<Unit>
 
     suspend fun fetchSongs(): Result<Unit>
 
