@@ -10,6 +10,7 @@
     <string name="search">Пошук</string>
     <string name="see_all">Паказаць усё</string>
     <string name="search_song_hint">Увядзіце назву песні</string>
+    <string name="search_artist_hint">Увядзіце імя выканаўцы</string>
     <string name="home_screen_items_count">%1$s трэкаў • %2$s выканаўцаў • %3$s альбомаў</string>
     <string name="favorites">Абранае</string>
     <string name="tracks_count">%1$s трэкаў</string>

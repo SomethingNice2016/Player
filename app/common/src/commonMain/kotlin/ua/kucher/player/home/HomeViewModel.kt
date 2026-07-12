@@ -27,13 +27,13 @@ internal class HomeViewModel(
     val uiState = combine(
         songRepository.getSongsCount(),
         songRepository.getFavouriteSongsCount(),
-        songRepository.getTopSongs(),
+        songRepository.getRecentlyPlayedSongs(),
         artistRepository.getArtistsCount(),
         artistRepository.getTopArtists(),
         albumRepository.getAlbumsCount(),
         playbackController.state,
         isRefreshing
-    ) { songsCount, favoriteSongsCount, topSongs, artistsCount, topArtists, albumCount, playbackState, isRefreshing ->
+    ) { songsCount, favoriteSongsCount, recentlyPlayedSongs, artistsCount, topArtists, albumCount, playbackState, isRefreshing ->
         HomeScreenUiState(
             songsCount = songsCount,
             favoriteSongsCount = favoriteSongsCount,
@@ -43,7 +43,7 @@ internal class HomeViewModel(
             isPlaying = playbackState.isPlaying,
             isRefreshing = isRefreshing,
             isPlayerShowed = playbackState.currentItemId != null,
-            topSongs = topSongs.map { song ->
+            recentlyPlayedSongs = recentlyPlayedSongs.map { song ->
                 SongUi(
                     id = song.id,
                     title = song.title,
@@ -57,7 +57,8 @@ internal class HomeViewModel(
                 ArtistUi(
                     id = artist.id,
                     name = artist.name,
-                    artwork = null
+                    numberOfSongs = artist.numberOfSongs,
+                    artwork = null,
                 )
             }
         )

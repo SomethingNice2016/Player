@@ -6,41 +6,40 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import ua.kucher.player.common.SongUi
-import ua.kucher.player.theme.components.items.SongItem
+import ua.kucher.player.common.ArtistUi
+import ua.kucher.player.theme.components.items.ArtistItem
 import ua.kucher.player.theme.extensions.BottomNavSpacer
 import ua.kucher.player.theme.extensions.MiniPlayerSpacer
 
 @Composable
-internal fun SongsList(
+internal fun ArtistsList(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState,
-    onSongClick: (id: Long) -> Unit,
-    onMenuClick: (id: Long) -> Unit,
-    songs: List<SongUi> = emptyList(),
-    playingSongId: Long? = null,
+    artists: List<ArtistUi> = emptyList(),
     isPlayerShowed: Boolean = false,
-    isPlaying: Boolean = false,
+    onArtistClick: (id: Long) -> Unit,
+    onMenuClick: (id: Long) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
         state = lazyListState,
     ) {
         items(
-            items = songs,
-            key = { song -> song.id },
-            contentType = { "song" }
-        ) { song ->
-            SongItem(
+            items = artists,
+            key = { artist -> artist.id },
+            contentType = { "artist" }
+        ) { artist ->
+            ArtistItem(
                 modifier = Modifier.fillMaxWidth(),
-                title = song.title,
-                artist = song.artistName,
-                artwork = song.artwork,
-                duration = song.displayDuration,
-                isSongPlaying = song.id == playingSongId,
-                isPlaying = isPlaying,
-                onClick = { onSongClick(song.id) },
-                onMenuClick = { onMenuClick(song.id) }
+                name = artist.name,
+                numberOfSongs = artist.numberOfSongs,
+                artwork = artist.artwork ?: "",
+                onMenuClick = {
+                    onMenuClick(artist.id)
+                },
+                onClick = {
+                    onArtistClick(artist.id)
+                }
             )
         }
         if (isPlayerShowed) {

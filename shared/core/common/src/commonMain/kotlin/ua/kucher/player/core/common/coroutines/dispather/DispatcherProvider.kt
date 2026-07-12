@@ -6,7 +6,7 @@ import kotlinx.coroutines.MainCoroutineDispatcher
 interface DispatcherProvider {
 
     companion object {
-        fun get(): DispatcherProvider = DispatcherProviderImpl()
+        fun create(): DispatcherProvider = DispatcherProviderImpl()
     }
 
     val io: CoroutineDispatcher

@@ -93,7 +93,7 @@ internal fun SongGridItem(
             color = PlayerTheme.colorScheme.secondaryTextColor,
             fontStyle = PlayerTheme.typography.mediumBody.fontStyle,
             maxLines = 1,
-            overflow = TextOverflow.MiddleEllipsis
+            overflow = TextOverflow.Ellipsis
         )
     }
 }
@@ -101,12 +101,18 @@ internal fun SongGridItem(
 @Preview
 @Composable
 private fun SongGridItemPreview() {
-    SongGridItem(
-        title = "Newer fade away",
-        artist = "Samurai",
-        isSongPlaying = false,
-        isPlaying = false,
-        artwork = null,
-        onClick = {}
-    )
+    Box(
+        modifier = Modifier
+            .clip(PlayerTheme.shapes.radius4Px)
+            .background(PlayerTheme.colorScheme.primaryBackground)
+    ) {
+        SongGridItem(
+            title = "Newer fade away",
+            artist = "Samurai",
+            isSongPlaying = false,
+            isPlaying = false,
+            artwork = null,
+            onClick = {}
+        )
+    }
 }

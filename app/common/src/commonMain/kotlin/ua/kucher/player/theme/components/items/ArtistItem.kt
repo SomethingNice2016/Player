@@ -4,7 +4,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
@@ -14,50 +13,38 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
-import player.app.common.generated.resources.default_song_artwork
+import player.app.common.generated.resources.ic_artist
 import player.app.common.generated.resources.ic_options
-import player.app.common.generated.resources.song_item_description
+import player.app.common.generated.resources.tracks_count
 import ua.kucher.player.theme.PlayerTheme
-import ua.kucher.player.theme.components.AudioVisualizer
-import ua.kucher.player.theme.components.FrostedGlass
 
 @Composable
-internal fun SongItem(
+internal fun ArtistItem(
     modifier: Modifier = Modifier,
-    title: String,
-    artist: String,
-    duration: String,
-    isSongPlaying: Boolean,
-    isPlaying: Boolean,
-    artwork: String?,
+    name: String,
+    artwork: String,
+    numberOfSongs: Int,
     onClick: () -> Unit,
     onMenuClick: () -> Unit
 ) {
-
-    val backgroundColor = if (isSongPlaying)
-        PlayerTheme.colorScheme.rippleColor
-    else
-        Color.Transparent
-
     Row(
         modifier = modifier
             .clickable(onClick = onClick)
-            .background(backgroundColor)
             .padding(
                 top = PlayerTheme.dimens.dimens8Px,
                 bottom = PlayerTheme.dimens.dimens8Px,
@@ -66,38 +53,25 @@ internal fun SongItem(
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
+        SubcomposeAsyncImage(
             modifier = Modifier
                 .size(PlayerTheme.dimens.songIconSize)
-                .clip(PlayerTheme.shapes.radius4Px)
-                .background(PlayerTheme.colorScheme.menuEnableButton.copy(alpha = 0.15F))
-        ) {
-            FrostedGlass(
-                modifier = Modifier.fillMaxSize(),
-                enabled = isSongPlaying,
-                tint = Color.Black.copy(alpha = 0.60F)
-            ) {
-                AsyncImage(
-                    modifier = Modifier.fillMaxSize(),
-                    model = artwork,
-                    contentDescription = title,
-                    contentScale = ContentScale.Crop,
-                    placeholder = painterResource(Res.drawable.default_song_artwork),
-                    error = painterResource(Res.drawable.default_song_artwork)
-                )
-            }
-            if (isSongPlaying) {
-                AudioVisualizer(
+                .clip(CircleShape)
+                .background(PlayerTheme.colorScheme.rippleColor),
+            model = artwork,
+            contentDescription = name,
+            contentScale = ContentScale.Crop,
+            error = {
+                Image(
+                    painter = painterResource(Res.drawable.ic_artist),
+                    contentDescription = null,
+                    contentScale = ContentScale.Fit,
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(PlayerTheme.dimens.dimens8Px),
-                    isPlaying = isPlaying,
-                    barsCount = 5,
-                    color = PlayerTheme.colorScheme.iconsMain
+                        .padding(PlayerTheme.dimens.dimens10Px)
                 )
             }
-        }
-
+        )
         Spacer(modifier = Modifier.width(PlayerTheme.dimens.dimens16Px))
         Column(
             modifier = Modifier
@@ -106,7 +80,7 @@ internal fun SongItem(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = title,
+                text = name,
                 color = PlayerTheme.colorScheme.primaryTextColor,
                 fontStyle = PlayerTheme.typography.largeBody.fontStyle,
                 maxLines = 2,
@@ -115,7 +89,7 @@ internal fun SongItem(
             Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens2Px))
 
             Text(
-                text = stringResource(Res.string.song_item_description, artist, duration),
+                text = stringResource(Res.string.tracks_count, numberOfSongs),
                 color = PlayerTheme.colorScheme.secondaryTextColor,
                 fontStyle = PlayerTheme.typography.mediumBody.fontStyle,
                 maxLines = 1,
@@ -141,15 +115,12 @@ internal fun SongItem(
 
 @Preview
 @Composable
-private fun SongItemPreview() {
-    SongItem(
+internal fun ArtistItemPreview() {
+    ArtistItem(
         modifier = Modifier.background(PlayerTheme.colorScheme.primaryBackground),
-        title = "Naver fade away",
-        artist = "SAMURAI",
-        duration = "2:22",
-        isSongPlaying = false,
-        isPlaying = false,
+        name = "SAMURAI",
         artwork = "",
+        numberOfSongs = 4,
         onClick = {},
         onMenuClick = {}
     )

@@ -25,7 +25,9 @@ internal sealed class AppRoute(
             Home,
             SongList,
             Settings,
-            Search
+            SongsSearch,
+            ArtistList,
+            ArtistSearch
         )
 
         fun getByPath(path: String) = values().find { value ->
@@ -51,8 +53,20 @@ internal sealed class AppRoute(
         icon = Res.drawable.ic_setting
     )
 
-    data object Search : AppRoute(
-        path = "search",
+    data object SongsSearch : AppRoute(
+        path = "songs_search",
+        label = null,
+        icon = null
+    )
+
+    data object ArtistList: AppRoute(
+        path = "artists",
+        label = null,
+        icon = null
+    )
+
+    data object ArtistSearch: AppRoute(
+        path = "artists_search",
         label = null,
         icon = null
     )

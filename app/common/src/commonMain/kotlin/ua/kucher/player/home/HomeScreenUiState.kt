@@ -15,5 +15,5 @@ internal data class HomeScreenUiState(
     val isRefreshing: Boolean = false,
     val isPlayerShowed: Boolean = false,
     val topArtists: List<ArtistUi> = emptyList(),
-    val topSongs: List<SongUi> = emptyList()
+    val recentlyPlayedSongs: List<SongUi> = emptyList()
 )

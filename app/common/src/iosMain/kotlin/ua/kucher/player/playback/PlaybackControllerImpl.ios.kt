@@ -8,11 +8,11 @@ internal class IOSPlaybackController : PlaybackController {
     override val state: StateFlow<PlaybackState>
         get() = TODO("Not yet implemented")
 
-    override fun prepare(playlist: List<PlaylistItem>) {
+    override fun play(item: PlaylistItem) {
         TODO("Not yet implemented")
     }
 
-    override fun play(item: PlaylistItem) {
+    override fun play(playlist: List<PlaylistItem>, item: PlaylistItem) {
         TODO("Not yet implemented")
     }
 
@@ -33,10 +33,6 @@ internal class IOSPlaybackController : PlaybackController {
     }
 
     override fun inQueue(id: Long): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override fun setItemChangeListener(listener: ((id: Long) -> Unit)?) {
         TODO("Not yet implemented")
     }
 

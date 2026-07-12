@@ -9,6 +9,8 @@ interface ArtistRepository {
 
     fun getTopArtists(): Flow<List<Artist>>
 
+    fun searchArtistsByName(name: String): Flow<List<Artist>>
+
     fun getArtistById(id: Long): Flow<Artist?>
 
     fun getArtistsCount(): Flow<Int>

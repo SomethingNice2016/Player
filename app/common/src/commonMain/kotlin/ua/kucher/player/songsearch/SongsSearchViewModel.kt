@@ -1,4 +1,4 @@
-package ua.kucher.player.search
+package ua.kucher.player.songsearch
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -17,7 +17,7 @@ import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.playback.PlaybackController
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class SearchViewModel(
+internal class SongsSearchViewModel(
     private val songRepository: SongRepository,
     private val timeFormatter: TimeFormatter,
     private val playbackController: PlaybackController
@@ -35,7 +35,7 @@ internal class SearchViewModel(
                 artwork = song.artwork,
                 artistName = song.artist?.name ?: "",
                 duration = song.duration,
-                displayDuration = timeFormatter.toFormatDuration(song.duration)
+                displayDuration = timeFormatter.formatDuration(song.duration)
             )
         }
     }
@@ -45,7 +45,7 @@ internal class SearchViewModel(
         searchResult,
         playbackController.state,
     ) { query, result, playbackState ->
-        SearchUiState(
+        SongsSearchUiState(
             searchQuery = query,
             searchResult = result,
             playingSongId = playbackState.currentItemId,
@@ -55,7 +55,7 @@ internal class SearchViewModel(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
-        initialValue = SearchUiState()
+        initialValue = SongsSearchUiState()
     )
 
     fun search(query: String) {

@@ -10,6 +10,7 @@
     <string name="search">Іздеу</string>
     <string name="see_all">Барлығын көру</string>
     <string name="search_song_hint">Ән атауын енгізіңіз</string>
+    <string name="search_artist_hint">Орындаушының атын енгізіңіз</string>
     <string name="home_screen_items_count">%1$s трек • %2$s орындаушы • %3$s альбом</string>
     <string name="favorites">Таңдаулылар</string>
     <string name="tracks_count">%1$s трек</string>

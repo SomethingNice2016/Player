@@ -15,6 +15,7 @@ import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.cast.CastPlayer
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -30,16 +31,18 @@ import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import com.google.common.collect.ImmutableList
 import org.koin.android.ext.android.inject
+import org.koin.core.component.KoinComponent
 import ua.kucher.player.MainActivity
-import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
+import ua.kucher.player.data.artist.ArtistRepository
+import ua.kucher.player.data.song.SongRepository
 import kotlin.properties.Delegates
 
 @Suppress("OPT_IN_ARGUMENT_IS_NOT_MARKER")
 @UnstableApi
 class PlaybackService : MediaLibraryService(),
-    Player.Listener,
     MediaSessionService.Listener,
-    MediaLibraryService.MediaLibrarySession.Callback {
+    MediaLibraryService.MediaLibrarySession.Callback,
+    KoinComponent {
 
     companion object {
         private const val SEEK_INCREMENT = 10000L
@@ -61,7 +64,17 @@ class PlaybackService : MediaLibraryService(),
         }
     }
 
-    private val dispatcherProvider: DispatcherProvider by inject()
+    private val songRepository: SongRepository by inject()
+
+    private val artistRepository: ArtistRepository by inject()
+
+    private val playbackAnalytics: PlaybackAnalytics by lazy {
+        PlaybackAnalytics(
+            songRepository = songRepository,
+            artistRepository = artistRepository,
+            coroutineScope = lifecycleScope
+        )
+    }
 
     private lateinit var player: Player
 
@@ -150,7 +163,7 @@ class PlaybackService : MediaLibraryService(),
                     .setSeekForwardIncrementMs(SEEK_INCREMENT)
                     .setHandleAudioBecomingNoisy(true)
                     .build().apply {
-                        addListener(this@PlaybackService)
+                        addListener(playbackAnalytics)
                         addAnalyticsListener(EventLogger())
                     }
             ).build()

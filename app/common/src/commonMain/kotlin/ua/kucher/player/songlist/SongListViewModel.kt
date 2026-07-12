@@ -38,7 +38,7 @@ internal class SongListViewModel(
                     artwork = song.artwork,
                     artistName = song.artist?.name ?: "",
                     duration = song.duration,
-                    displayDuration = timeFormatter.toFormatDuration(song.duration)
+                    displayDuration = timeFormatter.formatDuration(song.duration)
                 )
             },
             isRefreshing = refreshing,

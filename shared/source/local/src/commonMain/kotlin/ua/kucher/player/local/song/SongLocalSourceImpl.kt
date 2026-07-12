@@ -34,6 +34,11 @@ internal class SongLocalSourceImpl(
             entities.map(SongDto::toDomain)
         }
 
+    override fun getRecentlyPlayedSongs(): Flow<List<Song>> =
+        songDao.getRecentlyPlayedSongs().map { entities ->
+            entities.map(SongDto::toDomain)
+        }
+
     override fun getSongsByPlaylist(playlistId: Long) =
         songDao.getSongsByPlaylist(playlistId).map { entities ->
             entities.map(SongDto::toDomain)
@@ -71,6 +76,10 @@ internal class SongLocalSourceImpl(
 
     override suspend fun updateListenCountById(id: Long, count: Int) = runCatching {
         songDao.updateListenCount(id, count)
+    }
+
+    override suspend fun updatePlayedTimeById(id: Long, timestamp: Long) = runCatching {
+        songDao.updatePlayedTime(id, timestamp)
     }
 
     override suspend fun fetchSongs(): Result<Unit> = runCatching {

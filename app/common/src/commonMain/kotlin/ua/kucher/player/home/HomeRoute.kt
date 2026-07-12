@@ -5,6 +5,7 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import ua.kucher.player.navigation.AppRoute
+import ua.kucher.player.navigation.navigateTo
 
 @Composable
 internal fun HomeRoute(
@@ -19,10 +20,13 @@ internal fun HomeRoute(
         onSongClick = viewModel::playSong,
         onRefresh = viewModel::refresh,
         onSearch = {
-            navController.navigate(AppRoute.Search.path)
+            navController.navigateTo(AppRoute.SongsSearch)
+        },
+        onSeeAllSongs = {
+            navController.navigateTo(AppRoute.SongList)
         },
         onSeeAllArtists = {
-
+            navController.navigateTo(AppRoute.ArtistList)
         },
         onArtistClick = { id ->
 

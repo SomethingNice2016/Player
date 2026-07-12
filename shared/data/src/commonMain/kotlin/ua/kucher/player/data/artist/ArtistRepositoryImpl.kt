@@ -23,6 +23,9 @@ internal class ArtistRepositoryImpl(
     override fun getTopArtists() = artistLocalSource.getTopArtists()
         .flowOn(dispatcherProvider.io)
 
+    override fun searchArtistsByName(name: String) = artistLocalSource.searchArtistsByName(name)
+        .flowOn(dispatcherProvider.io)
+
     override suspend fun incListenCount(id: Long) = withContext(dispatcherProvider.io) {
         artistLocalSource.getListenCountById(id).flatMap { count ->
             artistLocalSource.updateListenCountById(id, count.inc())
