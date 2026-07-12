@@ -214,7 +214,9 @@ internal fun MusicPlayerScreen(
         LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
             if (pagerState.currentPage == currentIndex) return@LaunchedEffect
             if (pagerState.isScrollInProgress) return@LaunchedEffect
-            onPlay(pages[pagerState.currentPage].key)
+            pages.getOrNull(pagerState.currentPage)?.let { entry ->
+                onPlay(entry.key)
+            }
         }
 
         LaunchedEffect(currentIndex) {

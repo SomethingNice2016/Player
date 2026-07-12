@@ -3,13 +3,10 @@ package ua.kucher.player.home
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalGridApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -23,6 +20,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
@@ -116,11 +114,7 @@ internal fun HomeScreen(
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .scrollable(
-                        state = scrollableState,
-                        orientation = Orientation.Vertical,
-                        enabled = true
-                    )
+                    .verticalScroll(scrollableState)
             ) {
                 Text(
                     modifier = Modifier
@@ -138,43 +132,52 @@ internal fun HomeScreen(
 
                 Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens16Px))
 
-                FlowRow(
-                    modifier = Modifier.padding(horizontal = PlayerTheme.dimens.dimens16Px),
-                    maxItemsInEachRow = 2,
-                    horizontalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens8Px),
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = PlayerTheme.dimens.dimens16Px),
                     verticalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens8Px)
                 ) {
-                    HomeScreenTab(
-                        modifier = Modifier.weight(1F),
-                        primaryText = stringResource(Res.string.favorites),
-                        secondaryText = stringResource(Res.string.tracks_count, uiState.favoriteSongsCount),
-                        painter = painterResource(Res.drawable.ic_favorite),
-                        onClick = {}
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens8Px),
+                    ) {
+                        HomeScreenTab(
+                            modifier = Modifier.weight(1F),
+                            primaryText = stringResource(Res.string.favorites),
+                            secondaryText = stringResource(Res.string.tracks_count, uiState.favoriteSongsCount),
+                            painter = painterResource(Res.drawable.ic_favorite),
+                            onClick = {}
+                        )
 
-                    HomeScreenTab(
-                        modifier = Modifier.weight(1F),
-                        primaryText = stringResource(Res.string.playlists),
-                        secondaryText = stringResource(Res.string.playlists_count, uiState.favoriteSongsCount),
-                        painter = painterResource(Res.drawable.ic_playlist),
-                        onClick = {}
-                    )
+                        HomeScreenTab(
+                            modifier = Modifier.weight(1F),
+                            primaryText = stringResource(Res.string.playlists),
+                            secondaryText = stringResource(Res.string.playlists_count, uiState.favoriteSongsCount),
+                            painter = painterResource(Res.drawable.ic_playlist),
+                            onClick = {}
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens8Px),
+                    ) {
+                        HomeScreenTab(
+                            modifier = Modifier.weight(1F),
+                            primaryText = stringResource(Res.string.albums),
+                            secondaryText = stringResource(Res.string.albums_count, uiState.albumCount),
+                            painter = painterResource(Res.drawable.ic_album),
+                            onClick = {}
+                        )
 
-                    HomeScreenTab(
-                        modifier = Modifier.weight(1F),
-                        primaryText = stringResource(Res.string.albums),
-                        secondaryText = stringResource(Res.string.albums_count, uiState.albumCount),
-                        painter = painterResource(Res.drawable.ic_album),
-                        onClick = {}
-                    )
-
-                    HomeScreenTab(
-                        modifier = Modifier.weight(1F),
-                        primaryText = stringResource(Res.string.artists),
-                        secondaryText = stringResource(Res.string.artists_count, uiState.artistsCount),
-                        painter = painterResource(Res.drawable.ic_artist),
-                        onClick = {}
-                    )
+                        HomeScreenTab(
+                            modifier = Modifier.weight(1F),
+                            primaryText = stringResource(Res.string.artists),
+                            secondaryText = stringResource(Res.string.artists_count, uiState.artistsCount),
+                            painter = painterResource(Res.drawable.ic_artist),
+                            onClick = {}
+                        )
+                    }
                 }
 
                 Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens16Px))
