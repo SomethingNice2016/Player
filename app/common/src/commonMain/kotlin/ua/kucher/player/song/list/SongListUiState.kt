@@ -1,0 +1,10 @@
+package ua.kucher.player.song.list
+
+import ua.kucher.player.common.SongUi
+
+internal data class SongListUiState(
+    val songs: List<SongUi> = emptyList(),
+    val playingSongId: Long? = null,
+    val isPlaying: Boolean = false,
+    val isRefreshing: Boolean = false
+)

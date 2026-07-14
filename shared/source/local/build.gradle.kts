@@ -53,7 +53,6 @@ kotlin {
                 implementation(libs.koin.core)
                 implementation(libs.kotlin.stdlib)
                 implementation(libs.androidx.room.runtime)
-                implementation(libs.androidx.sqlite.bundled)
 
                 //Project modules
                 implementation(projects.shared.core.common)

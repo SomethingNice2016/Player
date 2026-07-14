@@ -2,6 +2,8 @@ package ua.kucher.player.local.album
 
 import kotlinx.coroutines.flow.map
 import ua.kucher.player.local.LocalStorageSource
+import ua.kucher.player.local.album.entity.AlbumEntity
+import ua.kucher.player.local.album.entity.toDomain
 
 internal class AlbumLocalSourceImpl(
     private val localStorageSource: LocalStorageSource,
@@ -22,6 +24,13 @@ internal class AlbumLocalSourceImpl(
 
     override fun getAlbumsByArtist(artistId: Long) =
         albumDao.getAlbumsByArtist(artistId).map { entities ->
+            entities.map { entity ->
+                entity.toDomain()
+            }
+        }
+
+    override fun searchAlbumsByTitle(title: String) =
+        albumDao.searchAlbumsByTitle(title).map { entities ->
             entities.map { entity ->
                 entity.toDomain()
             }

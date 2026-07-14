@@ -2,39 +2,42 @@ package ua.kucher.player
 
 import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
-import ua.kucher.player.artistlist.ArtistListViewModel
-import ua.kucher.player.artistsearch.ArtistSearchViewModel
+import ua.kucher.player.album.list.AlbumListViewModel
+import ua.kucher.player.album.search.AlbumSearchViewModel
+import ua.kucher.player.artist.list.ArtistListViewModel
+import ua.kucher.player.artist.search.ArtistSearchViewModel
 import ua.kucher.player.home.HomeViewModel
 import ua.kucher.player.setting.SettingViewModel
-import ua.kucher.player.songlist.SongListViewModel
+import ua.kucher.player.song.list.SongListViewModel
+import ua.kucher.player.song.search.SongsSearchViewModel
 import ua.kucher.player.songplayer.MusicPlayerViewModel
-import ua.kucher.player.songsearch.SongsSearchViewModel
 
 internal val viewModelModule = module {
 
     viewModel {
         SongListViewModel(
-            timeFormatter = get(),
             songRepository = get(),
             artistRepository = get(),
             albumRepository = get(),
-            playbackController = get()
+            playbackController = get(),
+            songMapper = get()
         )
     }
 
     viewModel {
         MusicPlayerViewModel(
             playbackController = get(),
-            timeFormatter = get(),
             songRepository = get(),
+            songMapper = get(),
+            timeFormatter = get()
         )
     }
 
     viewModel {
         SongsSearchViewModel(
-            timeFormatter = get(),
             playbackController = get(),
-            songRepository = get()
+            songRepository = get(),
+            songMapper = get()
         )
     }
 
@@ -43,21 +46,32 @@ internal val viewModelModule = module {
             songRepository = get(),
             artistRepository = get(),
             albumRepository = get(),
-            playbackController = get()
+            playbackController = get(),
+            songMapper = get()
         )
     }
 
     viewModel {
         ArtistListViewModel(
-            playbackController = get(),
             artistRepository = get()
         )
     }
 
     viewModel {
         ArtistSearchViewModel(
-            playbackController = get(),
             artistRepository = get()
+        )
+    }
+
+    viewModel {
+        AlbumListViewModel(
+            albumRepository = get()
+        )
+    }
+
+    viewModel {
+        AlbumSearchViewModel(
+            albumRepository = get()
         )
     }
 

@@ -3,7 +3,7 @@ package ua.kucher.player.local
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import ua.kucher.player.local.album.AlbumDao
-import ua.kucher.player.local.album.AlbumEntity
+import ua.kucher.player.local.album.entity.AlbumEntity
 import ua.kucher.player.local.artist.ArtistDao
 import ua.kucher.player.local.artist.ArtistEntity
 import ua.kucher.player.local.playlist.PlaylistEntity

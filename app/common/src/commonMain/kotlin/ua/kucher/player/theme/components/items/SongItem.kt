@@ -26,6 +26,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
@@ -35,6 +38,7 @@ import player.app.common.generated.resources.song_item_description
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.AudioVisualizer
 import ua.kucher.player.theme.components.FrostedGlass
+import ua.kucher.player.theme.extensions.toPx
 
 @Composable
 internal fun SongItem(
@@ -54,6 +58,8 @@ internal fun SongItem(
     else
         Color.Transparent
 
+    val artworkSize = PlayerTheme.dimens.songIconSize
+
     Row(
         modifier = modifier
             .clickable(onClick = onClick)
@@ -68,7 +74,7 @@ internal fun SongItem(
     ) {
         Box(
             modifier = Modifier
-                .size(PlayerTheme.dimens.songIconSize)
+                .size(artworkSize)
                 .clip(PlayerTheme.shapes.radius4Px)
                 .background(PlayerTheme.colorScheme.menuEnableButton.copy(alpha = 0.15F))
         ) {
@@ -79,7 +85,14 @@ internal fun SongItem(
             ) {
                 AsyncImage(
                     modifier = Modifier.fillMaxSize(),
-                    model = artwork,
+                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                        .data(artwork)
+                        .size(
+                            width = artworkSize.toPx(),
+                            height = artworkSize.toPx()
+                        )
+                        .crossfade(true)
+                        .build(),
                     contentDescription = title,
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(Res.drawable.default_song_artwork),

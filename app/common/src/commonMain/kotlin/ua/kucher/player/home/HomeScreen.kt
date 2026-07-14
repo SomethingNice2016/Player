@@ -49,11 +49,9 @@ import player.app.common.generated.resources.ic_arrow_right
 import player.app.common.generated.resources.ic_artist
 import player.app.common.generated.resources.ic_favorite
 import player.app.common.generated.resources.ic_playlist
-import player.app.common.generated.resources.ic_search
 import player.app.common.generated.resources.playlists
 import player.app.common.generated.resources.playlists_count
 import player.app.common.generated.resources.recently_played
-import player.app.common.generated.resources.search
 import player.app.common.generated.resources.see_all
 import player.app.common.generated.resources.top_artists
 import player.app.common.generated.resources.tracks_count
@@ -62,19 +60,17 @@ import ua.kucher.player.common.SongUi
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
 import ua.kucher.player.theme.components.items.ArtistGridItem
-import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 import ua.kucher.player.theme.components.items.SongGridItem
 import ua.kucher.player.theme.extensions.BottomNavSpacer
-import ua.kucher.player.theme.extensions.MiniPlayerSpacer
 
 @OptIn(ExperimentalGridApi::class)
 @Composable
 internal fun HomeScreen(
     uiState: HomeScreenUiState,
-    onSearch: () -> Unit,
     onRefresh: () -> Unit,
     onSeeAllArtists: () -> Unit,
     onSeeAllSongs: () -> Unit,
+    onSeeAllAlbums: () -> Unit,
     onSongClick: (id: Long) -> Unit,
     onArtistClick: (id: Long) -> Unit
 ) {
@@ -93,13 +89,6 @@ internal fun HomeScreen(
                 titleRes = Res.string.home_label,
                 navigationIcon = {},
                 showDivider = { false },
-                actions = {
-                    PlayerMenuIconButton(
-                        painter = painterResource(Res.drawable.ic_search),
-                        contentDescription = stringResource(Res.string.search),
-                        onClick = onSearch
-                    )
-                }
             )
         }
     ) { paddingValues ->
@@ -168,7 +157,7 @@ internal fun HomeScreen(
                             primaryText = stringResource(Res.string.albums),
                             secondaryText = stringResource(Res.string.albums_count, uiState.albumCount),
                             painter = painterResource(Res.drawable.ic_album),
-                            onClick = {}
+                            onClick = onSeeAllAlbums
                         )
 
                         HomeScreenTab(
@@ -276,9 +265,6 @@ internal fun HomeScreen(
                             )
                         }
                     }
-                }
-                if (uiState.isPlayerShowed) {
-                    MiniPlayerSpacer()
                 }
                 BottomNavSpacer()
             }
@@ -390,8 +376,8 @@ private fun HomeScreenPreview() {
                     artistUi.copy(id = 4L)
                 )
             ),
-            onSearch = {},
             onRefresh = {},
+            onSeeAllAlbums = {},
             onSeeAllArtists = {},
             onSeeAllSongs = {},
             onSongClick = {},

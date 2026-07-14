@@ -37,8 +37,11 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.navigation3)
             implementation(libs.compose.nav3)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.materialKolor)
             implementation(libs.androidx.ktx.core)
+
+            //Permissions
+            implementation(libs.permissions.core)
+            implementation(libs.permissions.gallery)
 
             //koin
             implementation(libs.koin.core)

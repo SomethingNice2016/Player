@@ -14,6 +14,9 @@ internal class AlbumRepositoryImpl(
     override fun getAlbums() = albumLocalSource.getAlbums()
         .flowOn(dispatcherProvider.io)
 
+    override fun searchAlbumsByTitle(title: String) = albumLocalSource.searchAlbumsByTitle(title)
+        .flowOn(dispatcherProvider.io)
+
     override fun getAlbumById(id: Long) = albumLocalSource.getAlbumById(id)
         .flowOn(dispatcherProvider.io)
 

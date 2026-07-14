@@ -19,12 +19,16 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import org.jetbrains.compose.resources.painterResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.default_song_artwork
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.AudioVisualizer
 import ua.kucher.player.theme.components.FrostedGlass
+import ua.kucher.player.theme.extensions.toPx
 
 @Composable
 internal fun SongGridItem(
@@ -36,6 +40,9 @@ internal fun SongGridItem(
     artwork: String?,
     onClick: () -> Unit
 ) {
+
+    val artworkSize = PlayerTheme.dimens.songIconSize
+
     Column(
         modifier = modifier
             .width(PlayerTheme.dimens.songIconGridSize)
@@ -57,7 +64,14 @@ internal fun SongGridItem(
             ) {
                 AsyncImage(
                     modifier = Modifier.fillMaxSize(),
-                    model = artwork,
+                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                        .data(artwork)
+                        .size(
+                            width = artworkSize.toPx(),
+                            height = artworkSize.toPx()
+                        )
+                        .crossfade(true)
+                        .build(),
                     contentDescription = title,
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(Res.drawable.default_song_artwork),

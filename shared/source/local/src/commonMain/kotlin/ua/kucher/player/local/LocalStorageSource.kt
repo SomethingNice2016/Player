@@ -1,6 +1,6 @@
 package ua.kucher.player.local
 
-import ua.kucher.player.local.album.AlbumEntity
+import ua.kucher.player.local.album.entity.AlbumEntity
 import ua.kucher.player.local.artist.ArtistEntity
 import ua.kucher.player.local.song.entity.SongEntity
 

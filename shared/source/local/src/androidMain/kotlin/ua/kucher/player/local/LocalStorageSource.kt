@@ -3,7 +3,7 @@ package ua.kucher.player.local
 import android.content.ContentUris
 import android.content.Context
 import android.provider.MediaStore
-import ua.kucher.player.local.album.AlbumEntity
+import ua.kucher.player.local.album.entity.AlbumEntity
 import ua.kucher.player.local.artist.ArtistEntity
 import ua.kucher.player.local.song.entity.SongEntity
 
@@ -103,6 +103,7 @@ internal actual class LocalStorageSource(
             arrayOf(
                 MediaStore.Audio.Albums._ID,
                 MediaStore.Audio.Albums.ALBUM,
+                MediaStore.Audio.Albums.NUMBER_OF_SONGS,
             ),
             null,
             null,
@@ -111,6 +112,7 @@ internal actual class LocalStorageSource(
 
             val idCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums._ID)
             val titleCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.ALBUM)
+            val numberOfSongsCol = cursor.getColumnIndexOrThrow(MediaStore.Audio.Albums.NUMBER_OF_SONGS)
 
             while (cursor.moveToNext()) {
 
@@ -119,11 +121,12 @@ internal actual class LocalStorageSource(
                 result += AlbumEntity(
                     id = albumId,
                     title = cursor.getString(titleCol),
+                    numberOfSongs = cursor.getInt(numberOfSongsCol),
                     artistId = albumArtistMap[albumId] ?: -1L,
                     artwork = ContentUris.withAppendedId(
                         MediaStore.Audio.Albums.EXTERNAL_CONTENT_URI,
                         albumId
-                    ).toString()
+                    ).toString(),
                 )
             }
         }
