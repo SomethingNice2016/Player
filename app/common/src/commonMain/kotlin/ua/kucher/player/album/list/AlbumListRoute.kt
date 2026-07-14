@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import ua.kucher.player.navigation.AppRoute
-import ua.kucher.player.navigation.navigateTo
 
 @Composable
 internal fun AlbumListRoute(
@@ -20,7 +19,7 @@ internal fun AlbumListRoute(
         onRefresh = viewModel::refresh,
         onBackClick = navController::popBackStack,
         onSearch = {
-            navController.navigateTo(AppRoute.AlbumSearch)
+            navController.navigate(AppRoute.AlbumSearch)
         },
         onAlbumClick = { id ->
 

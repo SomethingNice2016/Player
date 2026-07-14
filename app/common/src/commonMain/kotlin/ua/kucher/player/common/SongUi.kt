@@ -11,6 +11,7 @@ internal data class SongUi(
     val artistName: String,
     val displayDuration: String,
     val duration: Long,
+    val isFavorite: Boolean,
     val artwork: String?
 )
 
@@ -25,6 +26,7 @@ internal class SongUiMapper(
             artwork = song.artwork,
             artistName = song.artist?.name ?: "",
             duration = song.duration,
+            isFavorite = song.isFavorite,
             displayDuration = timeFormatter.formatDuration(song.duration)
         )
     }

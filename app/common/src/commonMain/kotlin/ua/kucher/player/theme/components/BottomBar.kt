@@ -15,6 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ua.kucher.player.navigation.AppRoute
+import ua.kucher.player.navigation.icon
+import ua.kucher.player.navigation.label
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 
@@ -70,7 +72,7 @@ internal fun BottomBar(
 private fun BottomMenuPreview() {
     BottomBar(
         modifier = Modifier.fillMaxWidth(),
-        items = AppRoute.getMainMenuItems(),
+        items = AppRoute.mainMenuItems,
         current = AppRoute.AllSong,
         onClick = {}
     )

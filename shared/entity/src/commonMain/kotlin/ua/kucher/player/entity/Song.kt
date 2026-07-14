@@ -5,11 +5,12 @@ data class Song(
     override val title: String,
     override val duration: Long,
     override val uri: String,
+    val isFavorite: Boolean,
     val songArtwork: String?,
     val lastModified: Long,
     val album: Album?,
     val artist: Artist?,
-    val playlistIds: Set<Long>
+    val playlistIds: Set<Long>,
 ) : PlaylistItem {
 
     override val artwork: String?

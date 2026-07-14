@@ -5,7 +5,6 @@ import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import ua.kucher.player.navigation.AppRoute
-import ua.kucher.player.navigation.navigateTo
 
 @Composable
 internal fun ArtistListRoute(
@@ -26,7 +25,7 @@ internal fun ArtistListRoute(
 
         },
         onSearch = {
-            navController.navigateTo(AppRoute.ArtistSearch)
+            navController.navigate(AppRoute.ArtistSearch)
         },
     )
 }

@@ -19,7 +19,7 @@ internal fun AllSongRoute(
         onSongClick = viewModel::playSong,
         onRefresh = viewModel::refresh,
         onSearch = {
-            navController.navigate(AppRoute.SongsSearch.path)
+            navController.navigate(AppRoute.SongsSearch)
         },
         onMenuClick = { id ->
 

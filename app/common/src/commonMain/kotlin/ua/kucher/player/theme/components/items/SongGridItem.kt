@@ -1,7 +1,7 @@
 package ua.kucher.player.theme.components.items
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -38,14 +38,18 @@ internal fun SongGridItem(
     isSongPlaying: Boolean,
     isPlaying: Boolean,
     artwork: String?,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    onLongClick: () -> Unit
 ) {
 
     val artworkSize = PlayerTheme.dimens.songIconSize
 
     Column(
         modifier = modifier
-            .clickable { onClick() }
+            .combinedClickable(
+                onClick = onClick,
+                onLongClick = onLongClick
+            )
             .padding(PlayerTheme.dimens.dimens8Px)
             .width(PlayerTheme.dimens.songIconGridSize)
             .clip(PlayerTheme.shapes.radius4Px)
@@ -126,7 +130,8 @@ private fun SongGridItemPreview() {
             isSongPlaying = false,
             isPlaying = false,
             artwork = null,
-            onClick = {}
+            onClick = {},
+            onLongClick = {}
         )
     }
 }

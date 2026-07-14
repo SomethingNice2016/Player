@@ -10,30 +10,11 @@ import ua.kucher.player.home.HomeViewModel
 import ua.kucher.player.setting.SettingViewModel
 import ua.kucher.player.song.allsongs.AllSongViewModel
 import ua.kucher.player.song.favorite.FavoriteSongViewModel
+import ua.kucher.player.song.menu.SongMenuViewModel
 import ua.kucher.player.song.search.SongsSearchViewModel
 import ua.kucher.player.songplayer.MusicPlayerViewModel
 
 internal val viewModelModule = module {
-
-    viewModel {
-        AllSongViewModel(
-            songRepository = get(),
-            artistRepository = get(),
-            albumRepository = get(),
-            playbackController = get(),
-            songMapper = get()
-        )
-    }
-
-    viewModel {
-        FavoriteSongViewModel(
-            songRepository = get(),
-            artistRepository = get(),
-            albumRepository = get(),
-            playbackController = get(),
-            songMapper = get()
-        )
-    }
 
     viewModel {
         MusicPlayerViewModel(
@@ -59,6 +40,33 @@ internal val viewModelModule = module {
             albumRepository = get(),
             playbackController = get(),
             songMapper = get()
+        )
+    }
+
+    viewModel {
+        AllSongViewModel(
+            songRepository = get(),
+            artistRepository = get(),
+            albumRepository = get(),
+            playbackController = get(),
+            songMapper = get()
+        )
+    }
+
+    viewModel {
+        FavoriteSongViewModel(
+            songRepository = get(),
+            artistRepository = get(),
+            albumRepository = get(),
+            playbackController = get(),
+            songMapper = get()
+        )
+    }
+
+    viewModel {
+        SongMenuViewModel(
+            playbackController = get(),
+            songRepository = get()
         )
     }
 

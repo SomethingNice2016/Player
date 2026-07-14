@@ -20,7 +20,7 @@ internal fun FavoriteSongRoute(
         onRefresh = viewModel::refresh,
         onBackClick = navController::popBackStack,
         onSearch = {
-            navController.navigate(AppRoute.SongsSearch.path)
+            navController.navigate(AppRoute.SongsSearch)
         },
         onMenuClick = { id ->
 
