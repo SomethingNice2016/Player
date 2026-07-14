@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ua.kucher.player.common.ArtistUi
 import ua.kucher.player.common.SongUi
-import ua.kucher.player.core.common.coroutines.combine
+import ua.kucher.player.core.ui.coroutines.combine
 import ua.kucher.player.data.albun.AlbumRepository
 import ua.kucher.player.data.artist.ArtistRepository
 import ua.kucher.player.data.song.SongRepository

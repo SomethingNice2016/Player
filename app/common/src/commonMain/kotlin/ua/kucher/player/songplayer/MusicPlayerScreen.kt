@@ -47,21 +47,21 @@ import player.app.common.generated.resources.ic_arrow_down
 import player.app.common.generated.resources.ic_cast
 import player.app.common.generated.resources.ic_options
 import ua.kucher.player.common.SongUi
+import ua.kucher.player.core.ui.components.FrostedGlass
+import ua.kucher.player.core.ui.utils.lerp
+import ua.kucher.player.core.ui.utils.rememberScreenSizeHeight
+import ua.kucher.player.core.ui.utils.rememberScreenSizeWidth
+import ua.kucher.player.core.ui.utils.rememberStatusBarHeight
 import ua.kucher.player.playback.PlaybackController
 import ua.kucher.player.song.allsongs.AllSongScreen
 import ua.kucher.player.song.allsongs.AllSongUiState
 import ua.kucher.player.theme.PlayerTheme
-import ua.kucher.player.theme.components.FrostedGlass
 import ua.kucher.player.theme.components.MiniPlayer
 import ua.kucher.player.theme.components.PlayerControl
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 import ua.kucher.player.theme.extensions.bottomNavHeight
 import ua.kucher.player.theme.extensions.playerDragEvents
 import ua.kucher.player.theme.extensions.toPx
-import ua.kucher.player.theme.lerp
-import ua.kucher.player.theme.rememberScreenSizeHeight
-import ua.kucher.player.theme.rememberScreenSizeWidth
-import ua.kucher.player.theme.rememberStatusBarHeight
 
 private const val ANIMATION_DURATION_MILLIS = 500
 

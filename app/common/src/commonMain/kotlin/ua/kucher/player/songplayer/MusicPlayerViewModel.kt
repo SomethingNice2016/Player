@@ -7,10 +7,10 @@ import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
 import ua.kucher.player.common.SongUi
-import ua.kucher.player.core.common.coroutines.combineNotNull
-import ua.kucher.player.core.common.coroutines.flatMapNotNullLatest
-import ua.kucher.player.core.common.coroutines.mapNotNull
-import ua.kucher.player.core.common.datetime.TimeFormatter
+import ua.kucher.player.core.ui.coroutines.combineNotNull
+import ua.kucher.player.core.ui.coroutines.flatMapNotNullLatest
+import ua.kucher.player.core.ui.coroutines.mapNotNull
+import ua.kucher.player.core.ui.datetime.TimeFormatter
 import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.entity.Song
 import ua.kucher.player.playback.PlaybackController

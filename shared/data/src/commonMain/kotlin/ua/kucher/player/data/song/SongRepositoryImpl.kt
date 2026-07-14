@@ -2,9 +2,9 @@ package ua.kucher.player.data.song
 
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
-import ua.kucher.player.core.common.datetime.TimeProvider
-import ua.kucher.player.core.common.result.flatMap
+import ua.kucher.player.core.ui.coroutines.dispather.DispatcherProvider
+import ua.kucher.player.core.ui.datetime.TimeProvider
+import ua.kucher.player.core.ui.result.flatMap
 import ua.kucher.player.entity.SongPlaylist
 import ua.kucher.player.local.song.SongLocalSource
 

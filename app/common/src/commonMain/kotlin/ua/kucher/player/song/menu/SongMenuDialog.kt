@@ -23,8 +23,8 @@ internal fun SongMenuDialog(
         modifier = Modifier
             .fillMaxWidth()
             .padding(PlayerTheme.dimens.dimens16Px)
-            .background(PlayerTheme.colorScheme.primaryBackground)
             .clip(PlayerTheme.shapes.radius16Px)
+            .background(PlayerTheme.colorScheme.primaryBackground)
     ) {
         Box(modifier = Modifier.size(100.dp))
     }

@@ -25,9 +25,9 @@ import coil3.request.crossfade
 import org.jetbrains.compose.resources.painterResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.default_song_artwork
+import ua.kucher.player.core.ui.components.AudioVisualizer
+import ua.kucher.player.core.ui.components.FrostedGlass
 import ua.kucher.player.theme.PlayerTheme
-import ua.kucher.player.theme.components.AudioVisualizer
-import ua.kucher.player.theme.components.FrostedGlass
 import ua.kucher.player.theme.extensions.toPx
 
 @Composable

@@ -1,5 +1,6 @@
 package ua.kucher.player.navigation
 
+import androidx.navigation3.runtime.NavKey
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
@@ -12,10 +13,10 @@ import player.app.common.generated.resources.music_label
 import player.app.common.generated.resources.setting_label
 
 
-internal sealed interface AppRoute {
+internal sealed interface AppRoute : NavKey {
 
     companion object {
-        val mainMenuItems = listOf(
+        val mainMenuItems = listOf<AppRoute>(
             Home, AllSong, Settings
         )
     }

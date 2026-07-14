@@ -3,12 +3,12 @@ package ua.kucher.player.artist.list
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import ua.kucher.player.navigation.AppBackStack
 import ua.kucher.player.navigation.AppRoute
 
 @Composable
 internal fun ArtistListRoute(
-    navController: NavController,
+    backStack: AppBackStack,
     viewModel: ArtistListViewModel
 ) {
 
@@ -17,7 +17,7 @@ internal fun ArtistListRoute(
     ArtistListScreen(
         uiState = uiState,
         onRefresh = viewModel::refresh,
-        onBackClick = navController::popBackStack,
+        onBackClick = backStack::removeLast,
         onArtistClick = { id ->
 
         },
@@ -25,7 +25,7 @@ internal fun ArtistListRoute(
 
         },
         onSearch = {
-            navController.navigate(AppRoute.ArtistSearch)
+            backStack.add(AppRoute.ArtistSearch)
         },
     )
 }

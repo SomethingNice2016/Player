@@ -4,7 +4,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import org.koin.dsl.module
-import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
+import ua.kucher.player.core.ui.coroutines.dispather.DispatcherProvider
 import ua.kucher.player.local.album.AlbumLocalSource
 import ua.kucher.player.local.album.AlbumLocalSourceImpl
 import ua.kucher.player.local.artist.ArtistLocalSource

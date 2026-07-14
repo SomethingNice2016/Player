@@ -3,12 +3,12 @@ package ua.kucher.player.song.search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import ua.kucher.player.navigation.AppBackStack
 
 @Composable
 internal fun SongsSearchRoute(
+    backStack: AppBackStack,
     viewModel: SongsSearchViewModel,
-    navController: NavController
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -21,7 +21,7 @@ internal fun SongsSearchRoute(
 
         },
         onBack = {
-            navController.popBackStack()
+            backStack.removeLast()
         }
     )
 

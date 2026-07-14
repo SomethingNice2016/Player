@@ -3,12 +3,12 @@ package ua.kucher.player.home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import ua.kucher.player.navigation.AppBackStack
 import ua.kucher.player.navigation.AppRoute
 
 @Composable
 internal fun HomeRoute(
-    navController: NavController,
+    backStack: AppBackStack,
     viewModel: HomeViewModel
 ) {
 
@@ -19,22 +19,22 @@ internal fun HomeRoute(
         onSongClick = viewModel::playSong,
         onRefresh = viewModel::refresh,
         onFavoriteSongsClick = {
-            navController.navigate(AppRoute.FavoriteSongs)
+            backStack.add(AppRoute.FavoriteSongs)
         },
         onSeeAllAlbums = {
-            navController.navigate(AppRoute.AlbumList)
+            backStack.add(AppRoute.AlbumList)
         },
         onSeeAllSongs = {
-            navController.navigate(AppRoute.AllSong)
+            backStack.add(AppRoute.AllSong)
         },
         onSeeAllArtists = {
-            navController.navigate(AppRoute.ArtistList)
+            backStack.add(AppRoute.ArtistList)
         },
         onArtistClick = { id ->
 
         },
         showSongMenu = { id ->
-            navController.navigate(AppRoute.SongMenu)
+            backStack.add(AppRoute.SongMenu)
         }
     )
 }

@@ -3,12 +3,12 @@ package ua.kucher.player.song.allsongs
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import ua.kucher.player.navigation.AppBackStack
 import ua.kucher.player.navigation.AppRoute
 
 @Composable
 internal fun AllSongRoute(
-    navController: NavController,
+    backStack: AppBackStack,
     viewModel: AllSongViewModel
 ) {
 
@@ -19,7 +19,7 @@ internal fun AllSongRoute(
         onSongClick = viewModel::playSong,
         onRefresh = viewModel::refresh,
         onSearch = {
-            navController.navigate(AppRoute.SongsSearch)
+            backStack.add(AppRoute.SongsSearch)
         },
         onMenuClick = { id ->
 

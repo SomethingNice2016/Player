@@ -1,13 +1,10 @@
 package ua.kucher.player.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
-import androidx.navigation.compose.rememberNavController
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import org.koin.compose.viewmodel.koinViewModel
 import ua.kucher.player.album.list.AlbumListRoute
 import ua.kucher.player.album.search.AlbumSearchRoute
@@ -17,94 +14,83 @@ import ua.kucher.player.home.HomeRoute
 import ua.kucher.player.setting.SettingRoute
 import ua.kucher.player.song.allsongs.AllSongRoute
 import ua.kucher.player.song.favorite.FavoriteSongRoute
-import ua.kucher.player.song.menu.SongMenuRoute
 import ua.kucher.player.song.search.SongsSearchRoute
+
+internal typealias AppBackStack = SnapshotStateList<AppRoute>
 
 @Composable
 internal fun PlayerNavigation(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController(),
-    startDestination: AppRoute = AppRoute.Home,
+    backStack: AppBackStack,
 ) {
-    NavHost(
+    NavDisplay(
         modifier = modifier,
-        navController = navController,
-        startDestination = startDestination,
-    ) {
-        composable<AppRoute.Home> { navBackStackEntry ->
-            HomeRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+        onBack = { backStack.removeLastOrNull() },
+        backStack = backStack,
+        entryProvider = entryProvider {
 
-        composable<AppRoute.AllSong> { navBackStackEntry ->
-            AllSongRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.Home> {
+                HomeRoute(
+                    backStack = backStack,
+                    viewModel = koinViewModel()
+                )
+            }
 
-        composable<AppRoute.FavoriteSongs> { navBackStackEntry ->
-            FavoriteSongRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.AllSong> {
+                AllSongRoute(
+                    backStack = backStack,
+                    viewModel = koinViewModel()
+                )
+            }
 
-        composable<AppRoute.Settings> { navBackStackEntry ->
-            SettingRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.FavoriteSongs> {
+                FavoriteSongRoute(
+                    backStack = backStack,
+                    viewModel = koinViewModel()
+                )
+            }
 
-        composable<AppRoute.SongsSearch> { navBackStackEntry ->
-            SongsSearchRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.Settings> {
+                SettingRoute(
+                    backStack = backStack,
+                    viewModel = koinViewModel()
+                )
+            }
 
-        composable<AppRoute.ArtistList> { navBackStackEntry ->
-            ArtistListRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.SongsSearch> {
+                SongsSearchRoute(
+                    backStack = backStack,
+                    viewModel = koinViewModel()
+                )
+            }
 
-        composable<AppRoute.ArtistSearch> { navBackStackEntry ->
-            ArtistSearchRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.ArtistList> {
+                ArtistListRoute(
+                    backStack = backStack,
+                    viewModel = koinViewModel()
+                )
+            }
 
-        composable<AppRoute.AlbumList> { navBackStackEntry ->
-            AlbumListRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.ArtistSearch> {
+                ArtistSearchRoute(
+                    backStack = backStack,
+                    viewModel = koinViewModel()
+                )
+            }
 
-        composable<AppRoute.AlbumSearch> { navBackStackEntry ->
-            AlbumSearchRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.AlbumList> {
+                AlbumListRoute(
+                    backStack = backStack,
+                    viewModel = koinViewModel()
+                )
+            }
 
-        dialog<AppRoute.SongMenu>(
-            dialogProperties = DialogProperties(
-                dismissOnBackPress = true,
-                dismissOnClickOutside = true,
-                usePlatformDefaultWidth = false
-            ),
-        ) { navBackStackEntry ->
-            SongMenuRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
+            entry<AppRoute.AlbumSearch> {
+                AlbumSearchRoute(
+                    backStack = backStack,
+                    viewModel = koinViewModel()
+                )
+            }
         }
-    }
+    )
 }

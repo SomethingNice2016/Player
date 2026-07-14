@@ -1,7 +1,7 @@
 package ua.kucher.player.common
 
 import androidx.compose.runtime.Stable
-import ua.kucher.player.core.common.datetime.TimeFormatter
+import ua.kucher.player.core.ui.datetime.TimeFormatter
 import ua.kucher.player.entity.Song
 
 @Stable

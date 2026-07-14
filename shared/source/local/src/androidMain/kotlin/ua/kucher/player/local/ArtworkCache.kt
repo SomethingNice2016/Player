@@ -4,9 +4,9 @@ import android.content.ContentUris
 import android.content.Context
 import android.media.MediaMetadataRetriever
 import android.provider.MediaStore
-import ua.kucher.player.core.common.bitmap.cropToSquare
-import ua.kucher.player.core.common.bitmap.toBitmap
-import ua.kucher.player.core.common.bitmap.toByteArray
+import ua.kucher.player.core.ui.bitmap.cropToSquare
+import ua.kucher.player.core.ui.bitmap.toBitmap
+import ua.kucher.player.core.ui.bitmap.toByteArray
 import java.io.File
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")

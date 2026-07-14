@@ -32,6 +32,7 @@ dependencyResolutionManagement {
 include(":app:androidApp")
 include(":app:common")
 include(":shared:core:common")
+include(":shared:core:ui")
 include(":shared:entity")
 include(":shared:data")
 include(":shared:source:local")

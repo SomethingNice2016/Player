@@ -3,11 +3,11 @@ package ua.kucher.player.artist.search
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import ua.kucher.player.navigation.AppBackStack
 
 @Composable
 internal fun ArtistSearchRoute(
-    navController: NavController,
+    backStack: AppBackStack,
     viewModel: ArtistSearchViewModel
 ) {
 
@@ -23,7 +23,7 @@ internal fun ArtistSearchRoute(
 
         },
         onBackClick = {
-            navController.popBackStack()
+            backStack.removeLast()
         }
     )
 }

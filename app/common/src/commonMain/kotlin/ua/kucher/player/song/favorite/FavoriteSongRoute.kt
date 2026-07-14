@@ -3,12 +3,12 @@ package ua.kucher.player.song.favorite
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import ua.kucher.player.navigation.AppBackStack
 import ua.kucher.player.navigation.AppRoute
 
 @Composable
 internal fun FavoriteSongRoute(
-    navController: NavController,
+    backStack: AppBackStack,
     viewModel: FavoriteSongViewModel
 ) {
 
@@ -18,9 +18,9 @@ internal fun FavoriteSongRoute(
         uiState = uiState,
         onSongClick = viewModel::playSong,
         onRefresh = viewModel::refresh,
-        onBackClick = navController::popBackStack,
+        onBackClick = backStack::removeLast,
         onSearch = {
-            navController.navigate(AppRoute.SongsSearch)
+            backStack.add(AppRoute.SongsSearch)
         },
         onMenuClick = { id ->
 
