@@ -1,26 +1,23 @@
 package ua.kucher.player.song.allsongs
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
-import ua.kucher.player.navigation.AppRoute
+import ua.kucher.player.navigation.AppNavigator
 
 @Composable
 internal fun AllSongRoute(
-    navController: NavController,
-    viewModel: AllSongViewModel
+    navigator: AppNavigator,
+    presenter: AllSongPresenter
 ) {
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by presenter.uiState.collectAsState()
 
     AllSongScreen(
         uiState = uiState,
-        onSongClick = viewModel::playSong,
-        onRefresh = viewModel::refresh,
-        onSearch = {
-            navController.navigate(AppRoute.SongsSearch.path)
-        },
+        onSongClick = presenter::playSong,
+        onRefresh = presenter::refresh,
+        onSearch = navigator::navigateToSongSearch,
         onMenuClick = { id ->
 
         }

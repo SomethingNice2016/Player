@@ -2,11 +2,8 @@ package ua.kucher.player.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import org.koin.compose.viewmodel.koinViewModel
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.ui.NavDisplay
 import ua.kucher.player.album.list.AlbumListRoute
 import ua.kucher.player.album.search.AlbumSearchRoute
 import ua.kucher.player.artist.list.ArtistListRoute
@@ -16,79 +13,81 @@ import ua.kucher.player.setting.SettingRoute
 import ua.kucher.player.song.allsongs.AllSongRoute
 import ua.kucher.player.song.favorite.FavoriteSongRoute
 import ua.kucher.player.song.search.SongsSearchRoute
+import ua.kucher.player.theme.extensions.koinPresenter
 
 @Composable
 internal fun PlayerNavigation(
     modifier: Modifier = Modifier,
-    navController: NavHostController = rememberNavController(),
-    startDestination: AppRoute = AppRoute.Home,
+    navigator: AppNavigator,
 ) {
-    NavHost(
+    NavDisplay(
         modifier = modifier,
-        navController = navController,
-        startDestination = startDestination.path,
-    ) {
-        composable(route = AppRoute.Home.path) { navBackStackEntry ->
-            HomeRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+        onBack = { navigator.navigateBack() },
+        backStack = navigator.backStack,
+        entryProvider = entryProvider {
 
-        composable(route = AppRoute.AllSong.path) { navBackStackEntry ->
-            AllSongRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.Home> {
+                HomeRoute(
+                    navigator = navigator,
+                    presenter = koinPresenter()
+                )
+            }
 
-        composable(route = AppRoute.FavoriteSongs.path) { navBackStackEntry ->
-            FavoriteSongRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.AllSong> {
+                AllSongRoute(
+                    navigator = navigator,
+                    presenter = koinPresenter()
+                )
+            }
 
-        composable(route = AppRoute.Settings.path) { navBackStackEntry ->
-            SettingRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.FavoriteSongs> {
+                FavoriteSongRoute(
+                    navigator = navigator,
+                    presenter = koinPresenter()
+                )
+            }
 
-        composable(route = AppRoute.SongsSearch.path) { navBackStackEntry ->
-            SongsSearchRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.Settings> {
+                SettingRoute(
+                    navigator = navigator,
+                    presenter = koinPresenter()
+                )
+            }
 
-        composable(route = AppRoute.ArtistList.path) { navBackStackEntry ->
-            ArtistListRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.SongsSearch> {
+                SongsSearchRoute(
+                    navigator = navigator,
+                    presenter = koinPresenter()
+                )
+            }
 
-        composable(route = AppRoute.ArtistSearch.path) { navBackStackEntry ->
-            ArtistSearchRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.ArtistList> {
+                ArtistListRoute(
+                    navigator = navigator,
+                    presenter = koinPresenter()
+                )
+            }
 
-        composable(route = AppRoute.AlbumList.path) { navBackStackEntry ->
-            AlbumListRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
-        }
+            entry<AppRoute.ArtistSearch> {
+                ArtistSearchRoute(
+                    navigator = navigator,
+                    presenter = koinPresenter()
+                )
+            }
 
-        composable(route = AppRoute.AlbumSearch.path) { navBackStackEntry ->
-            AlbumSearchRoute(
-                navController = navController,
-                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
-            )
+            entry<AppRoute.AlbumsList> {
+                AlbumListRoute(
+                    navigator = navigator,
+                    presenter = koinPresenter()
+                )
+            }
+
+            entry<AppRoute.AlbumSearch> {
+                AlbumSearchRoute(
+                    navigator = navigator,
+                    presenter = koinPresenter()
+                )
+            }
         }
-    }
+    )
 }

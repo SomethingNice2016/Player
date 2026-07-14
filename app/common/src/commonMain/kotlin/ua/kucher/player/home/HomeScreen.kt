@@ -73,7 +73,8 @@ internal fun HomeScreen(
     onSeeAllAlbums: () -> Unit,
     onFavoriteSongsClick: () -> Unit,
     onSongClick: (id: Long) -> Unit,
-    onArtistClick: (id: Long) -> Unit
+    onArtistClick: (id: Long) -> Unit,
+    showSongMenu: (id: Long) -> Unit
 ) {
 
     val pullToRefreshState = rememberPullToRefreshState()
@@ -214,6 +215,9 @@ internal fun HomeScreen(
                                 isPlaying = uiState.isPlaying,
                                 onClick = {
                                     onSongClick(song.id)
+                                },
+                                onLongClick = {
+                                    showSongMenu(song.id)
                                 }
                             )
                         }
@@ -339,14 +343,16 @@ private fun HomeScreenPreview() {
         artistName = "Samurai",
         displayDuration = "2:22",
         duration = 100000L,
-        artwork = ""
+        artwork = "",
+        isFavorite = false
     )
 
     val artistUi = ArtistUi(
         id = 1L,
         name = "Samurai",
         artwork = "",
-        numberOfSongs = 22
+        numberOfSongs = 22,
+        numberOfAlbums = 3
     )
 
     Box(
@@ -379,7 +385,8 @@ private fun HomeScreenPreview() {
             onSeeAllSongs = {},
             onSongClick = {},
             onArtistClick = {},
-            onFavoriteSongsClick = {}
+            onFavoriteSongsClick = {},
+            showSongMenu = {}
         )
     }
 }

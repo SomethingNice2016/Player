@@ -28,9 +28,9 @@ import coil3.compose.SubcomposeAsyncImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
+import player.app.common.generated.resources.artist_item_description
 import player.app.common.generated.resources.ic_artist
 import player.app.common.generated.resources.ic_options
-import player.app.common.generated.resources.tracks_count
 import ua.kucher.player.theme.PlayerTheme
 
 @Composable
@@ -38,6 +38,7 @@ internal fun ArtistItem(
     modifier: Modifier = Modifier,
     name: String,
     artwork: String,
+    numberOfAlbums: Int,
     numberOfSongs: Int,
     onClick: () -> Unit,
     onMenuClick: () -> Unit
@@ -89,7 +90,11 @@ internal fun ArtistItem(
             Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens2Px))
 
             Text(
-                text = stringResource(Res.string.tracks_count, numberOfSongs),
+                text = stringResource(
+                    Res.string.artist_item_description,
+                    numberOfAlbums,
+                    numberOfSongs
+                ),
                 color = PlayerTheme.colorScheme.secondaryTextColor,
                 fontStyle = PlayerTheme.typography.mediumBody.fontStyle,
                 maxLines = 1,
@@ -121,6 +126,7 @@ internal fun ArtistItemPreview() {
         name = "SAMURAI",
         artwork = "",
         numberOfSongs = 4,
+        numberOfAlbums = 2,
         onClick = {},
         onMenuClick = {}
     )

@@ -111,7 +111,8 @@ private fun SongListScreenTemplatePreview() {
         artistName = "SAMURAI",
         displayDuration = "3:33",
         duration = 69000L,
-        artwork = ""
+        artwork = "",
+        isFavorite = false
     )
 
     Box(

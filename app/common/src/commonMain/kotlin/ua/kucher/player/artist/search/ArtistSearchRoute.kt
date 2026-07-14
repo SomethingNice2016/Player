@@ -1,29 +1,27 @@
 package ua.kucher.player.artist.search
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import ua.kucher.player.navigation.AppNavigator
 
 @Composable
 internal fun ArtistSearchRoute(
-    navController: NavController,
-    viewModel: ArtistSearchViewModel
+    navigator: AppNavigator,
+    presenter: ArtistSearchPresenter
 ) {
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by presenter.uiState.collectAsState()
 
     ArtistSearchScreen(
         uiState = uiState,
-        onSearch = viewModel::search,
+        onSearch = presenter::search,
+        onBackClick = navigator::navigateBack,
         onArtistClick = { id ->
 
         },
         onMenuClick = { id ->
 
         },
-        onBackClick = {
-            navController.popBackStack()
-        }
     )
 }

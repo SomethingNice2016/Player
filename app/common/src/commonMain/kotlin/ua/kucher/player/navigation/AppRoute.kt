@@ -1,5 +1,7 @@
 package ua.kucher.player.navigation
 
+import androidx.navigation3.runtime.NavKey
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import player.app.common.generated.resources.Res
@@ -10,85 +12,58 @@ import player.app.common.generated.resources.ic_setting
 import player.app.common.generated.resources.music_label
 import player.app.common.generated.resources.setting_label
 
-internal sealed class AppRoute(
-    val path: String,
-    val label: StringResource? = null,
-    val icon: DrawableResource? = null
-) {
+
+internal sealed interface AppRoute : NavKey {
 
     companion object {
-        fun getMainMenuItems() = listOf(
+        val mainMenuItems = listOf(
             Home, AllSong, Settings
         )
-
-        fun values() = listOf(
-            Home,
-            AllSong,
-            Settings,
-            SongsSearch,
-            ArtistList,
-            ArtistSearch,
-            AlbumList,
-            AlbumSearch,
-            FavoriteSongs
-        )
-
-        fun getByPath(path: String) = values().find { value ->
-            value.path == path
-        } ?: throw IllegalArgumentException("Incorrect path!")
     }
 
-    data object Home : AppRoute(
-        path = "home",
-        label = Res.string.home_label,
-        icon = Res.drawable.ic_home
-    )
+    @Serializable
+    data object Home : AppRoute
 
-    data object AllSong : AppRoute(
-        path = "all_songs",
-        label = Res.string.music_label,
-        icon = Res.drawable.ic_music
-    )
+    @Serializable
+    data object AllSong : AppRoute
 
-    data object Settings : AppRoute(
-        path = "settings",
-        label = Res.string.setting_label,
-        icon = Res.drawable.ic_setting
-    )
+    @Serializable
+    data object Settings : AppRoute
 
-    data object SongsSearch : AppRoute(
-        path = "songs_search",
-        label = null,
-        icon = null
-    )
+    @Serializable
+    data object SongsSearch : AppRoute
 
-    data object ArtistList: AppRoute(
-        path = "artists",
-        label = null,
-        icon = null
-    )
+    @Serializable
+    data object ArtistList : AppRoute
 
-    data object ArtistSearch: AppRoute(
-        path = "artists_search",
-        label = null,
-        icon = null
-    )
+    @Serializable
+    data object ArtistSearch : AppRoute
 
-    data object AlbumList: AppRoute(
-        path = "album_list",
-        label = null,
-        icon = null
-    )
+    @Serializable
+    data object AlbumsList : AppRoute
 
-    data object AlbumSearch: AppRoute(
-        path = "album_search",
-        label = null,
-        icon = null
-    )
+    @Serializable
+    data object AlbumSearch : AppRoute
 
-    data object FavoriteSongs: AppRoute(
-        path = "favorite_songs",
-        label = null,
-        icon = null
-    )
+    @Serializable
+    data object FavoriteSongs : AppRoute
+
+    @Serializable
+    data object SongMenu : AppRoute
 }
+
+internal val AppRoute.label: StringResource?
+    get() = when (this) {
+        AppRoute.Home -> Res.string.home_label
+        AppRoute.AllSong -> Res.string.music_label
+        AppRoute.Settings -> Res.string.setting_label
+        else -> null
+    }
+
+internal val AppRoute.icon: DrawableResource?
+    get() = when (this) {
+        AppRoute.Home -> Res.drawable.ic_home
+        AppRoute.AllSong -> Res.drawable.ic_music
+        AppRoute.Settings -> Res.drawable.ic_setting
+        else -> null
+    }

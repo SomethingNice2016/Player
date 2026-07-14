@@ -2,10 +2,9 @@ package ua.kucher.player.data.song
 
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
-import ua.kucher.player.core.common.datetime.TimeProvider
-import ua.kucher.player.core.common.result.flatMap
-import ua.kucher.player.entity.SongPlaylist
+import ua.kucher.player.core.ui.coroutines.dispather.DispatcherProvider
+import ua.kucher.player.core.ui.datetime.TimeProvider
+import ua.kucher.player.local.Const
 import ua.kucher.player.local.song.SongLocalSource
 
 internal class SongRepositoryImpl(
@@ -26,7 +25,7 @@ internal class SongRepositoryImpl(
     override fun getRecentlyPlayedSongs() = songLocalSource.getRecentlyPlayedSongs()
         .flowOn(dispatcherProvider.io)
 
-    override fun getFavouriteSongs() = songLocalSource.getSongsByPlaylist(SongPlaylist.FAVORITE_PLAYLIST_ID)
+    override fun getFavouriteSongs() = songLocalSource.getSongsByPlaylist(Const.FAVORITE_PLAYLIST_ID)
         .flowOn(dispatcherProvider.io)
 
     override fun getSongsByAlbum(albumId: Long) = songLocalSource.getSongsByAlbum(albumId)
@@ -44,15 +43,11 @@ internal class SongRepositoryImpl(
     override fun getSongsCount() = songLocalSource.getSongsCount()
         .flowOn(dispatcherProvider.io)
 
-    override fun getFavouriteSongsCount() = songLocalSource.getSongsCountByPlaylist(SongPlaylist.FAVORITE_PLAYLIST_ID)
+    override fun getFavouriteSongsCount() = songLocalSource.getSongsCountByPlaylist(Const.FAVORITE_PLAYLIST_ID)
         .flowOn(dispatcherProvider.io)
 
     override suspend fun registerPlayback(id: Long) = withContext(dispatcherProvider.io) {
-        songLocalSource.updatePlayedTimeById(id, timeProvider.currentTimestamp).flatMap {
-            songLocalSource.getListenCountById(id).flatMap { count ->
-                songLocalSource.updateListenCountById(id, count.inc())
-            }
-        }
+        songLocalSource.registerPlayback(id, timeProvider.currentTimestamp)
     }
 
     override suspend fun fetchSongs() = withContext(dispatcherProvider.io) {

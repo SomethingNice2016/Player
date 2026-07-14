@@ -35,9 +35,9 @@ import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.default_song_artwork
 import player.app.common.generated.resources.ic_options
 import player.app.common.generated.resources.song_item_description
+import ua.kucher.player.core.ui.components.AudioVisualizer
+import ua.kucher.player.core.ui.components.FrostedGlass
 import ua.kucher.player.theme.PlayerTheme
-import ua.kucher.player.theme.components.AudioVisualizer
-import ua.kucher.player.theme.components.FrostedGlass
 import ua.kucher.player.theme.extensions.toPx
 
 @Composable

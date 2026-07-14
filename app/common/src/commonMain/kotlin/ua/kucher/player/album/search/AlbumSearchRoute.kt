@@ -1,22 +1,22 @@
 package ua.kucher.player.album.search
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import ua.kucher.player.navigation.AppNavigator
 
 @Composable
 internal fun AlbumSearchRoute(
-    navController: NavController,
-    viewModel: AlbumSearchViewModel
+    navigator: AppNavigator,
+    presenter: AlbumSearchPresenter
 ) {
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by presenter.uiState.collectAsState()
 
     AlbumSearchScreen(
         uiState = uiState,
-        onBackClick = navController::popBackStack,
-        onSearch = viewModel::search,
+        onBackClick = navigator::navigateBack,
+        onSearch = presenter::search,
         onAlbumClick = { id ->
 
         },

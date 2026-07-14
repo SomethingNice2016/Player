@@ -38,7 +38,7 @@ internal fun SongsSearchScreen(
     onSearch: (String) -> Unit,
     onSongClick: (id: Long) -> Unit,
     onMenuClick: (id: Long) -> Unit,
-    onBack: () -> Unit
+    onBackClick: () -> Unit
 ) {
 
     val focusRequester = remember {
@@ -71,7 +71,7 @@ internal fun SongsSearchScreen(
                     painter = painterResource(Res.drawable.ic_arrow_left),
                     onClick = {
                         keyboardController?.hide()
-                        onBack()
+                        onBackClick()
                     }
                 )
 
@@ -130,7 +130,8 @@ private fun SongsSearchScreenPreview() {
         artistName = "SAMURAI",
         displayDuration = "3:33",
         duration = 69000L,
-        artwork = ""
+        artwork = "",
+        isFavorite = false
     )
     SongsSearchScreen(
         uiState = SongsSearchUiState(
@@ -145,6 +146,6 @@ private fun SongsSearchScreenPreview() {
         onSearch = {},
         onSongClick = {},
         onMenuClick = {},
-        onBack = {}
+        onBackClick = {}
     )
 }

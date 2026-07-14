@@ -4,13 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavController
 
 @Composable
 internal fun MusicPlayerRoute(
     modifier: Modifier = Modifier,
-    navController: NavController,
-    viewModel: MusicPlayerViewModel,
+    viewModel: MusicPlayerPresenter,
     content: @Composable () -> Unit = {}
 ) {
 

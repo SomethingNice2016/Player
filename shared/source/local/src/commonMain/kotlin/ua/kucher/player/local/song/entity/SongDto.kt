@@ -5,6 +5,7 @@ import androidx.room.Junction
 import androidx.room.Relation
 import ua.kucher.player.entity.Album
 import ua.kucher.player.entity.Song
+import ua.kucher.player.local.Const
 import ua.kucher.player.local.album.entity.AlbumEntity
 import ua.kucher.player.local.artist.ArtistEntity
 import ua.kucher.player.local.artist.toDomain
@@ -48,6 +49,9 @@ internal fun SongDto.toDomain() = Song(
     artist = artist?.toDomain(),
     songArtwork = song.artwork,
     lastModified = song.lastModified,
+    isFavorite = playlists.any { playlist ->
+        playlist.id == Const.FAVORITE_PLAYLIST_ID
+    },
     playlistIds = playlists.map { playlist ->
         playlist.id
     }.toSet()

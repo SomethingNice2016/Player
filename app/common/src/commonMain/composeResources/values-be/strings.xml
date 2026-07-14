@@ -8,6 +8,7 @@
     <string name="github_url">https://github.com/SomethingNice2016/Player</string>
     <string name="song_item_description">%1$s • %2$s</string>
     <string name="album_item_description">Альбом • %1$s • %2$s трэкаў</string>
+    <string name="artist_item_description">%1$s альбомаў • %2$s трэкаў</string>
     <string name="search">Пошук</string>
     <string name="see_all">Паказаць усё</string>
     <string name="search_song_hint">Увядзіце назву трэка</string>

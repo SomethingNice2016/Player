@@ -31,6 +31,7 @@ internal fun ArtistsList(
                 modifier = Modifier.fillMaxWidth(),
                 name = artist.name,
                 numberOfSongs = artist.numberOfSongs,
+                numberOfAlbums = artist.numberOfAlbums,
                 artwork = artist.artwork ?: "",
                 onMenuClick = {
                     onMenuClick(artist.id)

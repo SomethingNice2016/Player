@@ -10,8 +10,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Dp
+import ua.kucher.player.core.ui.utils.rememberNavigationBarHeight
 import ua.kucher.player.theme.PlayerTheme
-import ua.kucher.player.theme.rememberNavigationBarHeight
 
 internal val bottomNavHeight: Dp
     @Composable

@@ -8,6 +8,7 @@
     <string name="github_url">https://github.com/SomethingNice2016/Player</string>
     <string name="song_item_description">%1$s • %2$s</string>
     <string name="album_item_description">Album • %1$s • %2$s Titel</string>
+    <string name="artist_item_description">%1$s Alben • %2$s Titel</string>
     <string name="search">Suchen</string>
     <string name="see_all">Alle anzeigen</string>
     <string name="search_song_hint">Titel eingeben</string>

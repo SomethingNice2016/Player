@@ -24,20 +24,10 @@ kotlin {
 
     sourceSets {
         commonMain.dependencies {
-            api(libs.compose.runtime)
-            api(libs.compose.ui)
-            api(libs.compose.foundation)
             api(libs.compose.resources)
-            api(libs.compose.ui.tooling.preview)
-            api(libs.compose.material3)
             implementation(libs.kermit)
-            implementation(libs.kotlinx.coroutines.core)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime)
-            implementation(libs.androidx.lifecycle.viewmodel.navigation3)
             implementation(libs.compose.nav3)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.androidx.ktx.core)
 
             //Permissions
             implementation(libs.permissions.core)
@@ -46,8 +36,6 @@ kotlin {
             //koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose.core)
-            implementation(libs.koin.compose.viewmodel)
-            implementation(libs.koin.compose.navigation)
 
             //image loader
             implementation(libs.coil.compose)
@@ -56,14 +44,11 @@ kotlin {
             implementation(projects.shared.data)
             implementation(projects.shared.entity)
             implementation(projects.shared.core.common)
+            implementation(projects.shared.core.ui)
         }
 
         androidMain.dependencies {
             implementation(libs.androidx.startup.runtime)
-            implementation(libs.androidx.compose.icons)
-            implementation(libs.androidx.constraintlayout.compose)
-            implementation(libs.kotlinx.coroutines.android)
-            implementation(libs.androidx.ktx.core)
             implementation(libs.androidx.workmanager)
             implementation(libs.koin.android)
             implementation(libs.coil.http)

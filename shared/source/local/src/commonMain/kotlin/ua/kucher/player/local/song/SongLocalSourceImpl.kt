@@ -6,7 +6,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
+import ua.kucher.player.core.ui.coroutines.dispather.DispatcherProvider
 import ua.kucher.player.entity.Song
 import ua.kucher.player.local.ArtworkCache
 import ua.kucher.player.local.LocalStorageSource
@@ -70,16 +70,8 @@ internal class SongLocalSourceImpl(
             entity?.toDomain()
         }
 
-    override suspend fun getListenCountById(id: Long) = runCatching {
-        songDao.getListenCount(id)
-    }
-
-    override suspend fun updateListenCountById(id: Long, count: Int) = runCatching {
-        songDao.updateListenCount(id, count)
-    }
-
-    override suspend fun updatePlayedTimeById(id: Long, timestamp: Long) = runCatching {
-        songDao.updatePlayedTime(id, timestamp)
+    override suspend fun registerPlayback(id: Long, timestamp: Long) = runCatching {
+        songDao.registerPlayback(id, timestamp)
     }
 
     override suspend fun fetchSongs(): Result<Unit> = runCatching {
