@@ -3,6 +3,7 @@ package ua.kucher.player.theme.components.items
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.SubcomposeAsyncImage
 import org.jetbrains.compose.resources.painterResource
 import player.app.common.generated.resources.Res
@@ -35,10 +37,10 @@ internal fun ArtistGridItem(
 ) {
     Column(
         modifier = modifier
-            .width(PlayerTheme.dimens.dimens80Px)
-            .clickable {
-                onClick()
-            },
+            .clickable { onClick() }
+            .padding(PlayerTheme.dimens.dimens8Px)
+            .clip(PlayerTheme.shapes.radius4Px)
+            .width(PlayerTheme.dimens.dimens80Px),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SubcomposeAsyncImage(
@@ -70,6 +72,22 @@ internal fun ArtistGridItem(
             color = PlayerTheme.colorScheme.primaryTextColor,
             style = PlayerTheme.typography.smallBody,
             maxLines = 1
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun ArtistGridItemPreview() {
+    Box(
+        modifier = Modifier
+            .clip(PlayerTheme.shapes.radius4Px)
+            .background(PlayerTheme.colorScheme.primaryBackground)
+    ) {
+        ArtistGridItem(
+            name = "Samurai",
+            artwork = null,
+            onClick = {}
         )
     }
 }

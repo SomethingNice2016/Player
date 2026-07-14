@@ -199,10 +199,8 @@ internal fun HomeScreen(
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         contentPadding = PaddingValues(
-                            horizontal = PlayerTheme.dimens.dimens16Px,
-                            vertical = PlayerTheme.dimens.dimens8Px
+                            horizontal = PlayerTheme.dimens.dimens8Px,
                         ),
-                        horizontalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens16Px)
                     ) {
                         items(
                             items = uiState.recentlyPlayedSongs,
@@ -248,10 +246,8 @@ internal fun HomeScreen(
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         contentPadding = PaddingValues(
-                            horizontal = PlayerTheme.dimens.dimens16Px,
-                            vertical = PlayerTheme.dimens.dimens8Px
+                            horizontal = PlayerTheme.dimens.dimens8Px,
                         ),
-                        horizontalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens16Px)
                     ) {
                         items(
                             items = uiState.topArtists,
