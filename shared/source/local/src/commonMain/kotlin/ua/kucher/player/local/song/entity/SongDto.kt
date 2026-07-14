@@ -3,9 +3,9 @@ package ua.kucher.player.local.song.entity
 import androidx.room.Embedded
 import androidx.room.Junction
 import androidx.room.Relation
+import ua.kucher.player.entity.Album
 import ua.kucher.player.entity.Song
-import ua.kucher.player.local.album.AlbumEntity
-import ua.kucher.player.local.album.toDomain
+import ua.kucher.player.local.album.entity.AlbumEntity
 import ua.kucher.player.local.artist.ArtistEntity
 import ua.kucher.player.local.artist.toDomain
 import ua.kucher.player.local.playlist.PlaylistEntity
@@ -36,7 +36,15 @@ internal fun SongDto.toDomain() = Song(
     title = song.title,
     duration = song.duration,
     uri = song.uri,
-    album = album?.toDomain(),
+    album = album?.let { nonNullAlbum ->
+        Album(
+            id = nonNullAlbum.id,
+            title = nonNullAlbum.title,
+            artwork = nonNullAlbum.artwork,
+            numberOfSongs = nonNullAlbum.numberOfSongs,
+            artist = artist?.toDomain()
+        )
+    },
     artist = artist?.toDomain(),
     songArtwork = song.artwork,
     lastModified = song.lastModified,

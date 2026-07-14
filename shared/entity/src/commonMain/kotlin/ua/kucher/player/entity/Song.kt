@@ -21,4 +21,7 @@ data class Song(
     override val albumTitle: String?
         get() = album?.title
 
+    interface Mapper<out T> {
+        fun map(song: Song): T
+    }
 }

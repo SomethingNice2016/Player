@@ -27,7 +27,9 @@ internal sealed class AppRoute(
             Settings,
             SongsSearch,
             ArtistList,
-            ArtistSearch
+            ArtistSearch,
+            AlbumList,
+            AlbumSearch
         )
 
         fun getByPath(path: String) = values().find { value ->
@@ -67,6 +69,18 @@ internal sealed class AppRoute(
 
     data object ArtistSearch: AppRoute(
         path = "artists_search",
+        label = null,
+        icon = null
+    )
+
+    data object AlbumList: AppRoute(
+        path = "album_list",
+        label = null,
+        icon = null
+    )
+
+    data object AlbumSearch: AppRoute(
+        path = "album_search",
         label = null,
         icon = null
     )

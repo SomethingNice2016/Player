@@ -13,13 +13,15 @@ import ua.kucher.player.core.common.coroutines.combine
 import ua.kucher.player.data.albun.AlbumRepository
 import ua.kucher.player.data.artist.ArtistRepository
 import ua.kucher.player.data.song.SongRepository
+import ua.kucher.player.entity.Song
 import ua.kucher.player.playback.PlaybackController
 
 internal class HomeViewModel(
     private val songRepository: SongRepository,
     private val artistRepository: ArtistRepository,
     private val albumRepository: AlbumRepository,
-    private val playbackController: PlaybackController
+    private val playbackController: PlaybackController,
+    private val songMapper: Song.Mapper<SongUi>
 ) : ViewModel() {
 
     private val isRefreshing = MutableStateFlow(false)
@@ -42,16 +44,8 @@ internal class HomeViewModel(
             playingSongId = playbackState.currentItemId,
             isPlaying = playbackState.isPlaying,
             isRefreshing = isRefreshing,
-            isPlayerShowed = playbackState.currentItemId != null,
             recentlyPlayedSongs = recentlyPlayedSongs.map { song ->
-                SongUi(
-                    id = song.id,
-                    title = song.title,
-                    artistName = song.artistTitle ?: "",
-                    displayDuration = "",
-                    duration = song.duration,
-                    artwork = song.artwork
-                )
+                songMapper.map(song)
             },
             topArtists = topArtists.map { artist ->
                 ArtistUi(

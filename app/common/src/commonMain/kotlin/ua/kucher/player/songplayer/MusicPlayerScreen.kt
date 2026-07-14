@@ -35,6 +35,10 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
+import coil3.size.Size
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -45,8 +49,8 @@ import player.app.common.generated.resources.ic_cast
 import player.app.common.generated.resources.ic_options
 import ua.kucher.player.common.SongUi
 import ua.kucher.player.playback.PlaybackController
-import ua.kucher.player.songlist.SongListScreen
-import ua.kucher.player.songlist.SongListUiState
+import ua.kucher.player.song.list.SongListScreen
+import ua.kucher.player.song.list.SongListUiState
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.FrostedGlass
 import ua.kucher.player.theme.components.MiniPlayer
@@ -329,7 +333,11 @@ internal fun MusicPlayerScreen(
                         modifier = Modifier
                             .size(artworkSize)
                             .clip(RoundedCornerShape(artworkCorner)),
-                        model = pages[page].value,
+                        model = ImageRequest.Builder(LocalPlatformContext.current)
+                            .data(pages[page].value)
+                            .size(Size.ORIGINAL)
+                            .crossfade(true)
+                            .build(),
                         contentDescription = "",
                         contentScale = ContentScale.Crop,
                         placeholder = painterResource(Res.drawable.default_song_artwork),
@@ -422,7 +430,6 @@ private fun PlayerScreenPreview() {
                             songUi.copy(id = 15),
                         ),
                         isPlaying = true,
-                        isPlayerShowed = true,
                         playingSongId = 12L
                     ),
                     onSongClick = {},

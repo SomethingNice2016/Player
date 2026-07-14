@@ -1,6 +1,8 @@
 package ua.kucher.player.common
 
 import androidx.compose.runtime.Stable
+import ua.kucher.player.core.common.datetime.TimeFormatter
+import ua.kucher.player.entity.Song
 
 @Stable
 internal data class SongUi(
@@ -11,3 +13,19 @@ internal data class SongUi(
     val duration: Long,
     val artwork: String?
 )
+
+internal class SongUiMapper(
+    private val timeFormatter: TimeFormatter
+) : Song.Mapper<SongUi> {
+
+    override fun map(song: Song): SongUi {
+        return SongUi(
+            id = song.id,
+            title = song.title,
+            artwork = song.artwork,
+            artistName = song.artist?.name ?: "",
+            duration = song.duration,
+            displayDuration = timeFormatter.formatDuration(song.duration)
+        )
+    }
+}

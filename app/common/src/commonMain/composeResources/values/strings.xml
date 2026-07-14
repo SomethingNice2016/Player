@@ -7,10 +7,12 @@
     <string name="setting_item_rate_app">Rate app</string>
     <string name="github_url">https://github.com/SomethingNice2016/Player</string>
     <string name="song_item_description">%1$s • %2$s</string>
+    <string name="album_item_description">Album • %1$s • %2$s tracks</string>
     <string name="search">Search</string>
     <string name="see_all">See all</string>
     <string name="search_song_hint">Enter the song title</string>
     <string name="search_artist_hint">Enter the artist name</string>
+    <string name="search_album_hint">Enter the album title</string>
     <string name="home_screen_items_count">%1$s tracks • %2$s artists • %3$s albums</string>
     <string name="favorites">Favorites</string>
     <string name="tracks_count">%1$s tracks</string>

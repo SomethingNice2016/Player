@@ -9,14 +9,12 @@ import androidx.compose.ui.Modifier
 import ua.kucher.player.common.ArtistUi
 import ua.kucher.player.theme.components.items.ArtistItem
 import ua.kucher.player.theme.extensions.BottomNavSpacer
-import ua.kucher.player.theme.extensions.MiniPlayerSpacer
 
 @Composable
 internal fun ArtistsList(
     modifier: Modifier = Modifier,
     lazyListState: LazyListState,
     artists: List<ArtistUi> = emptyList(),
-    isPlayerShowed: Boolean = false,
     onArtistClick: (id: Long) -> Unit,
     onMenuClick: (id: Long) -> Unit
 ) {
@@ -41,9 +39,6 @@ internal fun ArtistsList(
                     onArtistClick(artist.id)
                 }
             )
-        }
-        if (isPlayerShowed) {
-            item { MiniPlayerSpacer() }
         }
         item { BottomNavSpacer() }
     }

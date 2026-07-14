@@ -19,8 +19,8 @@ internal fun HomeRoute(
         uiState = uiState,
         onSongClick = viewModel::playSong,
         onRefresh = viewModel::refresh,
-        onSearch = {
-            navController.navigateTo(AppRoute.SongsSearch)
+        onSeeAllAlbums = {
+            navController.navigateTo(AppRoute.AlbumList)
         },
         onSeeAllSongs = {
             navController.navigateTo(AppRoute.SongList)

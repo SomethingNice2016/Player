@@ -12,6 +12,7 @@ import ua.kucher.player.core.common.coroutines.flatMapNotNullLatest
 import ua.kucher.player.core.common.coroutines.mapNotNull
 import ua.kucher.player.core.common.datetime.TimeFormatter
 import ua.kucher.player.data.song.SongRepository
+import ua.kucher.player.entity.Song
 import ua.kucher.player.playback.PlaybackController
 
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -19,20 +20,14 @@ internal class MusicPlayerViewModel(
     private val playbackController: PlaybackController,
     private val timeFormatter: TimeFormatter,
     private val songRepository: SongRepository,
+    private val songMapper: Song.Mapper<SongUi>
 ) : ViewModel() {
 
     private val currentSong = playbackController.state.map { playbackState ->
         playbackState.currentItemId
     }.flatMapNotNullLatest { id ->
         songRepository.getSongById(id).mapNotNull { song ->
-            SongUi(
-                id = song.id,
-                title = song.title,
-                artistName = song.artistTitle ?: "",
-                displayDuration = timeFormatter.formatDuration(song.duration),
-                duration = song.duration,
-                artwork = song.artwork
-            )
+            songMapper.map(song)
         }
     }
 

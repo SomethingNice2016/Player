@@ -1,21 +1,23 @@
 <resources>
     <string name="music_label">Музыка</string>
     <string name="home_label">Басты бет</string>
-    <string name="setting_label">Баптаулар</string>
+    <string name="setting_label">Параметрлер</string>
     <string name="setting_item_source_code">Бастапқы код</string>
     <string name="setting_item_about">Қолданба туралы</string>
     <string name="setting_item_rate_app">Қолданбаны бағалау</string>
     <string name="github_url">https://github.com/SomethingNice2016/Player</string>
     <string name="song_item_description">%1$s • %2$s</string>
+    <string name="album_item_description">Альбом • %1$s • %2$s трек</string>
     <string name="search">Іздеу</string>
     <string name="see_all">Барлығын көру</string>
-    <string name="search_song_hint">Ән атауын енгізіңіз</string>
+    <string name="search_song_hint">Трек атауын енгізіңіз</string>
     <string name="search_artist_hint">Орындаушының атын енгізіңіз</string>
+    <string name="search_album_hint">Альбом атауын енгізіңіз</string>
     <string name="home_screen_items_count">%1$s трек • %2$s орындаушы • %3$s альбом</string>
     <string name="favorites">Таңдаулылар</string>
     <string name="tracks_count">%1$s трек</string>
-    <string name="playlists">Ойнату тізімдері</string>
-    <string name="playlists_count">%1$s ойнату тізімі</string>
+    <string name="playlists">Плейлисттер</string>
+    <string name="playlists_count">%1$s плейлист</string>
     <string name="albums">Альбомдар</string>
     <string name="albums_count">%1$s альбом</string>
     <string name="artists">Орындаушылар</string>
