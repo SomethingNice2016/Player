@@ -38,7 +38,6 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import coil3.size.Size
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
@@ -58,6 +57,7 @@ import ua.kucher.player.theme.components.PlayerControl
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 import ua.kucher.player.theme.extensions.bottomNavHeight
 import ua.kucher.player.theme.extensions.playerDragEvents
+import ua.kucher.player.theme.extensions.toPx
 import ua.kucher.player.theme.lerp
 import ua.kucher.player.theme.rememberScreenSizeHeight
 import ua.kucher.player.theme.rememberScreenSizeWidth
@@ -163,6 +163,10 @@ internal fun MusicPlayerScreen(
         expandPlayerProgress.value >= 1F -> 1F
         else -> (expandPlayerProgress.value - 0.7F) / 0.3F
     }
+
+    val backgroundImageSize = backgroundHeight.toPx()
+
+    val artworkPixelSize = artworkBigSize.toPx()
 
     val imageBackgroundAlpha = expandPlayerProgress.value
 
@@ -278,14 +282,21 @@ internal fun MusicPlayerScreen(
                 ) {
                     AsyncImage(
                         modifier = Modifier.fillMaxSize(),
-                        model = nonNullState.currentSong.artwork,
+                        model = ImageRequest.Builder(LocalPlatformContext.current)
+                            .data(nonNullState.currentSong.artwork)
+                            .size(
+                                width = backgroundImageSize,
+                                height = backgroundImageSize
+                            )
+                            .crossfade(true)
+                            .build(),
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         onError = {
                             artworkTintAlpha = 0F
                         },
                         onSuccess = {
-                            artworkTintAlpha = 0.8F
+                            artworkTintAlpha = 0.7F
                         }
                     )
                 }
@@ -335,7 +346,10 @@ internal fun MusicPlayerScreen(
                             .clip(RoundedCornerShape(artworkCorner)),
                         model = ImageRequest.Builder(LocalPlatformContext.current)
                             .data(pages[page].value)
-                            .size(Size.ORIGINAL)
+                            .size(
+                                width = artworkPixelSize,
+                                height = artworkPixelSize
+                            )
                             .crossfade(true)
                             .build(),
                         contentDescription = "",
