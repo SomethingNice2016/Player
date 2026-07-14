@@ -8,7 +8,7 @@ import androidx.compose.ui.Modifier
 @Composable
 internal fun MusicPlayerRoute(
     modifier: Modifier = Modifier,
-    viewModel: MusicPlayerViewModel,
+    viewModel: MusicPlayerPresenter,
     content: @Composable () -> Unit = {}
 ) {
 

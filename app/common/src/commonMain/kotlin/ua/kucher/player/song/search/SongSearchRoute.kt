@@ -1,28 +1,26 @@
 package ua.kucher.player.song.search
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ua.kucher.player.navigation.AppBackStack
+import ua.kucher.player.navigation.AppNavigator
 
 @Composable
 internal fun SongsSearchRoute(
-    backStack: AppBackStack,
-    viewModel: SongsSearchViewModel,
+    navigator: AppNavigator,
+    presenter: SongsSearchPresenter,
 ) {
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by presenter.uiState.collectAsState()
 
     SongsSearchScreen(
         uiState = uiState,
-        onSearch = viewModel::search,
-        onSongClick = viewModel::playSong,
+        onSearch = presenter::search,
+        onSongClick = presenter::playSong,
+        onBackClick = navigator::navigateBack,
         onMenuClick = { id ->
 
         },
-        onBack = {
-            backStack.removeLast()
-        }
     )
 
 }

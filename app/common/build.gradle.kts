@@ -26,12 +26,8 @@ kotlin {
         commonMain.dependencies {
             api(libs.compose.resources)
             implementation(libs.kermit)
-            implementation(libs.androidx.lifecycle.viewmodel)
-            implementation(libs.androidx.lifecycle.runtime)
-            implementation(libs.androidx.lifecycle.viewmodel.navigation3)
             implementation(libs.compose.nav3)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.androidx.ktx.core)
 
             //Permissions
             implementation(libs.permissions.core)
@@ -40,8 +36,6 @@ kotlin {
             //koin
             implementation(libs.koin.core)
             implementation(libs.koin.compose.core)
-            implementation(libs.koin.compose.viewmodel)
-            implementation(libs.koin.compose.navigation)
 
             //image loader
             implementation(libs.coil.compose)
@@ -55,7 +49,6 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.androidx.startup.runtime)
-            implementation(libs.androidx.ktx.core)
             implementation(libs.androidx.workmanager)
             implementation(libs.koin.android)
             implementation(libs.coil.http)

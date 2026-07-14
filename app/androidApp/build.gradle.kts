@@ -71,8 +71,6 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.compose.core)
-    implementation(libs.koin.compose.viewmodel)
-    implementation(libs.koin.compose.navigation)
 
     implementation(projects.app.common)
     implementation(projects.shared.entity)

@@ -351,7 +351,8 @@ private fun HomeScreenPreview() {
         id = 1L,
         name = "Samurai",
         artwork = "",
-        numberOfSongs = 22
+        numberOfSongs = 22,
+        numberOfAlbums = 3
     )
 
     Box(

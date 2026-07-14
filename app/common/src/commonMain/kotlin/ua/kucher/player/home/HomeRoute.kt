@@ -1,40 +1,31 @@
 package ua.kucher.player.home
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ua.kucher.player.navigation.AppBackStack
-import ua.kucher.player.navigation.AppRoute
+import ua.kucher.player.navigation.AppNavigator
 
 @Composable
 internal fun HomeRoute(
-    backStack: AppBackStack,
-    viewModel: HomeViewModel
+    navigator: AppNavigator,
+    presenter: HomePresenter
 ) {
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by presenter.uiState.collectAsState()
 
     HomeScreen(
         uiState = uiState,
-        onSongClick = viewModel::playSong,
-        onRefresh = viewModel::refresh,
-        onFavoriteSongsClick = {
-            backStack.add(AppRoute.FavoriteSongs)
-        },
-        onSeeAllAlbums = {
-            backStack.add(AppRoute.AlbumList)
-        },
-        onSeeAllSongs = {
-            backStack.add(AppRoute.AllSong)
-        },
-        onSeeAllArtists = {
-            backStack.add(AppRoute.ArtistList)
-        },
+        onSongClick = presenter::playSong,
+        onRefresh = presenter::refresh,
+        onFavoriteSongsClick = navigator::navigateToFavoriteSongs,
+        onSeeAllAlbums = navigator::navigateToAlbumList,
+        onSeeAllSongs = navigator::navigateToAllSongs,
+        onSeeAllArtists = navigator::navigateToArtistList,
         onArtistClick = { id ->
 
         },
         showSongMenu = { id ->
-            backStack.add(AppRoute.SongMenu)
+
         }
     )
 }

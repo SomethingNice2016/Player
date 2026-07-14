@@ -3,7 +3,7 @@ package ua.kucher.player.local.playlist
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ua.kucher.player.entity.SongPlaylist
+import ua.kucher.player.local.Const
 import ua.kucher.player.local.TableName
 
 
@@ -17,6 +17,6 @@ internal data class PlaylistEntity(
 ) {
     companion object {
         fun createFavoriteQuery() =
-            "INSERT INTO ${TableName.PLAYLIST_TABLE_NAME} (id, name) VALUES (${SongPlaylist.FAVORITE_PLAYLIST_ID}, 'Favorite')"
+            "INSERT INTO ${TableName.PLAYLIST_TABLE_NAME} (id, name) VALUES (${Const.FAVORITE_PLAYLIST_ID}, 'Favorite')"
     }
 }

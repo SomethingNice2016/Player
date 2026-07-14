@@ -1,7 +1,6 @@
 package ua.kucher.player.artist.search
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -9,13 +8,15 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
-import ua.kucher.player.common.ArtistUi
+import ua.kucher.player.common.toUi
+import ua.kucher.player.core.ui.presenter.Presenter
 import ua.kucher.player.data.artist.ArtistRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class ArtistSearchViewModel(
-    private val artistRepository: ArtistRepository
-) : ViewModel(){
+internal class ArtistSearchPresenter(
+    private val artistRepository: ArtistRepository,
+    scope: CoroutineScope
+) : Presenter(scope) {
 
     private val searchQuery = MutableStateFlow("")
 
@@ -23,12 +24,7 @@ internal class ArtistSearchViewModel(
         artistRepository.searchArtistsByName(query)
     }.map { artists ->
         artists.map { artist ->
-            ArtistUi(
-                id = artist.id,
-                name = artist.name,
-                numberOfSongs = artist.numberOfSongs,
-                artwork = null,
-            )
+            artist.toUi()
         }
     }
 
@@ -41,7 +37,7 @@ internal class ArtistSearchViewModel(
             searchResult = result,
         )
     }.stateIn(
-        scope = viewModelScope,
+        scope = scope,
         started = SharingStarted.Eagerly,
         initialValue = ArtistSearchUiState()
     )

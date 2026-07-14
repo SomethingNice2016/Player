@@ -38,7 +38,7 @@ internal fun SongsSearchScreen(
     onSearch: (String) -> Unit,
     onSongClick: (id: Long) -> Unit,
     onMenuClick: (id: Long) -> Unit,
-    onBack: () -> Unit
+    onBackClick: () -> Unit
 ) {
 
     val focusRequester = remember {
@@ -71,7 +71,7 @@ internal fun SongsSearchScreen(
                     painter = painterResource(Res.drawable.ic_arrow_left),
                     onClick = {
                         keyboardController?.hide()
-                        onBack()
+                        onBackClick()
                     }
                 )
 
@@ -146,6 +146,6 @@ private fun SongsSearchScreenPreview() {
         onSearch = {},
         onSongClick = {},
         onMenuClick = {},
-        onBack = {}
+        onBackClick = {}
     )
 }

@@ -1,21 +1,21 @@
 package ua.kucher.player.song.menu
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavController
+import ua.kucher.player.navigation.AppNavigator
 
 @Composable
 internal fun SongMenuRoute(
-    navController: NavController,
-    viewModel: SongMenuViewModel
+    navigator: AppNavigator,
+    viewModel: SongMenuPresenter
 ) {
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.uiState.collectAsState()
 
     SongMenuDialog(
         uiState = uiState,
-        onBackClick = navController::popBackStack,
+        onBackClick = navigator::navigateBack,
         onPlayNextClick = {
 
         },

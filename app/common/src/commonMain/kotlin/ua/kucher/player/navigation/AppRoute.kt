@@ -16,7 +16,7 @@ import player.app.common.generated.resources.setting_label
 internal sealed interface AppRoute : NavKey {
 
     companion object {
-        val mainMenuItems = listOf<AppRoute>(
+        val mainMenuItems = listOf(
             Home, AllSong, Settings
         )
     }
@@ -40,7 +40,7 @@ internal sealed interface AppRoute : NavKey {
     data object ArtistSearch : AppRoute
 
     @Serializable
-    data object AlbumList : AppRoute
+    data object AlbumsList : AppRoute
 
     @Serializable
     data object AlbumSearch : AppRoute

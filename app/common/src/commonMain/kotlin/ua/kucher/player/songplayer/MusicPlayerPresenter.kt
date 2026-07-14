@@ -1,7 +1,6 @@
 package ua.kucher.player.songplayer
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
@@ -11,17 +10,19 @@ import ua.kucher.player.core.ui.coroutines.combineNotNull
 import ua.kucher.player.core.ui.coroutines.flatMapNotNullLatest
 import ua.kucher.player.core.ui.coroutines.mapNotNull
 import ua.kucher.player.core.ui.datetime.TimeFormatter
+import ua.kucher.player.core.ui.presenter.Presenter
 import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.entity.Song
 import ua.kucher.player.playback.PlaybackController
 
 @OptIn(ExperimentalCoroutinesApi::class)
-internal class MusicPlayerViewModel(
+internal class MusicPlayerPresenter(
     private val playbackController: PlaybackController,
     private val timeFormatter: TimeFormatter,
     private val songRepository: SongRepository,
-    private val songMapper: Song.Mapper<SongUi>
-) : ViewModel() {
+    private val songMapper: Song.Mapper<SongUi>,
+    scope: CoroutineScope
+) : Presenter(scope) {
 
     private val currentSong = playbackController.state.map { playbackState ->
         playbackState.currentItemId
@@ -59,7 +60,7 @@ internal class MusicPlayerViewModel(
     }
 
     fun playById(id: Long) {
-        viewModelScope.launch {
+        scope.launch {
             uiState.firstOrNull()?.let { state ->
                 if (id != state.currentSong.id)
                     songRepository.getSongById(id).firstOrNull()?.let { song ->
@@ -74,7 +75,7 @@ internal class MusicPlayerViewModel(
     }
 
     fun shuffle() {
-        viewModelScope.launch {
+        scope.launch {
             uiState.firstOrNull()?.isShuffle?.let { shuffle ->
                 playbackController.setShuffleMode(!shuffle)
             }
@@ -82,7 +83,7 @@ internal class MusicPlayerViewModel(
     }
 
     fun repeat() {
-        viewModelScope.launch {
+        scope.launch {
             uiState.firstOrNull()?.repeatMode?.let { repeat ->
                 playbackController.setRepeatMode(repeat.getNext())
             }

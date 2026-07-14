@@ -13,7 +13,7 @@ val mainModule = module {
 
     includes(
         mainPlatformModule,
-        viewModelModule,
+        presenterModule,
         dataModule,
     )
 

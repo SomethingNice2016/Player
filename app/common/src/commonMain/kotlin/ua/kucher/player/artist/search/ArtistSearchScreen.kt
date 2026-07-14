@@ -125,7 +125,8 @@ private fun ArtistSearchScreenPreview() {
         id = 12,
         name = "SAMURAI",
         artwork = "",
-        numberOfSongs = 12
+        numberOfSongs = 12,
+        numberOfAlbums = 3
     )
     ArtistSearchScreen(
         uiState = ArtistSearchUiState(

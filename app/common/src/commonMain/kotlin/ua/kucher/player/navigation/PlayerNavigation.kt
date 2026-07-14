@@ -1,11 +1,9 @@
 package ua.kucher.player.navigation
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
-import org.koin.compose.viewmodel.koinViewModel
 import ua.kucher.player.album.list.AlbumListRoute
 import ua.kucher.player.album.search.AlbumSearchRoute
 import ua.kucher.player.artist.list.ArtistListRoute
@@ -15,80 +13,79 @@ import ua.kucher.player.setting.SettingRoute
 import ua.kucher.player.song.allsongs.AllSongRoute
 import ua.kucher.player.song.favorite.FavoriteSongRoute
 import ua.kucher.player.song.search.SongsSearchRoute
-
-internal typealias AppBackStack = SnapshotStateList<AppRoute>
+import ua.kucher.player.theme.extensions.koinPresenter
 
 @Composable
 internal fun PlayerNavigation(
     modifier: Modifier = Modifier,
-    backStack: AppBackStack,
+    navigator: AppNavigator,
 ) {
     NavDisplay(
         modifier = modifier,
-        onBack = { backStack.removeLastOrNull() },
-        backStack = backStack,
+        onBack = { navigator.navigateBack() },
+        backStack = navigator.backStack,
         entryProvider = entryProvider {
 
             entry<AppRoute.Home> {
                 HomeRoute(
-                    backStack = backStack,
-                    viewModel = koinViewModel()
+                    navigator = navigator,
+                    presenter = koinPresenter()
                 )
             }
 
             entry<AppRoute.AllSong> {
                 AllSongRoute(
-                    backStack = backStack,
-                    viewModel = koinViewModel()
+                    navigator = navigator,
+                    presenter = koinPresenter()
                 )
             }
 
             entry<AppRoute.FavoriteSongs> {
                 FavoriteSongRoute(
-                    backStack = backStack,
-                    viewModel = koinViewModel()
+                    navigator = navigator,
+                    presenter = koinPresenter()
                 )
             }
 
             entry<AppRoute.Settings> {
                 SettingRoute(
-                    backStack = backStack,
-                    viewModel = koinViewModel()
+                    navigator = navigator,
+                    presenter = koinPresenter()
                 )
             }
 
             entry<AppRoute.SongsSearch> {
                 SongsSearchRoute(
-                    backStack = backStack,
-                    viewModel = koinViewModel()
+                    navigator = navigator,
+                    presenter = koinPresenter()
                 )
             }
 
             entry<AppRoute.ArtistList> {
                 ArtistListRoute(
-                    backStack = backStack,
-                    viewModel = koinViewModel()
+                    navigator = navigator,
+                    presenter = koinPresenter()
                 )
             }
 
             entry<AppRoute.ArtistSearch> {
                 ArtistSearchRoute(
-                    backStack = backStack,
-                    viewModel = koinViewModel()
+                    navigator = navigator,
+                    presenter = koinPresenter()
                 )
             }
 
-            entry<AppRoute.AlbumList> {
+            entry<AppRoute.AlbumsList> {
                 AlbumListRoute(
-                    backStack = backStack,
-                    viewModel = koinViewModel()
+                    navigator = navigator,
+                    presenter = koinPresenter()
                 )
             }
 
             entry<AppRoute.AlbumSearch> {
                 AlbumSearchRoute(
-                    backStack = backStack,
-                    viewModel = koinViewModel()
+                    navigator = navigator,
+                    presenter = koinPresenter()
                 )
             }
         }

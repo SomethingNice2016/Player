@@ -1,26 +1,23 @@
 package ua.kucher.player.album.list
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ua.kucher.player.navigation.AppBackStack
-import ua.kucher.player.navigation.AppRoute
+import ua.kucher.player.navigation.AppNavigator
 
 @Composable
 internal fun AlbumListRoute(
-    backStack: AppBackStack,
-    viewModel: AlbumListViewModel
+    navigator: AppNavigator,
+    presenter: AlbumListPresenter
 ) {
 
-    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val uiState by presenter.uiState.collectAsState()
 
     AlbumListScreen(
         uiState = uiState,
-        onRefresh = viewModel::refresh,
-        onBackClick = backStack::removeLast,
-        onSearch = {
-            backStack.add(AppRoute.AlbumSearch)
-        },
+        onRefresh = presenter::refresh,
+        onBackClick = navigator::navigateBack,
+        onSearch = navigator::navigateToAlbumSearch,
         onAlbumClick = { id ->
 
         },

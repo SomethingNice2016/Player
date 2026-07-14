@@ -25,11 +25,7 @@ interface SongLocalSource {
 
     fun getSongsCountByPlaylist(playlistId: Long): Flow<Int>
 
-    suspend fun getListenCountById(id: Long): Result<Int>
-
-    suspend fun updateListenCountById(id: Long, count: Int): Result<Unit>
-
-    suspend fun updatePlayedTimeById(id: Long, timestamp: Long): Result<Unit>
+    suspend fun registerPlayback(id: Long, timestamp: Long): Result<Unit>
 
     suspend fun fetchSongs(): Result<Unit>
 
