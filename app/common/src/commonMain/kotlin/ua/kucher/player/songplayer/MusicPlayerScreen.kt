@@ -49,8 +49,8 @@ import player.app.common.generated.resources.ic_cast
 import player.app.common.generated.resources.ic_options
 import ua.kucher.player.common.SongUi
 import ua.kucher.player.playback.PlaybackController
-import ua.kucher.player.song.list.SongListScreen
-import ua.kucher.player.song.list.SongListUiState
+import ua.kucher.player.song.allsongs.AllSongScreen
+import ua.kucher.player.song.allsongs.AllSongUiState
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.FrostedGlass
 import ua.kucher.player.theme.components.MiniPlayer
@@ -387,7 +387,7 @@ internal fun MusicPlayerScreen(
 
 @Preview()
 @Composable
-private fun PlayerScreenPreview() {
+private fun PlayerScreenPreviewAll() {
     val songUi = SongUi(
         id = 12,
         title = "Never fade away",
@@ -421,8 +421,8 @@ private fun PlayerScreenPreview() {
             onRepeat = {},
             onSeek = {},
             content = {
-                SongListScreen(
-                    uiState = SongListUiState(
+                AllSongScreen(
+                    uiState = AllSongUiState(
                         songs = listOf(
                             songUi,
                             songUi.copy(id = 13),

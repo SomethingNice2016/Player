@@ -69,7 +69,7 @@ private fun BottomMenuPreview() {
     BottomBar(
         modifier = Modifier.fillMaxWidth(),
         items = AppRoute.getMainMenuItems(),
-        current = AppRoute.SongList,
+        current = AppRoute.AllSong,
         onClick = {}
     )
 }

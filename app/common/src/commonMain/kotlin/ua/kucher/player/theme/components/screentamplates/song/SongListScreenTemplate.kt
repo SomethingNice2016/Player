@@ -1,4 +1,4 @@
-package ua.kucher.player.song.list
+package ua.kucher.player.theme.components.screentamplates.song
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
+import player.app.common.generated.resources.ic_arrow_left
 import player.app.common.generated.resources.ic_search
 import player.app.common.generated.resources.music_label
 import player.app.common.generated.resources.search
@@ -29,14 +30,16 @@ import ua.kucher.player.theme.components.SongsList
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 import ua.kucher.player.theme.components.rememberPlayerTopAppBarState
 
-
 @Composable
-internal fun SongListScreen(
+internal fun SongListScreenTemplate(
     uiState: SongListUiState,
+    title: String,
     onSongClick: (id: Long) -> Unit,
     onMenuClick: (id: Long) -> Unit,
     onRefresh: () -> Unit,
-    onSearch: () -> Unit
+    onSearch: () -> Unit,
+    onBackClick: () -> Unit = {},
+    showBackButton: Boolean = false,
 ) {
 
     val lazyListState = rememberLazyListState()
@@ -56,8 +59,15 @@ internal fun SongListScreen(
         topBar = {
             PlayerTopAppBar(
                 modifier = Modifier.fillMaxWidth(),
-                titleRes = Res.string.music_label,
-                navigationIcon = {},
+                titleStr = title,
+                navigationIcon = {
+                    if (showBackButton) {
+                        PlayerMenuIconButton(
+                            painter = painterResource(Res.drawable.ic_arrow_left),
+                            onClick = onBackClick
+                        )
+                    }
+                },
                 showDivider = { false },
                 scrollBehavior = scrollBehavior,
                 actions = {
@@ -93,7 +103,7 @@ internal fun SongListScreen(
 
 @Preview
 @Composable
-private fun SongListScreenPreview() {
+private fun SongListScreenTemplatePreview() {
 
     val songUi = SongUi(
         id = 12,
@@ -109,17 +119,19 @@ private fun SongListScreenPreview() {
             .fillMaxSize()
             .background(PlayerTheme.colorScheme.primaryBackground)
     ) {
-        SongListScreen(
-            uiState = SongListUiState(
-                songs = listOf(
+        SongListScreenTemplate(
+            title = stringResource(Res.string.music_label),
+            uiState = object : SongListUiState {
+                override val songs: List<SongUi> = listOf(
                     songUi,
                     songUi.copy(id = 13),
                     songUi.copy(id = 14),
                     songUi.copy(id = 15),
-                ),
-                isPlaying = true,
-                playingSongId = 12L
-            ),
+                )
+                override val isPlaying = true
+                override val isRefreshing = false
+                override val playingSongId = 12L
+            },
             onSongClick = {},
             onRefresh = {},
             onSearch = {},

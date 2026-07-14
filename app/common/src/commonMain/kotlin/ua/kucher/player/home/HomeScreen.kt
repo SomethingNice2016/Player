@@ -71,6 +71,7 @@ internal fun HomeScreen(
     onSeeAllArtists: () -> Unit,
     onSeeAllSongs: () -> Unit,
     onSeeAllAlbums: () -> Unit,
+    onFavoriteSongsClick: () -> Unit,
     onSongClick: (id: Long) -> Unit,
     onArtistClick: (id: Long) -> Unit
 ) {
@@ -137,7 +138,7 @@ internal fun HomeScreen(
                             primaryText = stringResource(Res.string.favorites),
                             secondaryText = stringResource(Res.string.tracks_count, uiState.favoriteSongsCount),
                             painter = painterResource(Res.drawable.ic_favorite),
-                            onClick = {}
+                            onClick = onFavoriteSongsClick
                         )
 
                         HomeScreenTab(
@@ -381,7 +382,8 @@ private fun HomeScreenPreview() {
             onSeeAllArtists = {},
             onSeeAllSongs = {},
             onSongClick = {},
-            onArtistClick = {}
+            onArtistClick = {},
+            onFavoriteSongsClick = {}
         )
     }
 }

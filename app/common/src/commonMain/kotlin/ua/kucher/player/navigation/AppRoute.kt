@@ -18,18 +18,19 @@ internal sealed class AppRoute(
 
     companion object {
         fun getMainMenuItems() = listOf(
-            Home, SongList, Settings
+            Home, AllSong, Settings
         )
 
         fun values() = listOf(
             Home,
-            SongList,
+            AllSong,
             Settings,
             SongsSearch,
             ArtistList,
             ArtistSearch,
             AlbumList,
-            AlbumSearch
+            AlbumSearch,
+            FavoriteSongs
         )
 
         fun getByPath(path: String) = values().find { value ->
@@ -43,8 +44,8 @@ internal sealed class AppRoute(
         icon = Res.drawable.ic_home
     )
 
-    data object SongList : AppRoute(
-        path = "songs",
+    data object AllSong : AppRoute(
+        path = "all_songs",
         label = Res.string.music_label,
         icon = Res.drawable.ic_music
     )
@@ -81,6 +82,12 @@ internal sealed class AppRoute(
 
     data object AlbumSearch: AppRoute(
         path = "album_search",
+        label = null,
+        icon = null
+    )
+
+    data object FavoriteSongs: AppRoute(
+        path = "favorite_songs",
         label = null,
         icon = null
     )
