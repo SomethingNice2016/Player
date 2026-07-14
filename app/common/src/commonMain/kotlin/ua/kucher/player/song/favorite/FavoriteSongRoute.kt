@@ -1,4 +1,4 @@
-package ua.kucher.player.song.list
+package ua.kucher.player.song.favorite
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -7,17 +7,18 @@ import androidx.navigation.NavController
 import ua.kucher.player.navigation.AppRoute
 
 @Composable
-internal fun SongListRoute(
+internal fun FavoriteSongRoute(
     navController: NavController,
-    viewModel: SongListViewModel
+    viewModel: FavoriteSongViewModel
 ) {
 
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    SongListScreen(
+    FavoriteSongScreen(
         uiState = uiState,
         onSongClick = viewModel::playSong,
         onRefresh = viewModel::refresh,
+        onBackClick = navController::popBackStack,
         onSearch = {
             navController.navigate(AppRoute.SongsSearch.path)
         },

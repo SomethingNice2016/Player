@@ -13,7 +13,8 @@ import ua.kucher.player.artist.list.ArtistListRoute
 import ua.kucher.player.artist.search.ArtistSearchRoute
 import ua.kucher.player.home.HomeRoute
 import ua.kucher.player.setting.SettingRoute
-import ua.kucher.player.song.list.SongListRoute
+import ua.kucher.player.song.allsongs.AllSongRoute
+import ua.kucher.player.song.favorite.FavoriteSongRoute
 import ua.kucher.player.song.search.SongsSearchRoute
 
 @Composable
@@ -34,8 +35,15 @@ internal fun PlayerNavigation(
             )
         }
 
-        composable(route = AppRoute.SongList.path) { navBackStackEntry ->
-            SongListRoute(
+        composable(route = AppRoute.AllSong.path) { navBackStackEntry ->
+            AllSongRoute(
+                navController = navController,
+                viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
+            )
+        }
+
+        composable(route = AppRoute.FavoriteSongs.path) { navBackStackEntry ->
+            FavoriteSongRoute(
                 navController = navController,
                 viewModel = koinViewModel(viewModelStoreOwner = navBackStackEntry)
             )

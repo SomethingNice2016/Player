@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import ua.kucher.player.navigation.AppRoute
@@ -64,12 +65,13 @@ internal fun BottomBar(
     }
 }
 
+@Preview
 @Composable
 private fun BottomMenuPreview() {
     BottomBar(
         modifier = Modifier.fillMaxWidth(),
         items = AppRoute.getMainMenuItems(),
-        current = AppRoute.SongList,
+        current = AppRoute.AllSong,
         onClick = {}
     )
 }

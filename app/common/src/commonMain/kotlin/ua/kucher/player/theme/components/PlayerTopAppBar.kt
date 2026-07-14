@@ -132,10 +132,38 @@ fun PlayerTopAppBar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     showDivider: () -> Boolean = { true },
 ) {
+    PlayerTopAppBar(
+        titleStr = stringResource(titleRes),
+        modifier = modifier,
+        navigationIcon = navigationIcon,
+        actions = actions,
+        collapsedHeight = collapsedHeight,
+        expandedHeight = expandedHeight,
+        windowInsets = windowInsets,
+        colors = colors,
+        scrollBehavior = scrollBehavior,
+        showDivider = showDivider,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PlayerTopAppBar(
+    titleStr: String,
+    modifier: Modifier = Modifier,
+    navigationIcon: @Composable () -> Unit = {},
+    actions: @Composable RowScope.() -> Unit = {},
+    collapsedHeight: Dp = PlayerTopAppBarDefaults.topAppBarCollapsedHeight,
+    expandedHeight: Dp = PlayerTopAppBarDefaults.topAppBarExpandedHeight,
+    windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
+    colors: TopAppBarColors = PlayerTopAppBarDefaults.topAppBarColors(),
+    scrollBehavior: TopAppBarScrollBehavior? = null,
+    showDivider: () -> Boolean = { true },
+) {
 
     val title = @Composable {
         androidx.compose.material3.Text(
-            text = stringResource(titleRes)
+            text = titleStr
         )
     }
 

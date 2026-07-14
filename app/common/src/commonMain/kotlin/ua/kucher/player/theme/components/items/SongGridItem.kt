@@ -45,11 +45,11 @@ internal fun SongGridItem(
 
     Column(
         modifier = modifier
+            .clickable { onClick() }
+            .padding(PlayerTheme.dimens.dimens8Px)
             .width(PlayerTheme.dimens.songIconGridSize)
             .clip(PlayerTheme.shapes.radius4Px)
-            .clickable {
-                onClick()
-            }
+
     ) {
         Box(
             modifier = Modifier

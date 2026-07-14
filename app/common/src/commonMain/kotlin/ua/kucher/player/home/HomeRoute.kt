@@ -19,17 +19,20 @@ internal fun HomeRoute(
         uiState = uiState,
         onSongClick = viewModel::playSong,
         onRefresh = viewModel::refresh,
+        onFavoriteSongsClick = {
+            navController.navigateTo(AppRoute.FavoriteSongs)
+        },
         onSeeAllAlbums = {
             navController.navigateTo(AppRoute.AlbumList)
         },
         onSeeAllSongs = {
-            navController.navigateTo(AppRoute.SongList)
+            navController.navigateTo(AppRoute.AllSong)
         },
         onSeeAllArtists = {
             navController.navigateTo(AppRoute.ArtistList)
         },
         onArtistClick = { id ->
 
-        }
+        },
     )
 }

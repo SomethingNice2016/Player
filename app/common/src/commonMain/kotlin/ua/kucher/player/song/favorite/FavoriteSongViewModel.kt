@@ -1,4 +1,4 @@
-package ua.kucher.player.song.list
+package ua.kucher.player.song.favorite
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -15,7 +15,7 @@ import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.entity.Song
 import ua.kucher.player.playback.PlaybackController
 
-internal class SongListViewModel(
+internal class FavoriteSongViewModel(
     private val songRepository: SongRepository,
     private val artistRepository: ArtistRepository,
     private val albumRepository: AlbumRepository,
@@ -26,11 +26,11 @@ internal class SongListViewModel(
     private val isRefreshing = MutableStateFlow(false)
 
     val uiState = combine(
-        songRepository.getAllSongs(),
+        songRepository.getFavouriteSongs(),
         playbackController.state,
         isRefreshing
     ) { songs, playbackState, refreshing ->
-        SongListUiState(
+        FavoriteSongUiState(
             songs = songs.map { song ->
                 songMapper.map(song)
             },
@@ -41,12 +41,12 @@ internal class SongListViewModel(
     }.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
-        initialValue = SongListUiState()
+        initialValue = FavoriteSongUiState()
     )
 
     fun playSong(id: Long) {
         viewModelScope.launch {
-            val songs = songRepository.getAllSongs().firstOrNull() ?: return@launch
+            val songs = songRepository.getFavouriteSongs().firstOrNull() ?: return@launch
             val song = songs.findLast { song -> song.id == id } ?: return@launch
             playbackController.play(
                 playlist = songs,

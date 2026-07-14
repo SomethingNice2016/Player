@@ -71,6 +71,7 @@ internal fun HomeScreen(
     onSeeAllArtists: () -> Unit,
     onSeeAllSongs: () -> Unit,
     onSeeAllAlbums: () -> Unit,
+    onFavoriteSongsClick: () -> Unit,
     onSongClick: (id: Long) -> Unit,
     onArtistClick: (id: Long) -> Unit
 ) {
@@ -137,7 +138,7 @@ internal fun HomeScreen(
                             primaryText = stringResource(Res.string.favorites),
                             secondaryText = stringResource(Res.string.tracks_count, uiState.favoriteSongsCount),
                             painter = painterResource(Res.drawable.ic_favorite),
-                            onClick = {}
+                            onClick = onFavoriteSongsClick
                         )
 
                         HomeScreenTab(
@@ -198,10 +199,8 @@ internal fun HomeScreen(
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         contentPadding = PaddingValues(
-                            horizontal = PlayerTheme.dimens.dimens16Px,
-                            vertical = PlayerTheme.dimens.dimens8Px
+                            horizontal = PlayerTheme.dimens.dimens8Px,
                         ),
-                        horizontalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens16Px)
                     ) {
                         items(
                             items = uiState.recentlyPlayedSongs,
@@ -247,10 +246,8 @@ internal fun HomeScreen(
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         contentPadding = PaddingValues(
-                            horizontal = PlayerTheme.dimens.dimens16Px,
-                            vertical = PlayerTheme.dimens.dimens8Px
+                            horizontal = PlayerTheme.dimens.dimens8Px,
                         ),
-                        horizontalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens16Px)
                     ) {
                         items(
                             items = uiState.topArtists,
@@ -381,7 +378,8 @@ private fun HomeScreenPreview() {
             onSeeAllArtists = {},
             onSeeAllSongs = {},
             onSongClick = {},
-            onArtistClick = {}
+            onArtistClick = {},
+            onFavoriteSongsClick = {}
         )
     }
 }
