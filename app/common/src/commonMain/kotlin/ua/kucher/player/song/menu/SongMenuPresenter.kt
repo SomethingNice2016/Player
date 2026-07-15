@@ -2,7 +2,7 @@ package ua.kucher.player.song.menu
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import ua.kucher.player.core.ui.presenter.Presenter
+import ua.kucher.player.core.common.presenter.Presenter
 import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.playback.PlaybackController
 

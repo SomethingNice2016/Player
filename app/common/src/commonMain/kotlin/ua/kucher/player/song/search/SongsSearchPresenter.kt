@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ua.kucher.player.common.SongUi
-import ua.kucher.player.core.ui.presenter.Presenter
+import ua.kucher.player.core.common.presenter.Presenter
 import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.entity.Song
 import ua.kucher.player.playback.PlaybackController

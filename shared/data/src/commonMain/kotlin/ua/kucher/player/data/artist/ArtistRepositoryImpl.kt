@@ -2,8 +2,8 @@ package ua.kucher.player.data.artist
 
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import ua.kucher.player.core.ui.coroutines.dispather.DispatcherProvider
-import ua.kucher.player.core.ui.result.flatMap
+import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
+import ua.kucher.player.core.common.result.flatMap
 import ua.kucher.player.local.artist.ArtistLocalSource
 
 internal class ArtistRepositoryImpl(

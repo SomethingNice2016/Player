@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ua.kucher.player.common.toUi
-import ua.kucher.player.core.ui.presenter.Presenter
+import ua.kucher.player.core.common.presenter.Presenter
 import ua.kucher.player.data.albun.AlbumRepository
 
 internal class AlbumListPresenter(

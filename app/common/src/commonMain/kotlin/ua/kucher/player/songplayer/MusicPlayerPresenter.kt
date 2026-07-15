@@ -2,15 +2,18 @@ package ua.kucher.player.songplayer
 
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import ua.kucher.player.common.SongUi
-import ua.kucher.player.core.ui.coroutines.combineNotNull
-import ua.kucher.player.core.ui.coroutines.flatMapNotNullLatest
-import ua.kucher.player.core.ui.coroutines.mapNotNull
-import ua.kucher.player.core.ui.datetime.TimeFormatter
-import ua.kucher.player.core.ui.presenter.Presenter
+import ua.kucher.player.core.common.coroutines.combineNotNull
+import ua.kucher.player.core.common.coroutines.flatMapNotNullLatest
+import ua.kucher.player.core.common.coroutines.mapNotNull
+import ua.kucher.player.core.common.datetime.TimeFormatter
+import ua.kucher.player.core.common.presenter.Presenter
 import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.entity.Song
 import ua.kucher.player.playback.PlaybackController
@@ -24,6 +27,8 @@ internal class MusicPlayerPresenter(
     scope: CoroutineScope
 ) : Presenter(scope) {
 
+    private val eventChanner = Channel<MusicPlayerEvent>(capacity = Channel.BUFFERED)
+
     private val currentSong = playbackController.state.map { playbackState ->
         playbackState.currentItemId
     }.flatMapNotNullLatest { id ->
@@ -31,6 +36,9 @@ internal class MusicPlayerPresenter(
             songMapper.map(song)
         }
     }
+
+    val event: Flow<MusicPlayerEvent>
+        get() = eventChanner.receiveAsFlow()
 
     val uiState = combineNotNull(
         currentSong,
@@ -87,6 +95,18 @@ internal class MusicPlayerPresenter(
             uiState.firstOrNull()?.repeatMode?.let { repeat ->
                 playbackController.setRepeatMode(repeat.getNext())
             }
+        }
+    }
+
+    fun collapsePlayer() {
+        scope.launch {
+            eventChanner.send(MusicPlayerEvent.CollapsePlayer)
+        }
+    }
+
+    fun expandPlayer() {
+        scope.launch {
+            eventChanner.send(MusicPlayerEvent.ExpandPlayer)
         }
     }
 }

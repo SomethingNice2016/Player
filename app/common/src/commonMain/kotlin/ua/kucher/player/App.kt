@@ -4,6 +4,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import ua.kucher.player.navigation.AppRoute
@@ -19,7 +23,7 @@ import ua.kucher.player.theme.extensions.rememberMiniPlayerPadding
 @Composable
 fun App() {
 
-    val playerViewModel: MusicPlayerPresenter = koinPresenter()
+    val playerPresenter: MusicPlayerPresenter = koinPresenter()
 
     PlayerTheme(useDarkTheme = true) {
 
@@ -27,21 +31,30 @@ fun App() {
 
         val navigator = rememberAppNavigator()
 
+        var playerExpanded by remember {
+            mutableStateOf(false)
+        }
+
         MusicPlayerRoute(
             modifier = Modifier.fillMaxSize(),
-            viewModel = playerViewModel
+            presenter = playerPresenter,
+            onPlayerExpanded = { expanded ->
+                playerExpanded = expanded
+            }
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 PlayerNavigation(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(bottom = playerPadding),
-                    navigator = navigator
+                    navigator = navigator,
+                    playerExpanded = playerExpanded,
+                    collapsePlayer = playerPresenter::collapsePlayer
                 )
 
                 BottomBar(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    current = navigator.current,
+                    current = navigator.currentRoute,
                     items = AppRoute.mainMenuItems,
                     onClick = navigator::navigate
                 )

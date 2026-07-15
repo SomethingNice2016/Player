@@ -25,8 +25,8 @@ import coil3.request.crossfade
 import org.jetbrains.compose.resources.painterResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.default_song_artwork
-import ua.kucher.player.core.ui.components.AudioVisualizer
-import ua.kucher.player.core.ui.components.FrostedGlass
+import ua.kucher.player.core.common.components.AudioVisualizer
+import ua.kucher.player.core.common.components.FrostedGlass
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.extensions.toPx
 
@@ -46,13 +46,13 @@ internal fun SongGridItem(
 
     Column(
         modifier = modifier
+            .clip(PlayerTheme.shapes.radius4Px)
             .combinedClickable(
                 onClick = onClick,
                 onLongClick = onLongClick
             )
             .padding(PlayerTheme.dimens.dimens8Px)
             .width(PlayerTheme.dimens.songIconGridSize)
-            .clip(PlayerTheme.shapes.radius4Px)
 
     ) {
         Box(

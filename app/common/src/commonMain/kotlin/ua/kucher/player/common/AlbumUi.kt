@@ -15,7 +15,7 @@ internal data class AlbumUi(
 internal fun Album.toUi() = AlbumUi(
     id = id,
     title = title,
+    numberOfSongs = numberOfSongs,
+    artwork = artwork,
     artistName = artist?.name ?: "",
-    numberOfSongs = 6,
-    artwork = artwork
 )
