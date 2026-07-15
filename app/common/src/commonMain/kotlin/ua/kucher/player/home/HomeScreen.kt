@@ -32,6 +32,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
@@ -57,10 +58,13 @@ import player.app.common.generated.resources.top_artists
 import player.app.common.generated.resources.tracks_count
 import ua.kucher.player.common.ArtistUi
 import ua.kucher.player.common.SongUi
+import ua.kucher.player.core.common.utils.canScroll
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
+import ua.kucher.player.theme.components.PlayerTopAppBarDefaults
 import ua.kucher.player.theme.components.items.ArtistGridItem
 import ua.kucher.player.theme.components.items.SongGridItem
+import ua.kucher.player.theme.components.rememberPlayerTopAppBarState
 import ua.kucher.player.theme.extensions.BottomNavSpacer
 
 @OptIn(ExperimentalGridApi::class)
@@ -81,14 +85,29 @@ internal fun HomeScreen(
 
     val scrollableState = rememberScrollState()
 
+    val scrollBehavior = PlayerTopAppBarDefaults.scrollBehavior()
+
+    val topAppBarState = rememberPlayerTopAppBarState(scrollBehavior)
+
+
+    val modifier = Modifier
+        .fillMaxSize()
+        .then(
+            scrollableState.canScroll
+                .takeIf { it }
+                ?.let { Modifier.nestedScroll(scrollBehavior.nestedScrollConnection) }
+                ?: Modifier
+        )
+
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         contentWindowInsets = WindowInsets(0),
         containerColor = Color.Transparent,
         topBar = {
             PlayerTopAppBar(
                 modifier = Modifier.fillMaxWidth(),
                 titleRes = Res.string.home_label,
+                scrollBehavior = scrollBehavior,
                 navigationIcon = {},
                 showDivider = { false },
             )
@@ -100,8 +119,8 @@ internal fun HomeScreen(
                 .padding(paddingValues),
             state = pullToRefreshState,
             isRefreshing = uiState.isRefreshing,
+            enabled = topAppBarState.isExpanded,
             onRefresh = onRefresh,
-            enabled = true
         ) {
             Column(
                 modifier = Modifier

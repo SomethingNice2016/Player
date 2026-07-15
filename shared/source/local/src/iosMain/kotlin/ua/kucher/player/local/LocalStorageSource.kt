@@ -1,14 +1,14 @@
 package ua.kucher.player.local
 
-import ua.kucher.player.database.AlbumEntity
-import ua.kucher.player.database.ArtistEntity
-import ua.kucher.player.database.SongEntity
+import ua.kucher.player.local.album.entity.AlbumEntity
+import ua.kucher.player.local.artist.ArtistEntity
+import ua.kucher.player.local.song.entity.SongEntity
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 internal actual class LocalStorageSource {
 
     actual suspend fun getSongs(): List<SongEntity> {
-        TODO("Not implemented")
+        TODO("Not yet implemented")
     }
 
     actual suspend fun getAlbums(): List<AlbumEntity> {

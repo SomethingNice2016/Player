@@ -6,7 +6,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import ua.kucher.player.core.ui.coroutines.dispather.DispatcherProvider
+import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
 import ua.kucher.player.entity.Song
 import ua.kucher.player.local.ArtworkCache
 import ua.kucher.player.local.LocalStorageSource

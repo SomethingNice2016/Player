@@ -11,59 +11,84 @@ import player.app.common.generated.resources.ic_music
 import player.app.common.generated.resources.ic_setting
 import player.app.common.generated.resources.music_label
 import player.app.common.generated.resources.setting_label
+import ua.kucher.player.core.common.uuid.uuid
 
 
 internal sealed interface AppRoute : NavKey {
 
+    val id: String
+
     companion object {
         val mainMenuItems = listOf(
-            Home, AllSong, Settings
+            { Home() },
+            { AllSong() },
+            { Settings() }
         )
     }
 
     @Serializable
-    data object Home : AppRoute
+    data class Home(
+        override val id: String = uuid()
+    ) : AppRoute
 
     @Serializable
-    data object AllSong : AppRoute
+    data class AllSong(
+        override val id: String = uuid()
+    ) : AppRoute
 
     @Serializable
-    data object Settings : AppRoute
+    data class Settings(
+        override val id: String = uuid()
+    ) : AppRoute
 
     @Serializable
-    data object SongsSearch : AppRoute
+    data class SongsSearch(
+        override val id: String = uuid()
+    ) : AppRoute
 
     @Serializable
-    data object ArtistList : AppRoute
+    data class ArtistList(
+        override val id: String = uuid()
+    ) : AppRoute
 
     @Serializable
-    data object ArtistSearch : AppRoute
+    data class ArtistSearch(
+        override val id: String = uuid()
+    ) : AppRoute
 
     @Serializable
-    data object AlbumsList : AppRoute
+    data class AlbumsList(
+        override val id: String = uuid()
+    ) : AppRoute
 
     @Serializable
-    data object AlbumSearch : AppRoute
+    data class AlbumSearch(
+        override val id: String = uuid()
+    ) : AppRoute
 
     @Serializable
-    data object FavoriteSongs : AppRoute
+    data class FavoriteSongs(
+        override val id: String = uuid()
+    ) : AppRoute
 
     @Serializable
-    data object SongMenu : AppRoute
+    data class SongMenu(
+        override val id: String = uuid()
+    ) : AppRoute
 }
 
 internal val AppRoute.label: StringResource?
     get() = when (this) {
-        AppRoute.Home -> Res.string.home_label
-        AppRoute.AllSong -> Res.string.music_label
-        AppRoute.Settings -> Res.string.setting_label
+        is AppRoute.Home -> Res.string.home_label
+        is AppRoute.AllSong -> Res.string.music_label
+        is AppRoute.Settings -> Res.string.setting_label
         else -> null
     }
 
 internal val AppRoute.icon: DrawableResource?
     get() = when (this) {
-        AppRoute.Home -> Res.drawable.ic_home
-        AppRoute.AllSong -> Res.drawable.ic_music
-        AppRoute.Settings -> Res.drawable.ic_setting
+        is AppRoute.Home -> Res.drawable.ic_home
+        is AppRoute.AllSong -> Res.drawable.ic_music
+        is AppRoute.Settings -> Res.drawable.ic_setting
         else -> null
     }

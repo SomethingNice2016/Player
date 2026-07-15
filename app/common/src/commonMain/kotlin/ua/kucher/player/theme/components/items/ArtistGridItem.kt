@@ -37,9 +37,9 @@ internal fun ArtistGridItem(
 ) {
     Column(
         modifier = modifier
+            .clip(PlayerTheme.shapes.radius4Px)
             .clickable { onClick() }
             .padding(PlayerTheme.dimens.dimens8Px)
-            .clip(PlayerTheme.shapes.radius4Px)
             .width(PlayerTheme.dimens.dimens80Px),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {

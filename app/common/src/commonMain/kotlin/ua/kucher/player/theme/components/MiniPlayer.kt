@@ -134,7 +134,7 @@ private fun MiniPlayerPreview() {
             artist = "SAMURAI",
             progress = 69L,
             duration = 228L,
-            isPlaying = true,
+            isPlaying = false,
             onPlayPause = {},
             onPrevious = {},
             onForward = {}

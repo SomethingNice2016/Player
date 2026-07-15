@@ -23,7 +23,7 @@ import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 @Composable
 internal fun BottomBar(
     modifier: Modifier = Modifier,
-    items: List<AppRoute>,
+    items: List<() -> AppRoute>,
     current: AppRoute,
     onClick: (AppRoute) -> Unit
 ) {
@@ -43,7 +43,9 @@ internal fun BottomBar(
 
             items.forEach { item ->
 
-                val selected = item == current
+                val route = item()
+
+                val selected = route::class == current::class
                 val background: Color
                 val tint: Color
 
@@ -58,9 +60,9 @@ internal fun BottomBar(
                 PlayerMenuIconButton(
                     backgroundColor = background,
                     tint = tint,
-                    painter = painterResource(requireNotNull(item.icon) { "Bottom menu item icon must not be null!" }),
-                    contentDescription = item.label?.let { res -> stringResource(res) } ?: "",
-                    onClick = { onClick(item) }
+                    painter = painterResource(requireNotNull(route.icon) { "Bottom menu item icon must not be null!" }),
+                    contentDescription = route.label?.let { res -> stringResource(res) } ?: "",
+                    onClick = { onClick(route) }
                 )
             }
         }
@@ -73,7 +75,7 @@ private fun BottomMenuPreview() {
     BottomBar(
         modifier = Modifier.fillMaxWidth(),
         items = AppRoute.mainMenuItems,
-        current = AppRoute.AllSong,
+        current = AppRoute.AllSong(),
         onClick = {}
     )
 }

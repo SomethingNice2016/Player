@@ -51,12 +51,14 @@ kotlin {
                 api(libs.compose.material3)
                 api(libs.kotlinx.coroutines.core)
                 api(libs.kotlin.stdlib)
+                implementation(libs.kermit)
             }
         }
 
         androidMain {
             dependencies {
                 api(libs.androidx.constraintlayout.compose)
+                api(libs.androidx.activityCompose)
                 api(libs.kotlinx.coroutines.android)
                 api(libs.androidx.ktx.core)
             }

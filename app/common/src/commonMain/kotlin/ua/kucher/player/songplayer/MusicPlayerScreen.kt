@@ -1,7 +1,7 @@
 package ua.kucher.player.songplayer
 
 import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -23,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,8 +37,6 @@ import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.painterResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.default_song_artwork
@@ -47,11 +44,12 @@ import player.app.common.generated.resources.ic_arrow_down
 import player.app.common.generated.resources.ic_cast
 import player.app.common.generated.resources.ic_options
 import ua.kucher.player.common.SongUi
-import ua.kucher.player.core.ui.components.FrostedGlass
-import ua.kucher.player.core.ui.utils.lerp
-import ua.kucher.player.core.ui.utils.rememberScreenSizeHeight
-import ua.kucher.player.core.ui.utils.rememberScreenSizeWidth
-import ua.kucher.player.core.ui.utils.rememberStatusBarHeight
+import ua.kucher.player.core.common.components.FrostedGlass
+import ua.kucher.player.core.common.utils.lerp
+import ua.kucher.player.core.common.utils.rememberNavigationBarHeight
+import ua.kucher.player.core.common.utils.rememberScreenSizeHeight
+import ua.kucher.player.core.common.utils.rememberScreenSizeWidth
+import ua.kucher.player.core.common.utils.rememberStatusBarHeight
 import ua.kucher.player.playback.PlaybackController
 import ua.kucher.player.song.allsongs.AllSongScreen
 import ua.kucher.player.song.allsongs.AllSongUiState
@@ -63,11 +61,10 @@ import ua.kucher.player.theme.extensions.bottomNavHeight
 import ua.kucher.player.theme.extensions.playerDragEvents
 import ua.kucher.player.theme.extensions.toPx
 
-private const val ANIMATION_DURATION_MILLIS = 500
-
 @Composable
 internal fun MusicPlayerScreen(
     modifier: Modifier = Modifier,
+    expandPlayerProgress: Animatable<Float, AnimationVector1D>,
     state: MusicPlayerUiState?,
     onPlay: (Long) -> Unit,
     onForward: () -> Unit,
@@ -76,28 +73,23 @@ internal fun MusicPlayerScreen(
     onShuffle: () -> Unit,
     onRepeat: () -> Unit,
     onSeek: (Long) -> Unit,
+    expandPlayer: () -> Unit,
+    collapsePlayer: () -> Unit,
+    onVerticalDrag: (Float) -> Unit,
     content: @Composable () -> Unit,
 ) {
-
-    val scope = rememberCoroutineScope()
 
     val screenWidth = rememberScreenSizeWidth()
 
     val statusBarHeight = rememberStatusBarHeight()
+
+    val navBarHeight = rememberNavigationBarHeight()
 
     val screenHeight = rememberScreenSizeHeight()
 
     val artworkSmallSize = PlayerTheme.dimens.songIconSize
 
     val artworkBigSize = screenWidth - (PlayerTheme.dimens.dimens24Px * 2)
-
-    var job: Job? by remember {
-        mutableStateOf(null)
-    }
-
-    val expandPlayerProgress = remember {
-        Animatable(0F)
-    }
 
     var dragPlayerStartProgress by remember {
         mutableFloatStateOf(0F)
@@ -113,7 +105,7 @@ internal fun MusicPlayerScreen(
 
     val backgroundHeight = lerp(
         start = artworkSmallSize + (PlayerTheme.dimens.dimens12Px * 2),
-        stop = screenHeight + statusBarHeight,
+        stop = screenHeight + statusBarHeight + navBarHeight,
         fraction = expandPlayerProgress.value
     )
 
@@ -172,31 +164,6 @@ internal fun MusicPlayerScreen(
 
     val appbarAlpha = playerSheetAlpha
 
-    fun expandPlayer() {
-        job?.cancel()
-        job = scope.launch {
-            expandPlayerProgress.animateTo(
-                targetValue = 1F,
-                animationSpec = tween(
-                    durationMillis = ANIMATION_DURATION_MILLIS
-                )
-            )
-        }
-    }
-
-    fun collapsePlayer() {
-        job?.cancel()
-        job = scope.launch {
-            expandPlayerProgress.animateTo(
-                targetValue = 0F,
-                animationSpec = tween(
-                    durationMillis = ANIMATION_DURATION_MILLIS
-                )
-            )
-        }
-    }
-
-
     Box(modifier = modifier.fillMaxSize()) {
 
         content()
@@ -244,15 +211,8 @@ internal fun MusicPlayerScreen(
                     .clip(RectangleShape)
                     .background(PlayerTheme.colorScheme.secondaryBackground)
                     .playerDragEvents(
-                        onTap = {
-                            expandPlayer()
-                        },
-                        onVerticalDrag = { delta ->
-                            job?.cancel()
-                            job = scope.launch {
-                                expandPlayerProgress.snapTo((expandPlayerProgress.value - delta).coerceIn(0f, 1F))
-                            }
-                        },
+                        onVerticalDrag = onVerticalDrag,
+                        onTap = expandPlayer,
                         onVerticalDagStart = {
                             dragPlayerStartProgress = expandPlayerProgress.value
                         },
@@ -435,6 +395,10 @@ private fun PlayerScreenPreviewAll() {
             onShuffle = {},
             onRepeat = {},
             onSeek = {},
+            onVerticalDrag = {},
+            expandPlayerProgress = Animatable(1F),
+            expandPlayer = {},
+            collapsePlayer = {},
             content = {
                 AllSongScreen(
                     uiState = AllSongUiState(
@@ -450,7 +414,7 @@ private fun PlayerScreenPreviewAll() {
                     onSongClick = {},
                     onRefresh = {},
                     onSearch = {},
-                    onMenuClick = {}
+                    onMenuClick = {},
                 )
             }
         )
