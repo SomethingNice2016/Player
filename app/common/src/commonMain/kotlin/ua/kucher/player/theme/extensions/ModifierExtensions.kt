@@ -23,7 +23,7 @@ internal val bottomNavHeight: Dp
 internal val miniPlayerHeight: Dp
     @Composable
     get() = with(PlayerTheme.dimens) {
-        dimens10Px + dimens12Px + songIconSize
+        dimens12Px + dimens12Px + songIconSize
     }
 
 

@@ -4,7 +4,6 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
 import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
 import ua.kucher.player.core.common.datetime.TimeProvider
-import ua.kucher.player.local.Const
 import ua.kucher.player.local.song.SongLocalSource
 
 internal class SongRepositoryImpl(
@@ -16,7 +15,7 @@ internal class SongRepositoryImpl(
     override fun getSongById(id: Long) = songLocalSource.getSongById(id)
         .flowOn(dispatcherProvider.io)
 
-    override fun getAllSongs() = songLocalSource.getSongs()
+    override fun getSongs() = songLocalSource.getSongs()
         .flowOn(dispatcherProvider.io)
 
     override fun getTopSongs() = songLocalSource.getTopSongs()
@@ -25,7 +24,7 @@ internal class SongRepositoryImpl(
     override fun getRecentlyPlayedSongs() = songLocalSource.getRecentlyPlayedSongs()
         .flowOn(dispatcherProvider.io)
 
-    override fun getFavouriteSongs() = songLocalSource.getSongsByPlaylist(Const.FAVORITE_PLAYLIST_ID)
+    override fun getFavouriteSongs() = songLocalSource.getFavoriteSong()
         .flowOn(dispatcherProvider.io)
 
     override fun getSongsByAlbum(albumId: Long) = songLocalSource.getSongsByAlbum(albumId)
@@ -34,8 +33,9 @@ internal class SongRepositoryImpl(
     override fun getSongsByArtist(artistId: Long) = songLocalSource.getSongsByArtist(artistId)
         .flowOn(dispatcherProvider.io)
 
-    override fun getSongsByPlaylist(playlistId: Long) = songLocalSource.getSongsByPlaylist(playlistId)
-        .flowOn(dispatcherProvider.io)
+    override fun getSongsByPlaylist(playlistId: Long) =
+        songLocalSource.getSongsByPlaylist(playlistId)
+            .flowOn(dispatcherProvider.io)
 
     override fun searchSongsByTitle(title: String) = songLocalSource.searchSongsByTitle(title)
         .flowOn(dispatcherProvider.io)
@@ -43,12 +43,22 @@ internal class SongRepositoryImpl(
     override fun getSongsCount() = songLocalSource.getSongsCount()
         .flowOn(dispatcherProvider.io)
 
-    override fun getFavouriteSongsCount() = songLocalSource.getSongsCountByPlaylist(Const.FAVORITE_PLAYLIST_ID)
+    override fun getFavouriteSongsCount() = songLocalSource.getFavoriteSongsCount()
         .flowOn(dispatcherProvider.io)
 
     override suspend fun registerPlayback(id: Long) = withContext(dispatcherProvider.io) {
         songLocalSource.registerPlayback(id, timeProvider.currentTimestamp)
     }
+
+    override suspend fun setFavoriteState(id: Long, isFavorite: Boolean) =
+        withContext(dispatcherProvider.io) {
+            songLocalSource.updateFavoriteTimestamp(
+                id = id,
+                timestamp = timeProvider.currentTimestamp.takeIf {
+                    isFavorite
+                }
+            )
+        }
 
     override suspend fun fetchSongs() = withContext(dispatcherProvider.io) {
         songLocalSource.fetchSongs()

@@ -84,44 +84,36 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun checkPermission() {
-        if (ContextCompat.checkSelfPermission(
-                this,
-                requiredPermission()
-            ) == PackageManager.PERMISSION_GRANTED
+        if (
+            requiredPermissions().map { permission ->
+                ContextCompat.checkSelfPermission(this, permission)
+            }.all { result ->
+                result == PackageManager.PERMISSION_GRANTED
+            }
         ) {
             loadAudio()
         } else {
-            requestAudioPermission.launch(arrayOf(requiredPermission(), Manifest.permission.POST_NOTIFICATIONS))
+            requestAudioPermission.launch(requiredPermissions())
         }
     }
 
-    private fun requiredPermission(): String =
+    private fun requiredPermissions(): Array<String> =
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            Manifest.permission.READ_MEDIA_AUDIO
+            arrayOf(
+                Manifest.permission.READ_MEDIA_AUDIO,
+                Manifest.permission.READ_MEDIA_IMAGES,
+                Manifest.permission.POST_NOTIFICATIONS
+            )
         } else {
-            Manifest.permission.READ_EXTERNAL_STORAGE
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
         }
 
 
     private fun loadAudio() {
         lifecycleScope.launch {
-            launch {
-                albumRepository.fetchAlbums().onFailure {
-                    Log.w("Song", "", it)
-                }
-            }
-
-            launch {
-                artistRepository.fetchArtists().onFailure {
-                    Log.w("Song", "", it)
-                }
-            }
-
-            launch {
-                songRepository.fetchSongs().onFailure {
-                    Log.w("Song", "", it)
-                }
-            }
+            albumRepository.fetchAlbums()
+            artistRepository.fetchArtists()
+            songRepository.fetchSongs()
         }
     }
 

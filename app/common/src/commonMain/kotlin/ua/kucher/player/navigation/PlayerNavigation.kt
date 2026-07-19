@@ -28,7 +28,8 @@ internal fun PlayerNavigation(
         onBack = { navigator.navigateBack() },
         backStack = navigator.backStack,
         entryProvider = entryProvider {
-            entry<AppRoute.Home> { route ->
+
+        entry<AppRoute.Home> { route ->
                 HomeRoute(
                     navigator = navigator,
                     presenter = koinPresenter(navigator.getEntry(route))

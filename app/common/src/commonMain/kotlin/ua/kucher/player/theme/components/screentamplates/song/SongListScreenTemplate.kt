@@ -23,6 +23,7 @@ import player.app.common.generated.resources.ic_search
 import player.app.common.generated.resources.music_label
 import player.app.common.generated.resources.search
 import ua.kucher.player.common.SongUi
+import ua.kucher.player.core.common.utils.canScroll
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
 import ua.kucher.player.theme.components.PlayerTopAppBarDefaults
@@ -50,10 +51,17 @@ internal fun SongListScreenTemplate(
 
     val pullToRefreshState = rememberPullToRefreshState()
 
+    val modifier = Modifier
+        .fillMaxSize()
+        .then(
+            other = lazyListState.canScroll
+                .takeIf { it }
+                ?.let { Modifier.nestedScroll(scrollBehavior.nestedScrollConnection) }
+                ?: Modifier
+        )
+
     Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .nestedScroll(scrollBehavior.nestedScrollConnection),
+        modifier = modifier,
         contentWindowInsets = WindowInsets(0),
         containerColor = Color.Transparent,
         topBar = {
@@ -74,6 +82,7 @@ internal fun SongListScreenTemplate(
                     PlayerMenuIconButton(
                         painter = painterResource(Res.drawable.ic_search),
                         contentDescription = stringResource(Res.string.search),
+                        iconSize = PlayerTheme.dimens.dimens20Px,
                         onClick = onSearch
                     )
                 }

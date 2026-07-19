@@ -1,6 +1,9 @@
 package ua.kucher.player.local.artist
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import ua.kucher.player.core.common.coroutines.mapNotNull
+import ua.kucher.player.entity.Artist
 import ua.kucher.player.local.LocalStorageSource
 
 internal class ArtistLocalSourceImpl(
@@ -8,27 +11,25 @@ internal class ArtistLocalSourceImpl(
     private val artistDao: ArtistDao
 ) : ArtistLocalSource {
 
-    override fun getArtistById(id: Long) =
-        artistDao.getArtistById(id).map { entity ->
-            entity?.toDomain()
-        }
+    override fun getArtistById(id: Long): Flow<Artist?> =
+        artistDao.getArtistById(id).mapNotNull(ArtistEntity::toDomain)
 
-    override fun getArtists() =
+    override fun getArtists(): Flow<List<Artist>> =
         artistDao.getArtists().map { artists ->
             artists.map(ArtistEntity::toDomain)
         }
 
-    override fun getTopArtists() =
+    override fun getTopArtists(): Flow<List<Artist>> =
         artistDao.getTopArtists().map { artists ->
             artists.map(ArtistEntity::toDomain)
         }
 
-    override fun searchArtistsByName(name: String) =
+    override fun searchArtistsByName(name: String): Flow<List<Artist>> =
         artistDao.searchArtistByName(name).map { artists ->
             artists.map(ArtistEntity::toDomain)
         }
 
-    override fun getArtistsCount() =
+    override fun getArtistsCount(): Flow<Int> =
         artistDao.getArtistsCount()
 
     override suspend fun getListenCountById(id: Long) = runCatching {
@@ -54,9 +55,8 @@ internal class ArtistLocalSourceImpl(
         }
 
         val toDelete = dbArtists.filter { it.id !in deviceMap }
-        artistDao.mergeArtist(
-            insert = toInsert,
-            upsert = toUpdate,
+        artistDao.merge(
+            upsert = toUpdate + toInsert,
             delete = toDelete
         )
     }

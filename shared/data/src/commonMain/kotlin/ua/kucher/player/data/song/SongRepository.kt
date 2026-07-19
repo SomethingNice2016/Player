@@ -7,7 +7,7 @@ interface SongRepository {
 
     fun getSongById(id: Long): Flow<Song?>
 
-    fun getAllSongs(): Flow<List<Song>>
+    fun getSongs(): Flow<List<Song>>
 
     fun getTopSongs(): Flow<List<Song>>
 
@@ -28,6 +28,8 @@ interface SongRepository {
     fun getFavouriteSongsCount(): Flow<Int>
 
     suspend fun registerPlayback(id: Long): Result<Unit>
+
+    suspend fun setFavoriteState(id: Long, isFavorite: Boolean): Result<Unit>
 
     suspend fun fetchSongs(): Result<Unit>
 

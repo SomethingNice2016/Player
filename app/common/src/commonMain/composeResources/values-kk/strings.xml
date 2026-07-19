@@ -25,4 +25,10 @@
     <string name="artists_count">%1$s орындаушы</string>
     <string name="top_artists">Танымал орындаушылар</string>
     <string name="recently_played">Жақында тыңдалғандар</string>
+    <string name="share">Бөлісу</string>
+    <string name="add_to_playlist">Плейлистке қосу</string>
+    <string name="play_next">Келесі болып ойнату</string>
+    <string name="song_menu_item_go_to_album">Альбомға өту</string>
+    <string name="song_menu_item_go_to_artist">Орындаушыға өту</string>
+    <string name="song_menu_item_add_to_queue">Кезекке қосу</string>
 </resources>

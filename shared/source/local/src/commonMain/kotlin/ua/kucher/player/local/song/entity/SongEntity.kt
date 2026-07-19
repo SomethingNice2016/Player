@@ -28,4 +28,6 @@ internal data class SongEntity(
     val lastPlayed: Long = 0L,
     @ColumnInfo(name = "listenCount")
     val listenCount: Int = 0,
+    @ColumnInfo(name = "favoriteAddedTime")
+    val favoriteAddedTime: Long? = null
 )

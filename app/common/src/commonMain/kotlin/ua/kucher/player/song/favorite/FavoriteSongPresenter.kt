@@ -53,7 +53,7 @@ internal class FavoriteSongPresenter(
 
     fun playSong(id: Long) {
         scope.launch {
-            val song = songs.value.findLast { song ->
+            val song = songs.value.find { song ->
                 song.id == id
             } ?: return@launch
 

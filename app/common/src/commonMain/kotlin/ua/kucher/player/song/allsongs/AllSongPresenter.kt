@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ua.kucher.player.common.SongUi
@@ -25,7 +26,7 @@ internal class AllSongPresenter(
 
     private val isRefreshing = MutableStateFlow(false)
 
-    private val songs = songRepository.getAllSongs()
+    private val songs = songRepository.getSongs()
         .stateIn(
             scope = scope,
             started = SharingStarted.Eagerly,
@@ -53,7 +54,7 @@ internal class AllSongPresenter(
 
     fun playSong(id: Long) {
         scope.launch {
-            val song = songs.value.findLast { song ->
+            val song = songRepository.getSongs().firstOrNull()?.find { song ->
                 song.id == id
             } ?: return@launch
 

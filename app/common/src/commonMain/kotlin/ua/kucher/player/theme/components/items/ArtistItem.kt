@@ -83,7 +83,7 @@ internal fun ArtistItem(
             Text(
                 text = name,
                 color = PlayerTheme.colorScheme.primaryTextColor,
-                fontStyle = PlayerTheme.typography.largeBody.fontStyle,
+                style = PlayerTheme.typography.mediumBody,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -96,7 +96,7 @@ internal fun ArtistItem(
                     numberOfSongs
                 ),
                 color = PlayerTheme.colorScheme.secondaryTextColor,
-                fontStyle = PlayerTheme.typography.mediumBody.fontStyle,
+                style = PlayerTheme.typography.smallBody,
                 maxLines = 1,
                 overflow = TextOverflow.MiddleEllipsis
             )

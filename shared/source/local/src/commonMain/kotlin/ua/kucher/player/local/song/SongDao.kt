@@ -16,7 +16,7 @@ internal interface SongDao {
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME}")
     suspend fun getSongsSnapshot(): List<SongEntity>
 
-    @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME}")
+    @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} ORDER BY lastModified DESC")
     fun getSongs(): Flow<List<SongDto>>
 
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} ORDER BY listenCount DESC LIMIT 10")
@@ -24,6 +24,9 @@ internal interface SongDao {
 
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE lastPlayed != 0 ORDER BY lastPlayed DESC LIMIT 10")
     fun getRecentlyPlayedSongs(): Flow<List<SongDto>>
+
+    @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE favoriteAddedTime IS NOT NULL ORDER BY favoriteAddedTime DESC")
+    fun getFavoriteSongs(): Flow<List<SongDto>>
 
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE albumId=:albumId")
     fun getSongsByAlbum(albumId: Long): Flow<List<SongDto>>
@@ -43,11 +46,11 @@ internal interface SongDao {
     @Query("SELECT COUNT(*) FROM ${TableName.SONG_TABLE_NAME}")
     fun getSongsCount(): Flow<Int>
 
+    @Query("SELECT COUNT(*) FROM ${TableName.SONG_TABLE_NAME} WHERE favoriteAddedTime IS NOT NULL")
+    fun getFavoriteSongsCount(): Flow<Int>
+
     @Query("SELECT COUNT(*) FROM ${TableName.SONG_TABLE_NAME} s INNER JOIN ${TableName.SONG_WITH_PLAYLIST_TABLE_NAME} sp ON s.id = sp.songId WHERE sp.playlistId=:playlistId")
     fun getSongsCountByPlaylist(playlistId: Long): Flow<Int>
-
-    @Query("DELETE FROM ${TableName.SONG_TABLE_NAME} WHERE id=:id")
-    suspend fun deleteSongById(id: Long)
 
     @Query("UPDATE ${TableName.SONG_TABLE_NAME} SET artwork=:artworkUri WHERE id=:id")
     suspend fun setArtwork(id: Long, artworkUri: String)
@@ -56,10 +59,16 @@ internal interface SongDao {
     suspend fun registerPlayback(id: Long, timestamp: Long)
 
     @Upsert
-    suspend fun upsertSongs(list: List<SongEntity>)
+    suspend fun upsert(list: List<SongEntity>)
+
+    @Query("DELETE FROM ${TableName.SONG_TABLE_NAME} WHERE id=:id")
+    suspend fun delete(id: Long)
 
     @Query("DELETE FROM ${TableName.SONG_TABLE_NAME} WHERE id IN (:ids)")
-    suspend fun deleteSongs(ids: List<Long>)
+    suspend fun delete(ids: List<Long>)
+
+    @Query("UPDATE ${TableName.SONG_TABLE_NAME} SET favoriteAddedTime=:timestamp WHERE id=:id")
+    suspend fun updateFavoriteTimestamp(id: Long, timestamp: Long?)
 
     @Transaction
     suspend fun setArtworks(songsWithArtworks: List<SongWithArtwork>) {
@@ -70,12 +79,10 @@ internal interface SongDao {
 
     @Transaction
     suspend fun mergeSongs(
-        insert: List<SongEntity>,
         upsert: List<SongEntity>,
         delete: List<SongEntity>
     ) {
-        upsertSongs(insert)
-        upsertSongs(upsert)
-        deleteSongs(delete.map { it.id })
+        delete(delete.map { it.id })
+        upsert(upsert)
     }
 }

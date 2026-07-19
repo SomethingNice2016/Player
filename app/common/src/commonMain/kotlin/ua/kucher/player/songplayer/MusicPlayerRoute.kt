@@ -5,6 +5,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -14,6 +15,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ua.kucher.player.core.common.toBool
 import ua.kucher.player.core.common.utils.ObserveOneTimeEvents
+import ua.kucher.player.navigation.AppNavigator
+import ua.kucher.player.song.menu.SongMenuRoute
 
 private const val ANIMATION_DURATION_MILLIS = 500
 
@@ -21,6 +24,7 @@ private const val ANIMATION_DURATION_MILLIS = 500
 internal fun MusicPlayerRoute(
     modifier: Modifier = Modifier,
     presenter: MusicPlayerPresenter,
+    navigator: AppNavigator,
     onPlayerExpanded: (Boolean) -> Unit,
     content: @Composable () -> Unit = {}
 ) {
@@ -35,6 +39,14 @@ internal fun MusicPlayerRoute(
 
     var job: Job? by remember {
         mutableStateOf(null)
+    }
+
+    var showSongMenu by remember {
+        mutableStateOf(false)
+    }
+
+    var selectedSongId by remember {
+        mutableLongStateOf(0L)
     }
 
     fun collapsePlayer() {
@@ -89,6 +101,20 @@ internal fun MusicPlayerRoute(
             job = scope.launch {
                 expandPlayerProgress.snapTo((expandPlayerProgress.value - delta).coerceIn(0F, 1F))
             }
+        },
+        onMenuClick = { id ->
+            selectedSongId = id
+            showSongMenu = true
+        }
+    )
+
+
+    SongMenuRoute(
+        songId = selectedSongId,
+        showSongMenu = showSongMenu,
+        navigator = navigator,
+        onDismiss = {
+            showSongMenu = false
         }
     )
 }

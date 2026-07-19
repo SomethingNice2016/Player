@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.dp
 
 @Immutable
 class PlayerDimens(
+    val dimens1Px: Dp = 1.dp,
     val dimens2Px: Dp = 2.dp,
     val dimens4Px: Dp = 4.dp,
     val dimens6Px: Dp = 6.dp,
@@ -17,6 +18,7 @@ class PlayerDimens(
     val dimens16Px: Dp = 16.dp,
     val dimens20Px: Dp = 20.dp,
     val dimens24Px: Dp = 24.dp,
+    val dimens28Px: Dp = 28.dp,
     val dimens32Px: Dp = 32.dp,
     val dimens36Px: Dp = 36.dp,
     val dimens40Px: Dp = 40.dp,
