@@ -69,14 +69,6 @@ internal val presenterModule = module {
     }
 
     factory { (scope: CoroutineScope) ->
-        SongMenuPresenter(
-            playbackController = get(),
-            songRepository = get(),
-            scope = scope
-        )
-    }
-
-    factory { (scope: CoroutineScope) ->
         ArtistListPresenter(
             artistRepository = get(),
             scope = scope
@@ -107,6 +99,16 @@ internal val presenterModule = module {
     factory { (scope: CoroutineScope) ->
         SettingPresenter(
             scope = scope
+        )
+    }
+
+    factory { (scope: CoroutineScope, id: Long) ->
+        SongMenuPresenter(
+            songId = id,
+            mapper = get(),
+            playbackController = get(),
+            songRepository = get(),
+            scope = scope,
         )
     }
 }

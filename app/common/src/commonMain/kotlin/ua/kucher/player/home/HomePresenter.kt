@@ -68,7 +68,7 @@ internal class HomePresenter(
 
     fun playSong(id: Long) {
         scope.launch {
-            val songs = songRepository.getAllSongs().firstOrNull() ?: return@launch
+            val songs = songRepository.getSongs().firstOrNull() ?: return@launch
             val song = songs.findLast { song -> song.id == id } ?: return@launch
             playbackController.play(
                 playlist = songs,

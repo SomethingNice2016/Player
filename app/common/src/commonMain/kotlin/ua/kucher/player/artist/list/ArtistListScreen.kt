@@ -60,13 +60,14 @@ internal fun ArtistListScreen(
                 navigationIcon = {
                     PlayerMenuIconButton(
                         painter = painterResource(Res.drawable.ic_arrow_left),
-                        onClick = onBackClick
+                        onClick = onBackClick,
                     )
                 },
                 actions = {
                     PlayerMenuIconButton(
                         painter = painterResource(Res.drawable.ic_search),
                         contentDescription = stringResource(Res.string.search),
+                        iconSize = PlayerTheme.dimens.dimens20Px,
                         onClick = onSearch
                     )
                 },

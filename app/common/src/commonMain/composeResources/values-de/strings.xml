@@ -25,4 +25,10 @@
     <string name="artists_count">%1$s Interpreten</string>
     <string name="top_artists">Beliebte Interpreten</string>
     <string name="recently_played">Zuletzt abgespielt</string>
+    <string name="share">Teilen</string>
+    <string name="add_to_playlist">Zur Playlist hinzufügen</string>
+    <string name="play_next">Als Nächstes wiedergeben</string>
+    <string name="song_menu_item_go_to_album">Zum Album</string>
+    <string name="song_menu_item_go_to_artist">Zum Interpreten</string>
+    <string name="song_menu_item_add_to_queue">Zur Warteschlange hinzufügen</string>
 </resources>

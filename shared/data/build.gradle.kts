@@ -37,9 +37,7 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
-                implementation(libs.kotlin.stdlib)
                 implementation(libs.koin.core)
-                implementation(libs.kotlinx.coroutines.core)
 
                 //Project modules
                 implementation(projects.shared.entity)

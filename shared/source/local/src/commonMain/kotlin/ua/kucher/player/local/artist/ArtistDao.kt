@@ -1,8 +1,6 @@
 package ua.kucher.player.local.artist
 
 import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Upsert
@@ -31,22 +29,16 @@ internal interface ArtistDao {
     fun getArtistsCount(): Flow<Int>
 
     @Query("DELETE FROM ${TableName.ARTIST_TABLE_NAME} WHERE id=:id")
-    suspend fun deleteArtistById(id: Long)
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertArtist(artist: ArtistEntity)
-
-    @Upsert
-    suspend fun upsertArtist(artist: ArtistEntity)
-
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertArtists(list: List<ArtistEntity>)
-
-    @Upsert
-    suspend fun upsertArtists(list: List<ArtistEntity>)
+    suspend fun delete(id: Long)
 
     @Query("DELETE FROM ${TableName.ARTIST_TABLE_NAME} WHERE id IN (:ids)")
-    suspend fun deleteArtists(ids: List<Long>)
+    suspend fun delete(ids: List<Long>)
+
+    @Upsert
+    suspend fun upsert(artist: ArtistEntity)
+
+    @Upsert
+    suspend fun upsert(artists: List<ArtistEntity>)
 
     @Query("UPDATE ${TableName.ARTIST_TABLE_NAME} SET listenCount=:count WHERE id=:id")
     suspend fun updateListenCount(id: Long, count: Int)
@@ -55,13 +47,11 @@ internal interface ArtistDao {
     suspend fun getListenCount(id: Long): Int
 
     @Transaction
-    suspend fun mergeArtist(
-        insert: List<ArtistEntity>,
+    suspend fun merge(
         upsert: List<ArtistEntity>,
         delete: List<ArtistEntity>
     ) {
-        insertArtists(insert)
-        upsertArtists(upsert)
-        deleteArtists(delete.map { it.id })
+        upsert(upsert)
+        delete(delete.map { it.id })
     }
 }

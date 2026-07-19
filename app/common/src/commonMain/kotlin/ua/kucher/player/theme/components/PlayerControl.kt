@@ -32,6 +32,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
@@ -221,14 +222,35 @@ internal fun PlayerControl(
             PlayerMenuIconButton(
                 painter = painterResource(Res.drawable.ic_skip_back),
                 tint = PlayerTheme.colorScheme.iconsMain,
+                iconSize = PlayerTheme.dimens.dimens32Px,
                 onClick = onPrevious
             )
+
+            val paddingVertical: Dp
+            val paddingStart: Dp
+            val paddingEnd: Dp
+
+            if (isPlaying) {
+                paddingVertical = PlayerTheme.dimens.dimens20Px
+                paddingStart = PlayerTheme.dimens.dimens20Px
+                paddingEnd = PlayerTheme.dimens.dimens20Px
+            } else {
+                paddingVertical = PlayerTheme.dimens.dimens20Px
+                paddingStart = PlayerTheme.dimens.dimens24Px
+                paddingEnd = PlayerTheme.dimens.dimens16Px
+            }
 
             Box(
                 modifier = Modifier
                     .size(74.dp)
                     .clip(CircleShape)
                     .background(PlayerTheme.colorScheme.iconsMain.copy(alpha = 0.2F))
+                    .padding(
+                        top = paddingVertical,
+                        bottom = paddingVertical,
+                        start = paddingStart,
+                        end = paddingEnd
+                    )
                     .clickable(onClick = onPlayPause),
                 contentAlignment = Alignment.Center
             ) {
@@ -247,6 +269,7 @@ internal fun PlayerControl(
             PlayerMenuIconButton(
                 painter = painterResource(Res.drawable.ic_skip_forward),
                 tint = PlayerTheme.colorScheme.iconsMain,
+                iconSize = PlayerTheme.dimens.dimens32Px,
                 onClick = onForward
             )
 
@@ -274,7 +297,7 @@ private fun PlayerControlPreview() {
             displayProgress = "1:22",
             duration = 100000,
             progress = 69000,
-            isPlaying = true,
+            isPlaying = false,
             isShuffle = false,
             repeatMode = PlaybackController.RepeatMode.ONE,
             onForward = {},

@@ -1,7 +1,11 @@
 package ua.kucher.player.local.album
 
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import ua.kucher.player.core.common.coroutines.mapNotNull
+import ua.kucher.player.entity.Album
 import ua.kucher.player.local.LocalStorageSource
+import ua.kucher.player.local.album.entity.AlbumDto
 import ua.kucher.player.local.album.entity.AlbumEntity
 import ua.kucher.player.local.album.entity.toDomain
 
@@ -10,33 +14,25 @@ internal class AlbumLocalSourceImpl(
     private val albumDao: AlbumDao
 ) : AlbumLocalSource {
 
-    override fun getAlbumById(id: Long) =
-        albumDao.getAlbumById(id).map { entity ->
-            entity?.toDomain()
-        }
+    override fun getAlbumById(id: Long): Flow<Album?> =
+        albumDao.getAlbumById(id).mapNotNull(AlbumDto::toDomain)
 
-    override fun getAlbums() =
+    override fun getAlbums(): Flow<List<Album>> =
         albumDao.getAlbums().map { entities ->
-            entities.map { entity ->
-                entity.toDomain()
-            }
+            entities.map(AlbumDto::toDomain)
         }
 
-    override fun getAlbumsByArtist(artistId: Long) =
+    override fun getAlbumsByArtist(artistId: Long): Flow<List<Album>> =
         albumDao.getAlbumsByArtist(artistId).map { entities ->
-            entities.map { entity ->
-                entity.toDomain()
-            }
+            entities.map(AlbumDto::toDomain)
         }
 
-    override fun searchAlbumsByTitle(title: String) =
+    override fun searchAlbumsByTitle(title: String): Flow<List<Album>> =
         albumDao.searchAlbumsByTitle(title).map { entities ->
-            entities.map { entity ->
-                entity.toDomain()
-            }
+            entities.map(AlbumDto::toDomain)
         }
 
-    override fun getAlbumsCount() =
+    override fun getAlbumsCount(): Flow<Int> =
         albumDao.getAlbumsCount()
 
     override suspend fun fetchAlbums() = runCatching {
@@ -48,7 +44,7 @@ internal class AlbumLocalSourceImpl(
 
         val toInsert = mutableListOf<AlbumEntity>()
         val toUpdate = mutableListOf<AlbumEntity>()
-        val toDelete = mutableListOf<Long>()
+        val toDelete = mutableListOf<AlbumEntity>()
 
         albumsInDevice.forEach { device ->
             val db = dbMap[device.id]
@@ -65,12 +61,11 @@ internal class AlbumLocalSourceImpl(
 
         dbAlbums.forEach { db ->
             if (db.id !in deviceMap) {
-                toDelete += db.id
+                toDelete += db
             }
         }
-        albumDao.mergeAlbum(
-            insert = toInsert,
-            upsert = toUpdate,
+        albumDao.merge(
+            upsert = toUpdate + toInsert,
             deleteIds = toDelete
         )
     }

@@ -67,6 +67,7 @@ internal fun AlbumListScreen(
                     PlayerMenuIconButton(
                         painter = painterResource(Res.drawable.ic_search),
                         contentDescription = stringResource(Res.string.search),
+                        iconSize = PlayerTheme.dimens.dimens20Px,
                         onClick = onSearch
                     )
                 },

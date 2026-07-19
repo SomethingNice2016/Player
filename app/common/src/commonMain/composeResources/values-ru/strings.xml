@@ -25,4 +25,10 @@
     <string name="artists_count">%1$s исполнителей</string>
     <string name="top_artists">Популярные исполнители</string>
     <string name="recently_played">Недавно прослушанные</string>
+    <string name="share">Поделиться</string>
+    <string name="add_to_playlist">Добавить в плейлист</string>
+    <string name="play_next">Воспроизвести следующим</string>
+    <string name="song_menu_item_go_to_album">Перейти к альбому</string>
+    <string name="song_menu_item_go_to_artist">Перейти к исполнителю</string>
+    <string name="song_menu_item_add_to_queue">Добавить в очередь</string>
 </resources>

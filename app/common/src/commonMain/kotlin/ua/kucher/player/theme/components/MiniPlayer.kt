@@ -91,18 +91,40 @@ internal fun MiniPlayer(
 
             PlayerMenuIconButton(
                 painter = painterResource(Res.drawable.ic_skip_back),
+                buttonSize = PlayerTheme.dimens.dimens40Px,
                 contentDescription = "",
                 onClick = onPrevious
             )
 
+            Spacer(
+                modifier = Modifier.width(
+                    width = if (isPlaying)
+                        PlayerTheme.dimens.dimens4Px
+                    else
+                        PlayerTheme.dimens.dimens6Px
+                )
+            )
+
             PlayerMenuIconButton(
                 painter = painterResource(playButtonIconRes),
+                buttonSize = PlayerTheme.dimens.dimens40Px,
+                iconSize = PlayerTheme.dimens.dimens28Px,
                 contentDescription = "",
                 onClick = onPlayPause
             )
 
+            Spacer(
+                modifier = Modifier.width(
+                    width = if (isPlaying)
+                        PlayerTheme.dimens.dimens4Px
+                    else
+                        PlayerTheme.dimens.dimens2Px
+                )
+            )
+
             PlayerMenuIconButton(
                 painter = painterResource(Res.drawable.ic_skip_forward),
+                buttonSize = PlayerTheme.dimens.dimens40Px,
                 contentDescription = "",
                 onClick = onForward
             )

@@ -10,6 +10,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import ua.kucher.player.navigation.AppNavigator
 import ua.kucher.player.navigation.AppRoute
 import ua.kucher.player.navigation.PlayerNavigation
 import ua.kucher.player.navigation.rememberAppNavigator
@@ -25,11 +26,11 @@ fun App() {
 
     val playerPresenter: MusicPlayerPresenter = koinPresenter()
 
+    val navigator: AppNavigator = rememberAppNavigator()
+
     PlayerTheme(useDarkTheme = true) {
 
         val playerPadding = rememberMiniPlayerPadding()
-
-        val navigator = rememberAppNavigator()
 
         var playerExpanded by remember {
             mutableStateOf(false)
@@ -38,6 +39,7 @@ fun App() {
         MusicPlayerRoute(
             modifier = Modifier.fillMaxSize(),
             presenter = playerPresenter,
+            navigator = navigator,
             onPlayerExpanded = { expanded ->
                 playerExpanded = expanded
             }

@@ -8,14 +8,11 @@ kotlin {
 
     android {
         namespace = "ua.kucher.player.core.common"
-        compileSdk {
-            version = release(libs.versions.androidSdkCompiled.get().toInt()) {
-                minorApiLevel = 1
-            }
-        }
+        compileSdk = libs.versions.androidSdkCompiled.get().toInt()
         minSdk = libs.versions.androidSdkMin.get().toInt()
 
         withHostTestBuilder {
+
         }
 
         withDeviceTestBuilder {
@@ -44,13 +41,14 @@ kotlin {
             dependencies {
                 api(libs.kotlinx.coroutines.core)
                 api(libs.kotlinx.datetime)
-                implementation(libs.kotlin.stdlib)
+                api(libs.kotlin.stdlib)
             }
         }
 
         androidMain {
             dependencies {
-                implementation(libs.androidx.ktx.core)
+                api(libs.androidx.ktx.core)
+                api(libs.kotlinx.coroutines.android)
             }
         }
 

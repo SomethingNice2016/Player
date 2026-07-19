@@ -121,7 +121,7 @@ internal fun SongItem(
             Text(
                 text = title,
                 color = PlayerTheme.colorScheme.primaryTextColor,
-                fontStyle = PlayerTheme.typography.largeBody.fontStyle,
+                style = PlayerTheme.typography.mediumBody,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
@@ -130,7 +130,7 @@ internal fun SongItem(
             Text(
                 text = stringResource(Res.string.song_item_description, artist, duration),
                 color = PlayerTheme.colorScheme.secondaryTextColor,
-                fontStyle = PlayerTheme.typography.mediumBody.fontStyle,
+                style = PlayerTheme.typography.smallBody,
                 maxLines = 1,
                 overflow = TextOverflow.MiddleEllipsis
             )

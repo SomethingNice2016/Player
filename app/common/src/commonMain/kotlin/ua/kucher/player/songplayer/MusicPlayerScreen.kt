@@ -1,5 +1,6 @@
 package ua.kucher.player.songplayer
 
+import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
 import androidx.compose.foundation.background
@@ -76,6 +77,7 @@ internal fun MusicPlayerScreen(
     expandPlayer: () -> Unit,
     collapsePlayer: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
+    onMenuClick: (Long) -> Unit,
     content: @Composable () -> Unit,
 ) {
 
@@ -97,10 +99,6 @@ internal fun MusicPlayerScreen(
 
     var isPlayerExpanding by remember {
         mutableStateOf(false)
-    }
-
-    var artworkTintAlpha by remember {
-        mutableFloatStateOf(0F)
     }
 
     val backgroundHeight = lerp(
@@ -168,8 +166,8 @@ internal fun MusicPlayerScreen(
 
         content()
 
-        val pages = remember(state?.artworks) {
-            state?.artworks?.entries?.sortedBy { it.key } ?: emptyList()
+        val pages = remember(state?.artworks?.keys?.toList()) {
+            state?.artworks?.entries?.toList() ?: emptyList()
         }
 
         val currentIndexMap: Map<Long, Int> = remember(pages) {
@@ -186,6 +184,12 @@ internal fun MusicPlayerScreen(
             pageCount = { pages.size },
         )
 
+        LaunchedEffect(currentIndex) {
+            if (pagerState.currentPage != currentIndex) {
+                pagerState.scrollToPage(currentIndex)
+            }
+        }
+
         LaunchedEffect(pagerState.currentPage, pagerState.isScrollInProgress) {
             if (pagerState.currentPage == currentIndex) return@LaunchedEffect
             if (pagerState.isScrollInProgress) return@LaunchedEffect
@@ -194,14 +198,7 @@ internal fun MusicPlayerScreen(
             }
         }
 
-        LaunchedEffect(currentIndex) {
-            if (pagerState.currentPage != currentIndex) {
-                pagerState.scrollToPage(currentIndex)
-            }
-        }
-
         state?.let { nonNullState ->
-
             Box(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -232,33 +229,29 @@ internal fun MusicPlayerScreen(
                         }
                     )
             ) {
-                FrostedGlass(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .alpha(imageBackgroundAlpha),
-                    blurRadius = 150F,
-                    enabled = true,
-                    tint = Color.Black.copy(alpha = artworkTintAlpha)
+                Crossfade(
+                    targetState = nonNullState.currentSong.artwork,
+                    label = "Artwork",
                 ) {
-                    AsyncImage(
-                        modifier = Modifier.fillMaxSize(),
-                        model = ImageRequest.Builder(LocalPlatformContext.current)
-                            .data(nonNullState.currentSong.artwork)
-                            .size(
-                                width = backgroundImageSize,
-                                height = backgroundImageSize
-                            )
-                            .crossfade(true)
-                            .build(),
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        onError = {
-                            artworkTintAlpha = 0F
-                        },
-                        onSuccess = {
-                            artworkTintAlpha = 0.7F
-                        }
-                    )
+                    FrostedGlass(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .alpha(imageBackgroundAlpha),
+                        blurRadius = 150F,
+                        enabled = true,
+                        tint = Color.Black.copy(alpha = 0.7F)
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier.fillMaxSize(),
+                            model = ImageRequest.Builder(LocalPlatformContext.current)
+                                .data(nonNullState.currentSong.artwork)
+                                .size(backgroundImageSize, backgroundImageSize)
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop
+                        )
+                    }
                 }
                 Row(
                     modifier = Modifier
@@ -286,7 +279,9 @@ internal fun MusicPlayerScreen(
 
                     PlayerMenuIconButton(
                         painter = painterResource(Res.drawable.ic_options),
-                        onClick = {}
+                        onClick = {
+                            onMenuClick(nonNullState.currentSong.id)
+                        }
                     )
                 }
 
@@ -399,6 +394,7 @@ private fun PlayerScreenPreviewAll() {
             expandPlayerProgress = Animatable(1F),
             expandPlayer = {},
             collapsePlayer = {},
+            onMenuClick = {},
             content = {
                 AllSongScreen(
                     uiState = AllSongUiState(

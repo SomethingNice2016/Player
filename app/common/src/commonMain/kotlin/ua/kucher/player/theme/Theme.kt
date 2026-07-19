@@ -34,8 +34,8 @@ internal fun PlayerTheme(
         playerLightColorScheme()
 
     CompositionLocalProvider(
-        LocalPlayerColorScheme provides colorScheme,
         LocalPlayerTypography provides playerTypography,
+        LocalPlayerColorScheme provides colorScheme,
         LocalIndication provides ripple(
             bounded = true,
             color = PlayerTheme.colorScheme.rippleColor

@@ -6,7 +6,10 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.joinAll
+import kotlinx.coroutines.launch
 import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
+import ua.kucher.player.core.common.coroutines.mapNotNull
 import ua.kucher.player.entity.Song
 import ua.kucher.player.local.ArtworkCache
 import ua.kucher.player.local.LocalStorageSource
@@ -29,6 +32,11 @@ internal class SongLocalSourceImpl(
             entities.map(SongDto::toDomain)
         }
 
+    override fun getFavoriteSong(): Flow<List<Song>> =
+        songDao.getFavoriteSongs().map { entities ->
+            entities.map(SongDto::toDomain)
+        }
+
     override fun getTopSongs(): Flow<List<Song>> =
         songDao.getTopSongs().map { entities ->
             entities.map(SongDto::toDomain)
@@ -39,36 +47,41 @@ internal class SongLocalSourceImpl(
             entities.map(SongDto::toDomain)
         }
 
-    override fun getSongsByPlaylist(playlistId: Long) =
+    override fun getSongsByPlaylist(playlistId: Long): Flow<List<Song>> =
         songDao.getSongsByPlaylist(playlistId).map { entities ->
             entities.map(SongDto::toDomain)
         }
 
-    override fun getSongsByAlbum(albumId: Long) =
+    override fun getSongsByAlbum(albumId: Long): Flow<List<Song>> =
         songDao.getSongsByAlbum(albumId).map { entities ->
             entities.map(SongDto::toDomain)
         }
 
-    override fun getSongsByArtist(artistId: Long) =
+    override fun getSongsByArtist(artistId: Long): Flow<List<Song>> =
         songDao.getSongsByArtist(artistId).map { entities ->
             entities.map(SongDto::toDomain)
         }
 
-    override fun searchSongsByTitle(title: String) =
+    override fun searchSongsByTitle(title: String): Flow<List<Song>> =
         songDao.searchSongsByTitle(title).map { entities ->
             entities.map(SongDto::toDomain)
         }
 
-    override fun getSongsCount() =
+    override fun getSongById(id: Long): Flow<Song?> =
+        songDao.getSongById(id).mapNotNull(SongDto::toDomain)
+
+    override fun getSongsCount(): Flow<Int> =
         songDao.getSongsCount()
 
-    override fun getSongsCountByPlaylist(playlistId: Long) =
+    override fun getFavoriteSongsCount(): Flow<Int> =
+        songDao.getFavoriteSongsCount()
+
+    override fun getSongsCountByPlaylist(playlistId: Long): Flow<Int> =
         songDao.getSongsCountByPlaylist(playlistId)
 
-    override fun getSongById(id: Long) =
-        songDao.getSongById(id).map { entity ->
-            entity?.toDomain()
-        }
+    override suspend fun updateFavoriteTimestamp(id: Long, timestamp: Long?) = runCatching {
+        songDao.updateFavoriteTimestamp(id, timestamp)
+    }
 
     override suspend fun registerPlayback(id: Long, timestamp: Long) = runCatching {
         songDao.registerPlayback(id, timestamp)
@@ -89,26 +102,25 @@ internal class SongLocalSourceImpl(
         val toDelete = dbSongs.filter { it.id !in deviceMap }
 
         songDao.mergeSongs(
-            insert = toInsert,
-            upsert = toUpdate,
-            delete = toDelete.map { it }
+            upsert = toInsert + toUpdate,
+            delete = toDelete
         )
 
         syncArtwork(
-            removedIds = toDelete.map { it.id },
+            removedSongs = toDelete,
             insertedSongs = toInsert,
         )
     }
 
     private suspend fun syncArtwork(
-        removedIds: List<Long>,
+        removedSongs: List<SongEntity>,
         insertedSongs: List<SongEntity>,
     ) = coroutineScope {
-        removedIds.map { id ->
-            async {
-                artworkCache.deleteSongArtworkFromCache(id)
+        removedSongs.map { song ->
+            launch {
+                artworkCache.deleteSongArtworkFromCache(song.id)
             }
-        }.awaitAll()
+        }.joinAll()
 
         val songsWithArtworks = insertedSongs.map { song ->
             async(dispatcherProvider.artworkCache) {

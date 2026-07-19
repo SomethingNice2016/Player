@@ -2,16 +2,15 @@ package ua.kucher.player.playback
 
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
+import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -26,15 +25,12 @@ internal class AndroidPlaybackController : PlaybackController {
 
     private var controller: MediaController? = null
 
-    private val scope = CoroutineScope(
-        context = SupervisorJob() + Dispatchers.Main.immediate
-    )
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
 
     private var progressJob: Job? = null
 
-    private val _state = MutableStateFlow(PlaybackState())
-
-    override val state = _state.asStateFlow()
+    override val state: StateFlow<PlaybackState>
+        field: MutableStateFlow<PlaybackState> = MutableStateFlow(PlaybackState())
 
     private val playerListener = object : Player.Listener {
 
@@ -104,7 +100,9 @@ internal class AndroidPlaybackController : PlaybackController {
     }
 
     override fun play(playlist: List<PlaylistItem>, item: PlaylistItem) = withController {
-        val mediaItems = playlist.map { it.toMediaItem() }
+        val mediaItems = playlist.map { playlistItem ->
+            playlistItem.toMediaItem()
+        }
         val index = mediaItems.indexOfFirst {
             it.mediaId == item.id.toString()
         }
@@ -130,7 +128,7 @@ internal class AndroidPlaybackController : PlaybackController {
 
     override fun seekToPosition(position: Long) = withController {
         seekTo(position)
-        _state.update { value -> value.copy(progress = currentPosition) }
+        state.update { value -> value.copy(progress = currentPosition) }
     }
 
     override fun setShuffleMode(isShuffle: Boolean) {
@@ -173,7 +171,7 @@ internal class AndroidPlaybackController : PlaybackController {
 
     private fun syncState() {
         val nonNullController = controller ?: run {
-            _state.update {
+            state.update {
                 PlaybackState(
                     currentItemId = null,
                     isPlaying = false,
@@ -185,15 +183,16 @@ internal class AndroidPlaybackController : PlaybackController {
             }
             return
         }
-        _state.update {
+        state.update {
             PlaybackState(
                 currentItemId = nonNullController.currentMediaItem?.mediaId?.toLongOrNull(),
                 isPlaying = nonNullController.isPlaying,
                 isShuffle = nonNullController.shuffleModeEnabled,
                 repeatMode = PlaybackController.RepeatMode.fromPlayerRepeatMode(nonNullController.repeatMode),
                 progress = nonNullController.currentPosition,
-                artworks = buildMap {
+                artworks = buildMap { 
                     nonNullController.mediaItems.forEach { mediaItem ->
+                        Logger.w(mediaItem.mediaMetadata.title.toString(), tag = "Player")
                         val id = mediaItem.mediaId.toLongOrNull() ?: return@forEach
                         put(id, mediaItem.mediaMetadata.artworkUri?.toString().orEmpty())
                     }
@@ -210,7 +209,7 @@ internal class AndroidPlaybackController : PlaybackController {
                 if (!controller.isPlaying) {
                     break
                 }
-                _state.update { value ->
+                state.update { value ->
                     value.copy(progress = controller.currentPosition)
                 }
                 delay(PROGRESS_UPDATE_DELAY.milliseconds)

@@ -6,6 +6,7 @@ import ua.kucher.player.local.album.AlbumDao
 import ua.kucher.player.local.album.entity.AlbumEntity
 import ua.kucher.player.local.artist.ArtistDao
 import ua.kucher.player.local.artist.ArtistEntity
+import ua.kucher.player.local.playlist.PlaylistDao
 import ua.kucher.player.local.playlist.PlaylistEntity
 import ua.kucher.player.local.playlist.SongWithPlaylistEntity
 import ua.kucher.player.local.song.SongDao
@@ -31,5 +32,7 @@ internal abstract class PlayerDatabase : RoomDatabase() {
     abstract fun getArtistDao(): ArtistDao
 
     abstract fun getAlbumDao(): AlbumDao
+
+    abstract fun getPlaylistDao(): PlaylistDao
 
 }

@@ -45,7 +45,6 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(libs.koin.core)
-                implementation(libs.kotlin.stdlib)
                 implementation(libs.androidx.room.runtime)
 
                 //Project modules
@@ -57,7 +56,6 @@ kotlin {
         androidMain {
             dependencies {
                 implementation(libs.koin.android)
-                implementation(libs.androidx.ktx.core)
                 implementation(libs.androidx.room.sqlite.wrapper)
             }
         }

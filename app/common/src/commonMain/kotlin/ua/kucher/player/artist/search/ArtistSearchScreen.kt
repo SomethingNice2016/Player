@@ -92,6 +92,7 @@ internal fun ArtistSearchScreen(
                     leadingIcon = {
                         PlayerMenuIconButton(
                             painter = painterResource(Res.drawable.ic_search),
+                            iconSize = PlayerTheme.dimens.dimens16Px,
                             contentDescription = null,
                         )
                     }

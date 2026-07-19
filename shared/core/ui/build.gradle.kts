@@ -9,14 +9,11 @@ kotlin {
 
     android {
         namespace = "ua.kucher.player.core.ui"
-        compileSdk {
-            version = release(libs.versions.androidSdkCompiled.get().toInt()) {
-                minorApiLevel = 1
-            }
-        }
+        compileSdk = libs.versions.androidSdkCompiled.get().toInt()
         minSdk = libs.versions.androidSdkMin.get().toInt()
 
         withHostTestBuilder {
+
         }
 
         withDeviceTestBuilder {
