@@ -11,6 +11,7 @@ import platform.Foundation.NSData
 import platform.Foundation.create
 import platform.UIKit.UIImage
 import platform.UIKit.UIImagePNGRepresentation
+import platform.posix.memcpy
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
 @OptIn(ExperimentalForeignApi::class)
@@ -24,7 +25,7 @@ actual class SharedBitmap(val nativeImage: UIImage) {
         val nsData = UIImagePNGRepresentation(nativeImage) ?: return byteArrayOf()
         val bytes = ByteArray(nsData.length.toInt())
         if (bytes.isNotEmpty()) bytes.usePinned { pinned ->
-            platform.posix.memcpy(pinned.addressOf(0), nsData.bytes, nsData.length)
+            memcpy(pinned.addressOf(0), nsData.bytes, nsData.length)
         }
         return bytes
     }
@@ -40,8 +41,9 @@ actual class SharedBitmap(val nativeImage: UIImage) {
             val nsData = bytes.usePinned { pinned ->
                 NSData.create(bytes = pinned.addressOf(0), length = bytes.size.toULong())
             }
-            return SharedBitmap(
-                UIImage.imageWithData(nsData) ?: throw IllegalArgumentException("Failed to decode Image")
+            return _root_ide_package_.ua.kucher.player.core.common.bitmap.SharedBitmap(
+                UIImage.imageWithData(nsData)
+                    ?: throw IllegalArgumentException("Failed to decode Image")
             )
         }
     }

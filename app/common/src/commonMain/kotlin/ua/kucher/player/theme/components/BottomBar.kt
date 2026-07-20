@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
-import ua.kucher.player.navigation.AppRoute
+import ua.kucher.player.navigation.AppEntry
 import ua.kucher.player.navigation.icon
 import ua.kucher.player.navigation.label
 import ua.kucher.player.theme.PlayerTheme
@@ -23,9 +23,9 @@ import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 @Composable
 internal fun BottomBar(
     modifier: Modifier = Modifier,
-    items: List<() -> AppRoute>,
-    current: AppRoute,
-    onClick: (AppRoute) -> Unit
+    items: List<() -> AppEntry>,
+    current: AppEntry,
+    onClick: (AppEntry) -> Unit
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -74,8 +74,8 @@ internal fun BottomBar(
 private fun BottomMenuPreview() {
     BottomBar(
         modifier = Modifier.fillMaxWidth(),
-        items = AppRoute.mainMenuItems,
-        current = AppRoute.AllSong(),
+        items = AppEntry.mainMenuItemsFactories,
+        current = AppEntry.AllSong(),
         onClick = {}
     )
 }

@@ -21,18 +21,18 @@ data class PlayerColorScheme(
 )
 
 internal fun playerLightColorScheme() = PlayerColorScheme(
-    primaryBackground = PlayerPaletteTokens.GhostWhite,
-    secondaryBackground = PlayerPaletteTokens.MidnightBlueSurface,
+    primaryBackground = PlayerPaletteTokens.LightGray,
+    secondaryBackground = PlayerPaletteTokens.White,
     seekbarProgressColor = PlayerPaletteTokens.RoyalPurple,
-    seekbarColor = PlayerPaletteTokens.Black,
+    seekbarColor = PlayerPaletteTokens.RoyalPurple.copy(alpha = 0.25f),
     menuEnableButton = PlayerPaletteTokens.RoyalPurple,
-    menuDisableButton = PlayerPaletteTokens.MediumGray,
+    menuDisableButton = PlayerPaletteTokens.GrayText,
     favoriteEnableButton = PlayerPaletteTokens.BrightRed,
-    primaryTextColor = PlayerPaletteTokens.CharcoalBlack,
-    secondaryTextColor = PlayerPaletteTokens.MediumGray,
-    rippleColor = PlayerPaletteTokens.RoyalPurple.copy(alpha = 0.15F),
-    borderMain = PlayerPaletteTokens.Platinum,
-    iconsMain = PlayerPaletteTokens.CharcoalBlack
+    primaryTextColor = PlayerPaletteTokens.DarkText,
+    secondaryTextColor = PlayerPaletteTokens.GrayText,
+    rippleColor = PlayerPaletteTokens.RoyalPurple.copy(alpha = 0.12f),
+    borderMain = PlayerPaletteTokens.LightBorder,
+    iconsMain = PlayerPaletteTokens.DarkText
 )
 
 internal fun playerDarkColorScheme() = PlayerColorScheme(

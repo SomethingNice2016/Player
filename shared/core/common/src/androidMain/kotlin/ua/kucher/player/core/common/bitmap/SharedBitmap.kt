@@ -3,6 +3,7 @@ package ua.kucher.player.core.common.bitmap
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import androidx.core.graphics.get
+import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
@@ -19,7 +20,7 @@ actual class SharedBitmap(val nativeBitmap: Bitmap) {
     }
 
     actual fun toByteArray(quality: Int): ByteArray {
-        val stream = java.io.ByteArrayOutputStream()
+        val stream = ByteArrayOutputStream()
         nativeBitmap.compress(Bitmap.CompressFormat.PNG, quality, stream)
         return stream.toByteArray()
     }

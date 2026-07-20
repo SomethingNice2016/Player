@@ -26,7 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
 import coil3.request.ImageRequest
-import coil3.request.crossfade
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
@@ -71,7 +70,6 @@ internal fun AlbumItem(
                     width = artworkSize.toPx(),
                     height = artworkSize.toPx()
                 )
-                .crossfade(true)
                 .build(),
             contentDescription = title,
             contentScale = ContentScale.Crop,

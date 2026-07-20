@@ -23,7 +23,7 @@ import player.app.common.generated.resources.ic_search
 import player.app.common.generated.resources.music_label
 import player.app.common.generated.resources.search
 import ua.kucher.player.common.SongUi
-import ua.kucher.player.core.common.utils.canScroll
+import ua.kucher.player.core.ui.utils.canScroll
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
 import ua.kucher.player.theme.components.PlayerTopAppBarDefaults

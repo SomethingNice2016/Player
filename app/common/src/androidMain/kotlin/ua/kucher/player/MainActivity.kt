@@ -20,7 +20,6 @@ import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
-import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
 import ua.kucher.player.data.albun.AlbumRepository
 import ua.kucher.player.data.artist.ArtistRepository
 import ua.kucher.player.data.song.SongRepository
@@ -42,7 +41,7 @@ class MainActivity : ComponentActivity() {
 
     private val artistRepository: ArtistRepository by inject()
 
-    private val dispatcherProvider: DispatcherProvider by inject()
+    private val dispatcherProvider: ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider by inject()
 
 
     private val playbackController: AndroidPlaybackController by inject()

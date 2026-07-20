@@ -16,6 +16,6 @@ expect class SharedBitmap {
     override fun hashCode(): Int
 
     companion object {
-        fun fromByteArray(bytes: ByteArray): SharedBitmap
+        fun fromByteArray(bytes: ByteArray): ua.kucher.player.core.common.bitmap.SharedBitmap
     }
 }

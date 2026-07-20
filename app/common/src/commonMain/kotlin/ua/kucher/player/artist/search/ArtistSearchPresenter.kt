@@ -1,6 +1,5 @@
 package ua.kucher.player.artist.search
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -9,14 +8,13 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ua.kucher.player.common.toUi
-import ua.kucher.player.core.common.presenter.Presenter
+import ua.kucher.player.core.ui.presenter.Presenter
 import ua.kucher.player.data.artist.ArtistRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class ArtistSearchPresenter(
     private val artistRepository: ArtistRepository,
-    scope: CoroutineScope
-) : Presenter(scope) {
+) : Presenter() {
 
     private val searchQuery = MutableStateFlow("")
 

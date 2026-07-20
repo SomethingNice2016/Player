@@ -1,6 +1,5 @@
 package ua.kucher.player.songplayer
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -9,11 +8,12 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import ua.kucher.player.common.SongUi
+import ua.kucher.player.core.common.clipboard.ClipboardController
 import ua.kucher.player.core.common.coroutines.combineNotNull
 import ua.kucher.player.core.common.coroutines.flatMapNotNullLatest
 import ua.kucher.player.core.common.coroutines.mapNotNull
 import ua.kucher.player.core.common.datetime.TimeFormatter
-import ua.kucher.player.core.common.presenter.Presenter
+import ua.kucher.player.core.ui.presenter.Presenter
 import ua.kucher.player.data.song.SongRepository
 import ua.kucher.player.entity.Song
 import ua.kucher.player.playback.PlaybackController
@@ -22,10 +22,10 @@ import ua.kucher.player.playback.PlaybackController
 internal class MusicPlayerPresenter(
     private val playbackController: PlaybackController,
     private val timeFormatter: TimeFormatter,
+    private val clipboardController: ClipboardController,
     private val songRepository: SongRepository,
     private val songMapper: Song.Mapper<SongUi>,
-    scope: CoroutineScope
-) : Presenter(scope) {
+) : Presenter() {
 
     private val eventChanner = Channel<MusicPlayerEvent>(capacity = Channel.BUFFERED)
 
@@ -107,6 +107,22 @@ internal class MusicPlayerPresenter(
     fun expandPlayer() {
         scope.launch {
             eventChanner.send(MusicPlayerEvent.ExpandPlayer)
+        }
+    }
+
+    fun copySongTitle() {
+        scope.launch {
+            uiState.firstOrNull()?.currentSong?.title?.let { title ->
+                clipboardController.setText(title)
+            }
+        }
+    }
+
+    fun copyArtistName() {
+        scope.launch {
+            uiState.firstOrNull()?.currentSong?.artistName?.let { artistName ->
+                clipboardController.setText(artistName)
+            }
         }
     }
 }

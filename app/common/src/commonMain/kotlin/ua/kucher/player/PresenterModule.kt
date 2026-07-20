@@ -1,6 +1,5 @@
 package ua.kucher.player
 
-import kotlinx.coroutines.CoroutineScope
 import org.koin.dsl.module
 import ua.kucher.player.album.list.AlbumListPresenter
 import ua.kucher.player.album.search.AlbumSearchPresenter
@@ -16,99 +15,88 @@ import ua.kucher.player.songplayer.MusicPlayerPresenter
 
 internal val presenterModule = module {
 
-    factory { (scope: CoroutineScope) ->
+    factory {
         MusicPlayerPresenter(
             playbackController = get(),
             songRepository = get(),
             songMapper = get(),
             timeFormatter = get(),
-            scope = scope
+            clipboardController = get(),
         )
     }
 
-    factory { (scope: CoroutineScope) ->
+    factory {
         SongsSearchPresenter(
             playbackController = get(),
             songRepository = get(),
             songMapper = get(),
-            scope = scope
         )
     }
 
-    factory { (scope: CoroutineScope) ->
+    factory {
         HomePresenter(
             songRepository = get(),
             artistRepository = get(),
             albumRepository = get(),
             playbackController = get(),
             songMapper = get(),
-            scope = scope
         )
     }
 
-    factory { (scope: CoroutineScope) ->
+    factory {
         AllSongPresenter(
             songRepository = get(),
             artistRepository = get(),
             albumRepository = get(),
             playbackController = get(),
             songMapper = get(),
-            scope = scope
         )
     }
 
-    factory { (scope: CoroutineScope) ->
+    factory {
         FavoriteSongPresenter(
             songRepository = get(),
             artistRepository = get(),
             albumRepository = get(),
             playbackController = get(),
             songMapper = get(),
-            scope = scope
         )
     }
 
-    factory { (scope: CoroutineScope) ->
+    factory {
         ArtistListPresenter(
             artistRepository = get(),
-            scope = scope
         )
     }
 
-    factory { (scope: CoroutineScope) ->
+    factory {
         ArtistSearchPresenter(
             artistRepository = get(),
-            scope = scope
         )
     }
 
-    factory { (scope: CoroutineScope) ->
+    factory {
         AlbumListPresenter(
             albumRepository = get(),
-            scope = scope
         )
     }
 
-    factory { (scope: CoroutineScope) ->
+    factory {
         AlbumSearchPresenter(
             albumRepository = get(),
-            scope = scope
         )
     }
 
-    factory { (scope: CoroutineScope) ->
-        SettingPresenter(
-            scope = scope
-        )
+    factory {
+        SettingPresenter()
     }
 
-    factory { (scope: CoroutineScope, id: Long) ->
+    factory { (id: Long) ->
         SongMenuPresenter(
             songId = id,
             mapper = get(),
             playbackController = get(),
             songRepository = get(),
-            scope = scope,
         )
     }
 }

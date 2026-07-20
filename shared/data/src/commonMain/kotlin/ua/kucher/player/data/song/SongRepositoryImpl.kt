@@ -2,13 +2,11 @@ package ua.kucher.player.data.song
 
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
-import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
-import ua.kucher.player.core.common.datetime.TimeProvider
 import ua.kucher.player.local.song.SongLocalSource
 
 internal class SongRepositoryImpl(
-    private val dispatcherProvider: DispatcherProvider,
-    private val timeProvider: TimeProvider,
+    private val dispatcherProvider: ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider,
+    private val timeProvider: ua.kucher.player.core.common.datetime.TimeProvider,
     private val songLocalSource: SongLocalSource,
 ) : SongRepository {
 

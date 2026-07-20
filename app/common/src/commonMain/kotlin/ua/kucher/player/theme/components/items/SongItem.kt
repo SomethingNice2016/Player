@@ -28,15 +28,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
-import coil3.request.crossfade
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.default_song_artwork
 import player.app.common.generated.resources.ic_options
 import player.app.common.generated.resources.song_item_description
-import ua.kucher.player.core.common.components.AudioVisualizer
-import ua.kucher.player.core.common.components.FrostedGlass
+import ua.kucher.player.core.ui.components.AudioVisualizer
+import ua.kucher.player.core.ui.components.FrostedGlass
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.extensions.toPx
 
@@ -91,7 +90,6 @@ internal fun SongItem(
                             width = artworkSize.toPx(),
                             height = artworkSize.toPx()
                         )
-                        .crossfade(true)
                         .build(),
                     contentDescription = title,
                     contentScale = ContentScale.Crop,

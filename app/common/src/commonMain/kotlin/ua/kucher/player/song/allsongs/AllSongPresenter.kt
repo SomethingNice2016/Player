@@ -1,14 +1,12 @@
 package ua.kucher.player.song.allsongs
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ua.kucher.player.common.SongUi
-import ua.kucher.player.core.common.presenter.Presenter
+import ua.kucher.player.core.ui.presenter.Presenter
 import ua.kucher.player.data.albun.AlbumRepository
 import ua.kucher.player.data.artist.ArtistRepository
 import ua.kucher.player.data.song.SongRepository
@@ -21,8 +19,7 @@ internal class AllSongPresenter(
     private val albumRepository: AlbumRepository,
     private val playbackController: PlaybackController,
     private val songMapper: Song.Mapper<SongUi>,
-    scope: CoroutineScope
-) : Presenter(scope) {
+) : Presenter() {
 
     private val isRefreshing = MutableStateFlow(false)
 
@@ -54,7 +51,7 @@ internal class AllSongPresenter(
 
     fun playSong(id: Long) {
         scope.launch {
-            val song = songRepository.getSongs().firstOrNull()?.find { song ->
+            val song = songs.value.find { song ->
                 song.id == id
             } ?: return@launch
 

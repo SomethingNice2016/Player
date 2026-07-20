@@ -14,7 +14,7 @@ import androidx.compose.ui.Modifier
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ua.kucher.player.core.common.toBool
-import ua.kucher.player.core.common.utils.ObserveOneTimeEvents
+import ua.kucher.player.core.ui.utils.ObserveOneTimeEvents
 import ua.kucher.player.navigation.AppNavigator
 import ua.kucher.player.song.menu.SongMenuRoute
 
@@ -94,6 +94,8 @@ internal fun MusicPlayerRoute(
         onShuffle = presenter::shuffle,
         onRepeat = presenter::repeat,
         onSeek = presenter::seekToPosition,
+        onTitleLongClick = presenter::copySongTitle,
+        onArtistLongClick = presenter::copyArtistName,
         collapsePlayer = ::collapsePlayer,
         expandPlayer = ::expandPlayer,
         onVerticalDrag = { delta ->
@@ -107,7 +109,6 @@ internal fun MusicPlayerRoute(
             showSongMenu = true
         }
     )
-
 
     SongMenuRoute(
         songId = selectedSongId,

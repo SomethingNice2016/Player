@@ -8,7 +8,7 @@ import ua.kucher.player.album.list.AlbumListRoute
 import ua.kucher.player.album.search.AlbumSearchRoute
 import ua.kucher.player.artist.list.ArtistListRoute
 import ua.kucher.player.artist.search.ArtistSearchRoute
-import ua.kucher.player.core.common.backhandler.PlatformBackHandler
+import ua.kucher.player.core.ui.backhandler.PlatformBackHandler
 import ua.kucher.player.home.HomeRoute
 import ua.kucher.player.setting.SettingRoute
 import ua.kucher.player.song.allsongs.AllSongRoute
@@ -29,66 +29,66 @@ internal fun PlayerNavigation(
         backStack = navigator.backStack,
         entryProvider = entryProvider {
 
-        entry<AppRoute.Home> { route ->
+            entry<AppEntry.Home> { entry ->
                 HomeRoute(
                     navigator = navigator,
-                    presenter = koinPresenter(navigator.getEntry(route))
+                    presenter = koinPresenter(entry)
                 )
             }
 
-            entry<AppRoute.AllSong> { route ->
+            entry<AppEntry.AllSong> { entry ->
                 AllSongRoute(
                     navigator = navigator,
-                    presenter = koinPresenter(navigator.getEntry(route))
+                    presenter = koinPresenter(entry)
                 )
             }
 
-            entry<AppRoute.FavoriteSongs> { route ->
+            entry<AppEntry.FavoriteSongs> { entry ->
                 FavoriteSongRoute(
                     navigator = navigator,
-                    presenter = koinPresenter(navigator.getEntry(route))
+                    presenter = koinPresenter(entry)
                 )
             }
 
-            entry<AppRoute.Settings> { route ->
+            entry<AppEntry.Settings> { entry ->
                 SettingRoute(
                     navigator = navigator,
-                    presenter = koinPresenter(navigator.getEntry(route))
+                    presenter = koinPresenter(entry)
                 )
             }
 
-            entry<AppRoute.SongsSearch> { route ->
+            entry<AppEntry.SongsSearch> { entry ->
                 SongsSearchRoute(
                     navigator = navigator,
-                    presenter = koinPresenter(navigator.getEntry(route))
+                    presenter = koinPresenter(entry)
                 )
             }
 
-            entry<AppRoute.ArtistList> { route ->
+            entry<AppEntry.ArtistList> { entry ->
                 ArtistListRoute(
                     navigator = navigator,
-                    presenter = koinPresenter(navigator.getEntry(route))
+                    presenter = koinPresenter(entry)
                 )
             }
 
-            entry<AppRoute.ArtistSearch> { route ->
+            entry<AppEntry.ArtistSearch> { entry ->
                 ArtistSearchRoute(
                     navigator = navigator,
-                    presenter = koinPresenter(navigator.getEntry(route))
+                    presenter = koinPresenter(entry)
                 )
             }
 
-            entry<AppRoute.AlbumsList> { route ->
+            entry<AppEntry.AlbumsList> { entry ->
                 AlbumListRoute(
                     navigator = navigator,
-                    presenter = koinPresenter(navigator.getEntry(route))
+                    presenter = koinPresenter(entry)
                 )
             }
 
-            entry<AppRoute.AlbumSearch> { route ->
+            entry<AppEntry.AlbumSearch> { entry ->
                 AlbumSearchRoute(
                     navigator = navigator,
-                    presenter = koinPresenter(navigator.getEntry(route))
+                    presenter = koinPresenter(entry)
                 )
             }
         }

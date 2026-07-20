@@ -58,7 +58,7 @@ import player.app.common.generated.resources.top_artists
 import player.app.common.generated.resources.tracks_count
 import ua.kucher.player.common.ArtistUi
 import ua.kucher.player.common.SongUi
-import ua.kucher.player.core.common.utils.canScroll
+import ua.kucher.player.core.ui.utils.canScroll
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.PlayerTopAppBar
 import ua.kucher.player.theme.components.PlayerTopAppBarDefaults
