@@ -3,6 +3,7 @@ package ua.kucher.player.songplayer
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.AnimationVector1D
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -45,12 +46,12 @@ import player.app.common.generated.resources.ic_arrow_down
 import player.app.common.generated.resources.ic_cast
 import player.app.common.generated.resources.ic_options
 import ua.kucher.player.common.SongUi
-import ua.kucher.player.core.common.components.FrostedGlass
-import ua.kucher.player.core.common.utils.lerp
-import ua.kucher.player.core.common.utils.rememberNavigationBarHeight
-import ua.kucher.player.core.common.utils.rememberScreenSizeHeight
-import ua.kucher.player.core.common.utils.rememberScreenSizeWidth
-import ua.kucher.player.core.common.utils.rememberStatusBarHeight
+import ua.kucher.player.core.ui.components.FrostedGlass
+import ua.kucher.player.core.ui.utils.lerp
+import ua.kucher.player.core.ui.utils.rememberNavigationBarHeight
+import ua.kucher.player.core.ui.utils.rememberScreenSizeHeight
+import ua.kucher.player.core.ui.utils.rememberScreenSizeWidth
+import ua.kucher.player.core.ui.utils.rememberStatusBarHeight
 import ua.kucher.player.playback.PlaybackController
 import ua.kucher.player.song.allsongs.AllSongScreen
 import ua.kucher.player.song.allsongs.AllSongUiState
@@ -78,6 +79,8 @@ internal fun MusicPlayerScreen(
     collapsePlayer: () -> Unit,
     onVerticalDrag: (Float) -> Unit,
     onMenuClick: (Long) -> Unit,
+    onTitleLongClick: () -> Unit,
+    onArtistLongClick: () -> Unit,
     content: @Composable () -> Unit,
 ) {
 
@@ -230,14 +233,17 @@ internal fun MusicPlayerScreen(
                     )
             ) {
                 Crossfade(
-                    targetState = nonNullState.currentSong.artwork,
+                    targetState = nonNullState.currentSong,
                     label = "Artwork",
+                    animationSpec = tween(
+                        durationMillis = 1500,
+                    )
                 ) {
                     FrostedGlass(
                         modifier = Modifier
                             .fillMaxSize()
                             .alpha(imageBackgroundAlpha),
-                        blurRadius = 150F,
+                        blurRadius = 90F,
                         enabled = true,
                         tint = Color.Black.copy(alpha = 0.7F)
                     ) {
@@ -246,7 +252,7 @@ internal fun MusicPlayerScreen(
                             model = ImageRequest.Builder(LocalPlatformContext.current)
                                 .data(nonNullState.currentSong.artwork)
                                 .size(backgroundImageSize, backgroundImageSize)
-                                .crossfade(true)
+                                .crossfade(durationMillis = 1000)
                                 .build(),
                             contentDescription = null,
                             contentScale = ContentScale.Crop
@@ -305,7 +311,6 @@ internal fun MusicPlayerScreen(
                                 width = artworkPixelSize,
                                 height = artworkPixelSize
                             )
-                            .crossfade(true)
                             .build(),
                         contentDescription = "",
                         contentScale = ContentScale.Crop,
@@ -342,12 +347,14 @@ internal fun MusicPlayerScreen(
                     isPlaying = nonNullState.isPlaying,
                     isShuffle = nonNullState.isShuffle,
                     repeatMode = nonNullState.repeatMode,
+                    onTitleLongClick = onTitleLongClick,
+                    onArtistLongClick = onArtistLongClick,
                     onForward = onForward,
                     onPrevious = onPrevious,
                     onPlayPause = onPlayPause,
                     onShuffle = onShuffle,
                     onRepeat = onRepeat,
-                    onSeek = onSeek
+                    onSeek = onSeek,
                 )
             }
         }
@@ -390,6 +397,8 @@ private fun PlayerScreenPreviewAll() {
             onShuffle = {},
             onRepeat = {},
             onSeek = {},
+            onTitleLongClick = {},
+            onArtistLongClick = {},
             onVerticalDrag = {},
             expandPlayerProgress = Animatable(1F),
             expandPlayer = {},

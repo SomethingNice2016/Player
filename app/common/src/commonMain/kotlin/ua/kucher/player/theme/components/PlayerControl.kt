@@ -4,6 +4,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.basicMarquee
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -67,7 +69,9 @@ internal fun PlayerControl(
     onPlayPause: () -> Unit,
     onShuffle: () -> Unit,
     onRepeat: () -> Unit,
-    onSeek: (newValue: Long) -> Unit
+    onSeek: (newValue: Long) -> Unit,
+    onTitleLongClick: () -> Unit,
+    onArtistLongClick: () -> Unit,
 ) {
 
     var isDragging by remember { mutableStateOf(false) }
@@ -102,6 +106,8 @@ internal fun PlayerControl(
         }
     }
 
+    val titleInteractionSource = remember { MutableInteractionSource() }
+    val artistInteractionSource = remember { MutableInteractionSource() }
 
     Column(
         modifier = modifier
@@ -115,6 +121,12 @@ internal fun PlayerControl(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
+                .combinedClickable(
+                    onClick = {},
+                    onLongClick = onTitleLongClick,
+                    interactionSource = titleInteractionSource,
+                    indication = null,
+                )
                 .padding(horizontal = PlayerTheme.dimens.dimens8Px)
                 .basicMarquee(
                     iterations = Int.MAX_VALUE,
@@ -132,6 +144,12 @@ internal fun PlayerControl(
         Text(
             modifier = Modifier
                 .fillMaxWidth()
+                .combinedClickable(
+                    onClick = {},
+                    onLongClick = onArtistLongClick,
+                    interactionSource = artistInteractionSource,
+                    indication = null,
+                )
                 .padding(horizontal = PlayerTheme.dimens.dimens8Px),
             text = artist,
             color = PlayerTheme.colorScheme.secondaryTextColor,
@@ -305,7 +323,9 @@ private fun PlayerControlPreview() {
             onPlayPause = {},
             onShuffle = {},
             onRepeat = {},
-            onSeek = {}
+            onSeek = {},
+            onTitleLongClick = {},
+            onArtistLongClick = {}
         )
     }
 }

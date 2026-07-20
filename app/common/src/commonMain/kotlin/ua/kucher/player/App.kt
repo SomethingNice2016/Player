@@ -10,8 +10,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import ua.kucher.player.navigation.AppEntry
 import ua.kucher.player.navigation.AppNavigator
-import ua.kucher.player.navigation.AppRoute
 import ua.kucher.player.navigation.PlayerNavigation
 import ua.kucher.player.navigation.rememberAppNavigator
 import ua.kucher.player.songplayer.MusicPlayerPresenter
@@ -26,7 +26,7 @@ fun App() {
 
     val playerPresenter: MusicPlayerPresenter = koinPresenter()
 
-    val navigator: AppNavigator = rememberAppNavigator()
+    val navigator: AppNavigator = rememberAppNavigator(AppEntry.Home())
 
     PlayerTheme(useDarkTheme = true) {
 
@@ -56,8 +56,8 @@ fun App() {
 
                 BottomBar(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    current = navigator.currentRoute,
-                    items = AppRoute.mainMenuItems,
+                    current = navigator.currentMenuEntry,
+                    items = AppEntry.mainMenuItemsFactories,
                     onClick = navigator::navigate
                 )
             }

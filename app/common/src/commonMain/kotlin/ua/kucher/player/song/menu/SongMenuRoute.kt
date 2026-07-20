@@ -55,11 +55,13 @@ internal fun SongMenuRoute(
                 goToArtist = {
                     uiState.artistId?.let { id ->
                         onDismiss()
+                        navigator.navigateToArtist(id)
                     }
                 },
                 goToAlbum = {
                     uiState.albumId?.let { id ->
                         onDismiss()
+                        navigator.navigateToAlbum(id)
                     }
                 }
             )

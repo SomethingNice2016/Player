@@ -25,10 +25,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             api(libs.compose.resources)
-            implementation(libs.kermit)
             implementation(libs.compose.nav3)
             implementation(libs.kotlinx.serialization.json)
-            implementation(libs.kermit)
 
             //Permissions
             implementation(libs.permissions.core)

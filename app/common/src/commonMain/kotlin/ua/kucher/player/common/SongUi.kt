@@ -1,7 +1,6 @@
 package ua.kucher.player.common
 
 import androidx.compose.runtime.Stable
-import ua.kucher.player.core.common.datetime.TimeFormatter
 import ua.kucher.player.entity.Song
 
 @Stable
@@ -16,7 +15,7 @@ internal data class SongUi(
 )
 
 internal class SongUiMapper(
-    private val timeFormatter: TimeFormatter
+    private val timeFormatter: ua.kucher.player.core.common.datetime.TimeFormatter
 ) : Song.Mapper<SongUi> {
 
     override fun map(song: Song): SongUi {

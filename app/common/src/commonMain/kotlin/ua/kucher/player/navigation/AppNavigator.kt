@@ -4,77 +4,79 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.snapshots.SnapshotStateList
-import co.touchlab.kermit.Logger
 
 @Composable
-internal fun rememberAppNavigator() = remember {
-    AppNavigator()
+internal fun rememberAppNavigator(startEntry: AppEntry) = remember {
+    AppNavigator(startEntry)
 }
 
-internal class AppNavigator {
+internal class AppNavigator(
+    startEntry: AppEntry
+) {
 
-    private val entries = mutableMapOf<String, ScreenEntry<AppRoute>>()
-    val backStack: List<AppRoute>
-        field: SnapshotStateList<AppRoute> = mutableStateListOf()
+    private val _backStack: SnapshotStateList<AppEntry> =
+        mutableStateListOf()
 
-    val currentRoute: AppRoute
-        get() = backStack.last()
+    val backStack: List<AppEntry>
+        get() = _backStack
 
-    val currentEntry: ScreenEntry<AppRoute>
-        get() = requireNotNull(entries[currentRoute.id])
+    val currentEntry: AppEntry
+        get() = _backStack.last()
+
+    val currentMenuEntry: AppEntry
+        get() = requireNotNull(
+            value = _backStack.findLast { route ->
+                AppEntry.mainMenuItemsClass.contains(route::class)
+            }
+        )
 
     init {
-        navigate(AppRoute.Home())
+        navigate(startEntry)
     }
 
-    private fun logBackstack() {
-        backStack.forEach {
-            Logger.d(
-                messageString = "route: ${it::class.simpleName} id: ${it.id}",
-                tag = AppNavigator::class.simpleName.toString()
-            )
-        }
-    }
-
-    fun getEntry(route: AppRoute): ScreenEntry<AppRoute> =
-        requireNotNull(entries[route.id]) {
-            "ScreenEntry for ${route::class.simpleName} (${route.id}) not found"
-        }
-
-    fun navigate(route: AppRoute) {
-        val entry = ScreenEntry(route)
-        backStack.add(route)
-        entries[route.id] = entry
-        logBackstack()
+    fun navigate(route: AppEntry) {
+        _backStack.add(route)
     }
 
     fun navigateBack() {
-        if (backStack.size <= 1) return
-        backStack.lastOrNull()?.let { route ->
-            backStack.removeLastOrNull()
-            entries.remove(route.id)?.clear()
-        }
-        logBackstack()
+        if (_backStack.size <= 1) return
+        removeLastEntry()
     }
 
     fun navigateToAllSongs() =
-        navigate(AppRoute.AllSong())
+        navigate(AppEntry.AllSong())
 
     fun navigateToSongSearch() =
-        navigate(AppRoute.SongsSearch())
+        navigate(AppEntry.SongsSearch())
 
     fun navigateToFavoriteSongs() =
-        navigate(AppRoute.FavoriteSongs())
+        navigate(AppEntry.FavoriteSongs())
 
     fun navigateToArtistList() =
-        navigate(AppRoute.ArtistList())
+        navigate(AppEntry.ArtistList())
 
     fun navigateToArtistSearch() =
-        navigate(AppRoute.ArtistSearch())
+        navigate(AppEntry.ArtistSearch())
 
     fun navigateToAlbumList() =
-        navigate(AppRoute.AlbumsList())
+        navigate(AppEntry.AlbumsList())
 
     fun navigateToAlbumSearch() =
-        navigate(AppRoute.AlbumSearch())
+        navigate(AppEntry.AlbumSearch())
+
+    fun navigateToAlbum(id: Long) {
+
+    }
+
+    fun navigateToArtist(id: Long) {
+
+    }
+
+    private fun removeEntry(index: Int) {
+        _backStack.removeAt(index).clear()
+    }
+
+    private fun removeLastEntry() {
+        _backStack.removeLast().clear()
+    }
 }

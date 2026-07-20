@@ -1,50 +1,16 @@
 package ua.kucher.player.navigation
 
-import androidx.navigation3.runtime.NavKey
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.cancel
-import kotlin.reflect.KClass
+import ua.kucher.player.core.ui.presenter.PresenterStore
+import ua.kucher.player.core.ui.presenter.PresenterStoreOwner
 
-internal class ScreenEntry<T : NavKey>(
-    val route: T
-) {
+internal abstract class ScreenEntry : PresenterStoreOwner {
 
-    val scope = CoroutineScope(
-        SupervisorJob() + Dispatchers.Main.immediate
-    )
+    override val presenterStore: PresenterStore = PresenterStore()
 
-    val presenterStore = PresenterStore()
-
-    private val objects = mutableMapOf<KClass<*>, Any>()
-
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> getOrPut(
-        clazz: KClass<T>,
-        factory: () -> T
-    ): T {
-        return objects.getOrPut(clazz) {
-            factory()
-        } as T
-    }
-
-    @Suppress("UNCHECKED_CAST")
-    fun <T : Any> get(
-        clazz: KClass<T>
-    ): T? {
-        return objects[clazz] as? T
-    }
-
-    fun remove(
-        clazz: KClass<*>
-    ) {
-        objects.remove(clazz)
-    }
+    abstract val id: String
 
     fun clear() {
         presenterStore.clear()
-        objects.clear()
-        scope.cancel()
     }
+
 }

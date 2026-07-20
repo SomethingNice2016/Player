@@ -42,6 +42,7 @@ kotlin {
                 api(libs.kotlinx.coroutines.core)
                 api(libs.kotlinx.datetime)
                 api(libs.kotlin.stdlib)
+                api(libs.kermit)
             }
         }
 

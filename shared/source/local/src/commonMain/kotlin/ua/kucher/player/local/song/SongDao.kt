@@ -37,7 +37,7 @@ internal interface SongDao {
     @Query("SELECT s.* FROM ${TableName.SONG_TABLE_NAME} s INNER JOIN ${TableName.SONG_WITH_PLAYLIST_TABLE_NAME} sp ON s.id = sp.songId WHERE sp.playlistId=:playlistId")
     fun getSongsByPlaylist(playlistId: Long): Flow<List<SongDto>>
 
-    @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE LOWER(title) LIKE '%' || LOWER(:title) || '%'")
+    @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE LOWER(title) LIKE '%' || LOWER(:title) || '%' ORDER BY lastModified DESC")
     fun searchSongsByTitle(title: String): Flow<List<SongDto>>
 
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE id=:id")

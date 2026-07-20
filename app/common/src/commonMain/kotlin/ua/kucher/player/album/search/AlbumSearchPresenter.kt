@@ -1,6 +1,5 @@
 package ua.kucher.player.album.search
 
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -9,14 +8,13 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import ua.kucher.player.common.toUi
-import ua.kucher.player.core.common.presenter.Presenter
+import ua.kucher.player.core.ui.presenter.Presenter
 import ua.kucher.player.data.albun.AlbumRepository
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal class AlbumSearchPresenter(
     private val albumRepository: AlbumRepository,
-    scope: CoroutineScope
-) : Presenter(scope) {
+) : Presenter() {
 
     private val searchQuery = MutableStateFlow("")
 
