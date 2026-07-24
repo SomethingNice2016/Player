@@ -2,7 +2,6 @@ package ua.kucher.player.home
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import ua.kucher.player.common.SongUi
@@ -24,6 +23,13 @@ internal class HomePresenter(
 ) : Presenter() {
 
     private val isRefreshing = MutableStateFlow(false)
+
+    private val songs = songRepository.getSongs()
+        .stateIn(
+            scope = scope,
+            started = SharingStarted.Eagerly,
+            initialValue = emptyList()
+        )
 
     val uiState = combine(
         songRepository.getSongsCount(),
@@ -65,14 +71,12 @@ internal class HomePresenter(
     )
 
     fun playSong(id: Long) {
-        scope.launch {
-            val songs = songRepository.getSongs().firstOrNull() ?: return@launch
-            val song = songs.findLast { song -> song.id == id } ?: return@launch
-            playbackController.play(
-                playlist = songs,
-                item = song
-            )
-        }
+        playbackController.play(
+            playlist = songs.value,
+            item = songs.value.findLast { song ->
+                song.id == id
+            } ?: return
+        )
     }
 
     fun refresh() {

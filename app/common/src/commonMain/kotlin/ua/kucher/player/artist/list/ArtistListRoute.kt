@@ -3,11 +3,13 @@ package ua.kucher.player.artist.list
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import ua.kucher.player.navigation.AppNavigator
+import ua.kucher.player.navigation.AppRouter
+import ua.kucher.player.navigation.navigateToArtist
+import ua.kucher.player.navigation.navigateToArtistSearch
 
 @Composable
 internal fun ArtistListRoute(
-    navigator: AppNavigator,
+    router: AppRouter,
     presenter: ArtistListPresenter
 ) {
 
@@ -16,11 +18,9 @@ internal fun ArtistListRoute(
     ArtistListScreen(
         uiState = uiState,
         onRefresh = presenter::refresh,
-        onBackClick = navigator::navigateBack,
-        onSearch = navigator::navigateToArtistSearch,
-        onArtistClick = { id ->
-
-        },
+        onBackClick = router::navigateBack,
+        onSearch = router::navigateToArtistSearch,
+        onArtistClick = router::navigateToArtist,
         onMenuClick = { id ->
 
         },

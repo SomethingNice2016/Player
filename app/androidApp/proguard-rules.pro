@@ -3,11 +3,7 @@
 
 -keep class * extends android.app.Activity
 
--keepclasseswithmembers class * {
-    @com.squareup.moshi.* <methods>;
-}
-
--keep class kotlin.reflect.jvm.internal.impl.builtins.BuiltInsLoaderImpl
+-keep class kotlin.reflect.jvm.internal.impl.serialization.deserialization.builtins.BuiltInsLoaderImpl
 
 -keepclassmembers class kotlin.Metadata {
     public <methods>;
@@ -21,7 +17,6 @@
 
 -keepclassmembers enum * { *; }
 
--dontnote com.bumptech.glide.**
 
 -keepattributes Signature, InnerClasses, EnclosingMethod
 
@@ -42,9 +37,6 @@
 # Guarded by a NoClassDefFoundError try/catch and only used when on the classpath.
 -dontwarn kotlin.Unit
 
-# A resource is loaded with a relative path so the package of this class must be preserved.
--keepnames class okhttp3.internal.publicsuffix.PublicSuffixDatabase
-
 # Animal Sniffer compileOnly dependency to ensure APIs are compatible with older versions of Java.
 -dontwarn org.codehaus.mojo.animal_sniffer.*
 
@@ -54,33 +46,33 @@
 # Architecture Components
 ## Android architecture components: Lifecycle
 # LifecycleObserver's empty constructor is considered to be unused by proguard
--keepclassmembers class * implements android.arch.lifecycle.LifecycleObserver {
+-keepclassmembers class * implements androidx.lifecycle.LifecycleObserver {
     <init>(...);
 }
 # ViewModel's empty constructor is considered to be unused by proguard
--keepclassmembers class * extends android.arch.lifecycle.ViewModel {
+-keepclassmembers class * extends androidx.lifecycle.ViewModel {
     <init>(...);
 }
 # keep Lifecycle State and Event enums values
--keepclassmembers class android.arch.lifecycle.Lifecycle$State { *; }
--keepclassmembers class android.arch.lifecycle.Lifecycle$Event { *; }
+-keepclassmembers class androidx.lifecycle.Lifecycle$State { *; }
+-keepclassmembers class androidx.lifecycle.Lifecycle$Event { *; }
 # keep methods annotated with @OnLifecycleEvent even if they seem to be unused
 # (Mostly for LiveData.LifecycleBoundObserver.onStateChange(), but who knows)
 -keepclassmembers class * {
-    @android.arch.lifecycle.OnLifecycleEvent *;
+    @androidx.lifecycle.OnLifecycleEvent *;
 }
 
--keepclassmembers class * implements android.arch.lifecycle.LifecycleObserver {
+-keepclassmembers class * implements androidx.lifecycle.LifecycleObserver {
     <init>(...);
 }
 
--keep class * implements android.arch.lifecycle.LifecycleObserver {
+-keep class * implements androidx.lifecycle.LifecycleObserver {
     <init>(...);
 }
 -keepclassmembers class android.arch.** { *; }
 -keep class android.arch.** { *; }
 -dontwarn android.arch.**
--keep class * implements android.arch.lifecycle.GeneratedAdapter {<init>(...);}
+-keep class * implements androidx.lifecycle.GeneratedAdapter {<init>(...);}
 
 # KOTLIN Extensions
 

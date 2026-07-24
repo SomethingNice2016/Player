@@ -15,7 +15,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import ua.kucher.player.core.common.toBool
 import ua.kucher.player.core.ui.utils.ObserveOneTimeEvents
-import ua.kucher.player.navigation.AppNavigator
+import ua.kucher.player.navigation.AppRouter
 import ua.kucher.player.song.menu.SongMenuRoute
 
 private const val ANIMATION_DURATION_MILLIS = 500
@@ -24,7 +24,7 @@ private const val ANIMATION_DURATION_MILLIS = 500
 internal fun MusicPlayerRoute(
     modifier: Modifier = Modifier,
     presenter: MusicPlayerPresenter,
-    navigator: AppNavigator,
+    router: AppRouter,
     onPlayerExpanded: (Boolean) -> Unit,
     content: @Composable () -> Unit = {}
 ) {
@@ -49,36 +49,33 @@ internal fun MusicPlayerRoute(
         mutableLongStateOf(0L)
     }
 
-    fun collapsePlayer() {
-        job?.cancel()
-        job = scope.launch {
-            expandPlayerProgress.animateTo(
-                targetValue = 0F,
-                animationSpec = tween(
-                    durationMillis = ANIMATION_DURATION_MILLIS
-                )
-            )
-        }
-    }
-
-    fun expandPlayer() {
-        job?.cancel()
-        job = scope.launch {
-            expandPlayerProgress.animateTo(
-                targetValue = 1F,
-                animationSpec = tween(
-                    durationMillis = ANIMATION_DURATION_MILLIS
-                )
-            )
-        }
-    }
-
     onPlayerExpanded(expandPlayerProgress.value.toBool())
 
     ObserveOneTimeEvents(presenter.event) { event ->
         when (event) {
-            MusicPlayerEvent.CollapsePlayer -> collapsePlayer()
-            MusicPlayerEvent.ExpandPlayer -> expandPlayer()
+            MusicPlayerEvent.CollapsePlayer -> {
+                job?.cancel()
+                job = scope.launch {
+                    expandPlayerProgress.animateTo(
+                        targetValue = 0F,
+                        animationSpec = tween(
+                            durationMillis = ANIMATION_DURATION_MILLIS
+                        )
+                    )
+                }
+            }
+
+            MusicPlayerEvent.ExpandPlayer -> {
+                job?.cancel()
+                job = scope.launch {
+                    expandPlayerProgress.animateTo(
+                        targetValue = 1F,
+                        animationSpec = tween(
+                            durationMillis = ANIMATION_DURATION_MILLIS
+                        )
+                    )
+                }
+            }
         }
     }
 
@@ -96,8 +93,8 @@ internal fun MusicPlayerRoute(
         onSeek = presenter::seekToPosition,
         onTitleLongClick = presenter::copySongTitle,
         onArtistLongClick = presenter::copyArtistName,
-        collapsePlayer = ::collapsePlayer,
-        expandPlayer = ::expandPlayer,
+        collapsePlayer = presenter::collapsePlayer,
+        expandPlayer = presenter::expandPlayer,
         onVerticalDrag = { delta ->
             job?.cancel()
             job = scope.launch {
@@ -113,7 +110,7 @@ internal fun MusicPlayerRoute(
     SongMenuRoute(
         songId = selectedSongId,
         showSongMenu = showSongMenu,
-        navigator = navigator,
+        router = router,
         onDismiss = {
             showSongMenu = false
         }

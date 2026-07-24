@@ -10,22 +10,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import org.koin.core.parameter.parametersOf
-import ua.kucher.player.navigation.AppNavigator
+import ua.kucher.player.navigation.AppRouter
+import ua.kucher.player.navigation.navigateToAlbum
+import ua.kucher.player.navigation.navigateToArtist
 import ua.kucher.player.theme.PlayerTheme
-import ua.kucher.player.theme.extensions.koinPresenter
+import ua.kucher.player.theme.extensions.koinLocalPresenter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun SongMenuRoute(
     songId: Long,
     showSongMenu: Boolean,
-    navigator: AppNavigator,
+    router: AppRouter,
     onDismiss: () -> Unit,
 ) {
 
     if (!showSongMenu) return
 
-    val presenter: SongMenuPresenter = koinPresenter {
+    val presenter: SongMenuPresenter = koinLocalPresenter {
         parametersOf(songId)
     }
 
@@ -50,18 +52,18 @@ internal fun SongMenuRoute(
                     onDismiss()
                 },
                 onShareClick = {
-
+                    presenter.share()
                 },
                 goToArtist = {
                     uiState.artistId?.let { id ->
                         onDismiss()
-                        navigator.navigateToArtist(id)
+                        router.navigateToArtist(id)
                     }
                 },
                 goToAlbum = {
                     uiState.albumId?.let { id ->
                         onDismiss()
-                        navigator.navigateToAlbum(id)
+                        router.navigateToAlbum(id)
                     }
                 }
             )

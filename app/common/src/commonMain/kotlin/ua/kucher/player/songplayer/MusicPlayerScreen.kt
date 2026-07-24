@@ -36,9 +36,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import org.jetbrains.compose.resources.painterResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.default_song_artwork
@@ -61,6 +58,7 @@ import ua.kucher.player.theme.components.PlayerControl
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 import ua.kucher.player.theme.extensions.bottomNavHeight
 import ua.kucher.player.theme.extensions.playerDragEvents
+import ua.kucher.player.theme.extensions.rememberImageRequest
 import ua.kucher.player.theme.extensions.toPx
 
 @Composable
@@ -165,6 +163,8 @@ internal fun MusicPlayerScreen(
 
     val appbarAlpha = playerSheetAlpha
 
+    val placeholder = painterResource(Res.drawable.default_song_artwork)
+
     Box(modifier = modifier.fillMaxSize()) {
 
         content()
@@ -249,11 +249,12 @@ internal fun MusicPlayerScreen(
                     ) {
                         AsyncImage(
                             modifier = Modifier.fillMaxSize(),
-                            model = ImageRequest.Builder(LocalPlatformContext.current)
-                                .data(nonNullState.currentSong.artwork)
-                                .size(backgroundImageSize, backgroundImageSize)
-                                .crossfade(durationMillis = 1000)
-                                .build(),
+                            model = rememberImageRequest(
+                                uri = nonNullState.currentSong.artwork,
+                                height = backgroundImageSize,
+                                width = backgroundImageSize,
+                                dispatcher = null
+                            ),
                             contentDescription = null,
                             contentScale = ContentScale.Crop
                         )
@@ -305,17 +306,15 @@ internal fun MusicPlayerScreen(
                         modifier = Modifier
                             .size(artworkSize)
                             .clip(RoundedCornerShape(artworkCorner)),
-                        model = ImageRequest.Builder(LocalPlatformContext.current)
-                            .data(pages[page].value)
-                            .size(
-                                width = artworkPixelSize,
-                                height = artworkPixelSize
-                            )
-                            .build(),
+                        model = rememberImageRequest(
+                            uri = pages[page].value,
+                            height = artworkPixelSize,
+                            width = artworkPixelSize,
+                        ),
                         contentDescription = "",
                         contentScale = ContentScale.Crop,
-                        placeholder = painterResource(Res.drawable.default_song_artwork),
-                        error = painterResource(Res.drawable.default_song_artwork)
+                        placeholder = placeholder,
+                        error = placeholder
                     )
                 }
 

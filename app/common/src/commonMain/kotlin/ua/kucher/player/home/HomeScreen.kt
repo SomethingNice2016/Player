@@ -42,6 +42,7 @@ import player.app.common.generated.resources.albums
 import player.app.common.generated.resources.albums_count
 import player.app.common.generated.resources.artists
 import player.app.common.generated.resources.artists_count
+import player.app.common.generated.resources.default_song_artwork
 import player.app.common.generated.resources.favorites
 import player.app.common.generated.resources.home_label
 import player.app.common.generated.resources.home_screen_items_count
@@ -88,7 +89,6 @@ internal fun HomeScreen(
     val scrollBehavior = PlayerTopAppBarDefaults.scrollBehavior()
 
     val topAppBarState = rememberPlayerTopAppBarState(scrollBehavior)
-
 
     val modifier = Modifier
         .fillMaxSize()
@@ -216,6 +216,8 @@ internal fun HomeScreen(
                         )
                     }
 
+                    val songPlaceholder = painterResource(Res.drawable.default_song_artwork)
+
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),
                         contentPadding = PaddingValues(
@@ -230,6 +232,7 @@ internal fun HomeScreen(
                                 title = song.title,
                                 artist = song.artistName,
                                 artwork = song.artwork,
+                                placeholder = songPlaceholder,
                                 isSongPlaying = song.id == uiState.playingSongId,
                                 isPlaying = uiState.isPlaying,
                                 onClick = {

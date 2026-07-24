@@ -263,13 +263,13 @@ internal fun PlayerControl(
                     .size(74.dp)
                     .clip(CircleShape)
                     .background(PlayerTheme.colorScheme.iconsMain.copy(alpha = 0.2F))
+                    .clickable(onClick = onPlayPause)
                     .padding(
                         top = paddingVertical,
                         bottom = paddingVertical,
                         start = paddingStart,
                         end = paddingEnd
-                    )
-                    .clickable(onClick = onPlayPause),
+                    ),
                 contentAlignment = Alignment.Center
             ) {
                 val playButtonIconRes = if (isPlaying)

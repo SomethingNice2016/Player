@@ -116,6 +116,7 @@ private fun SettingItem(
             color = PlayerTheme.colorScheme.primaryTextColor,
             fontStyle = PlayerTheme.typography.h5.fontStyle,
         )
+        Spacer(modifier = Modifier.weight(1F))
     }
 }
 

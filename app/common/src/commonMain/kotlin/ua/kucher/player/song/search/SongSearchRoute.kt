@@ -7,12 +7,12 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import ua.kucher.player.navigation.AppNavigator
+import ua.kucher.player.navigation.AppRouter
 import ua.kucher.player.song.menu.SongMenuRoute
 
 @Composable
 internal fun SongsSearchRoute(
-    navigator: AppNavigator,
+    router: AppRouter,
     presenter: SongsSearchPresenter,
 ) {
 
@@ -30,7 +30,7 @@ internal fun SongsSearchRoute(
         uiState = uiState,
         onSearch = presenter::search,
         onSongClick = presenter::playSong,
-        onBackClick = navigator::navigateBack,
+        onBackClick = router::navigateBack,
         onMenuClick = { id ->
             selectedSongId = id
             showSongMenu = true
@@ -40,7 +40,7 @@ internal fun SongsSearchRoute(
     SongMenuRoute(
         songId = selectedSongId,
         showSongMenu = showSongMenu,
-        navigator = navigator,
+        router = router,
         onDismiss = {
             showSongMenu = false
         }

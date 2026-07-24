@@ -15,18 +15,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.ImageRequest
 import org.jetbrains.compose.resources.painterResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.default_song_artwork
 import ua.kucher.player.core.ui.components.AudioVisualizer
 import ua.kucher.player.core.ui.components.FrostedGlass
 import ua.kucher.player.theme.PlayerTheme
+import ua.kucher.player.theme.extensions.rememberImageRequest
 import ua.kucher.player.theme.extensions.toPx
 
 @Composable
@@ -37,6 +37,7 @@ internal fun SongGridItem(
     isSongPlaying: Boolean,
     isPlaying: Boolean,
     artwork: String?,
+    placeholder: Painter,
     onClick: () -> Unit,
     onLongClick: () -> Unit
 ) {
@@ -65,19 +66,20 @@ internal fun SongGridItem(
                 enabled = isSongPlaying,
                 tint = Color.Black.copy(alpha = 0.60F)
             ) {
+
+                val artworkSizePx = artworkSize.toPx()
+
                 AsyncImage(
                     modifier = Modifier.fillMaxSize(),
-                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                        .data(artwork)
-                        .size(
-                            width = artworkSize.toPx(),
-                            height = artworkSize.toPx()
-                        )
-                        .build(),
+                    model = rememberImageRequest(
+                        uri = artwork,
+                        height = artworkSizePx,
+                        width = artworkSizePx
+                    ),
                     contentDescription = title,
                     contentScale = ContentScale.Crop,
-                    placeholder = painterResource(Res.drawable.default_song_artwork),
-                    error = painterResource(Res.drawable.default_song_artwork)
+                    placeholder = placeholder,
+                    error = placeholder
                 )
             }
             if (isSongPlaying) {
@@ -125,6 +127,7 @@ private fun SongGridItemPreview() {
         SongGridItem(
             title = "Newer fade away",
             artist = "Samurai",
+            placeholder = painterResource(Res.drawable.default_song_artwork),
             isSongPlaying = false,
             isPlaying = false,
             artwork = null,

@@ -1,8 +1,10 @@
 package ua.kucher.player
 
 import org.koin.dsl.module
+import ua.kucher.player.album.detail.AlbumDetailPresenter
 import ua.kucher.player.album.list.AlbumListPresenter
 import ua.kucher.player.album.search.AlbumSearchPresenter
+import ua.kucher.player.artist.detail.ArtistDetailPresenter
 import ua.kucher.player.artist.list.ArtistListPresenter
 import ua.kucher.player.artist.search.ArtistSearchPresenter
 import ua.kucher.player.home.HomePresenter
@@ -91,12 +93,33 @@ internal val presenterModule = module {
         SettingPresenter()
     }
 
-    factory { (id: Long) ->
+    factory { (songId: Long) ->
         SongMenuPresenter(
-            songId = id,
+            songId = songId,
             mapper = get(),
             playbackController = get(),
+            sharingManager = get(),
             songRepository = get(),
+        )
+    }
+
+    factory { (albumId: Long) ->
+        AlbumDetailPresenter(
+            albumId = albumId,
+            albumRepository = get(),
+            songRepository = get(),
+            mapper = get()
+        )
+    }
+
+    factory { (artistId: Long) ->
+        ArtistDetailPresenter(
+            artistId = artistId,
+            artistRepository = get(),
+            albumRepository = get(),
+            songRepository = get(),
+            playbackController = get(),
+            mapper = get()
         )
     }
 }

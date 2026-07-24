@@ -12,18 +12,23 @@ import ua.kucher.player.local.album.entity.AlbumEntity
 @Dao
 internal interface AlbumDao {
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.ALBUM_TABLE_NAME}")
     suspend fun getAlbumsSnapshot(): List<AlbumEntity>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.ALBUM_TABLE_NAME}")
     fun getAlbums(): Flow<List<AlbumDto>>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.ALBUM_TABLE_NAME} WHERE artistId=:artistId")
     fun getAlbumsByArtist(artistId: Long): Flow<List<AlbumDto>>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.ALBUM_TABLE_NAME} WHERE LOWER(title) LIKE '%' || LOWER(:title) || '%'")
     fun searchAlbumsByTitle(title: String): Flow<List<AlbumDto>>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.ALBUM_TABLE_NAME} WHERE id=:id")
     fun getAlbumById(id: Long): Flow<AlbumDto?>
 

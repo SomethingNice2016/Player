@@ -1,7 +1,7 @@
 [versions]
 
 kotlin = "2.4.10"
-agp = "9.3.0"
+agp = "9.3.1"
 ksp = "2.3.9"
 compose-multiplatform = "1.11.1"
 material3 = "1.11.0-alpha07"
@@ -9,7 +9,7 @@ androidx-activityCompose = "1.13.0"
 constraint-layout = "1.1.1"
 kermit = "2.1.0"
 kotlinx-coroutines = "1.11.0"
-androidx-nav3 = "1.1.1"
+multiplatform-nav3-ui = "1.1.1"
 kotlinx-serialization = "1.11.0"
 kotlinx-datetime = "0.8.0"
 multiplatformSettings = "1.3.0"
@@ -23,14 +23,20 @@ koin = "4.2.2"
 ktx = "1.19.0"
 coil = "3.5.0"
 media = "1.10.1"
+paging = "3.5.0"
 room = "2.8.4"
+gms = "4.5.0"
+okio = "3.18.0"
+crashlytics = "3.0.7"
 work-manager = "2.11.2"
 startupRuntime = "1.2.0"
 permissions = "0.12.0"
+firebase = "34.16.0"
 
 androidSdkMin = "26"
 androidSdkTarget = "37"
 androidSdkCompiled = "37"
+leakcanary = "1.0.0"
 
 [libraries]
 
@@ -47,6 +53,11 @@ androidx-activityCompose = { module = "androidx.activity:activity-compose", vers
 androidx-ktx-core = { module = "androidx.core:core-ktx", version.ref = "ktx" }
 androidx-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraint-layout" }
 
+#Firebase
+firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebase" }
+firebase-analytics = { module = "com.google.firebase:firebase-analytics" }
+firebase-crashlytics = { module = "com.google.firebase:firebase-crashlytics" }
+
 #Logger
 kermit = { module = "co.touchlab:kermit", version.ref = "kermit" }
 
@@ -61,7 +72,7 @@ koin-android = { module = "io.insert-koin:koin-android", version.ref = "koin" }
 koin-compose-core = { module = "io.insert-koin:koin-compose", version.ref = "koin" }
 
 #navigation
-compose-nav3 = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "androidx-nav3" }
+compose-nav3 = { module = "org.jetbrains.androidx.navigation3:navigation3-ui", version.ref = "multiplatform-nav3-ui" }
 
 #KotlinX
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
@@ -91,7 +102,12 @@ androidx-media-cast = { module = "androidx.media3:media3-cast", version.ref = "m
 androidx-media-ktx = { module = "androidx.media3:media3-common-ktx", version.ref = "media" }
 androidx-media-ui = { module = "androidx.media3:media3-ui", version.ref = "media" }
 
+#Paging
+paging-common = { module = "androidx.paging:paging-common", version.ref = "paging" }
+paging-compose = { module = "androidx.paging:paging-compose", version.ref = "paging" }
+
 #Room database
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "room" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 androidx-room-sqlite-wrapper = { module = "androidx.room:room-sqlite-wrapper", version.ref = "room" }
@@ -102,6 +118,10 @@ androidx-startup-runtime = { module = "androidx.startup:startup-runtime", versio
 #Work manager
 androidx-workmanager = { module = "androidx.work:work-runtime-ktx", version.ref = "work-manager" }
 
+#Other
+leakcanary = { group = "com.android.tools.studio.leakcanary", name = "leakcanary", version.ref = "leakcanary" }
+okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+
 [plugins]
 
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
@@ -111,6 +131,8 @@ android-application = { id = "com.android.application", version.ref = "agp" }
 android-kmp-library = { id = "com.android.kotlin.multiplatform.library", version.ref = "agp" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 buildConfig = { id = "com.github.gmazzo.buildconfig", version.ref = "buildConfig" }
+crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
+gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 android-lint = { id = "com.android.lint", version.ref = "agp" }
 androidx-room = { id = "androidx.room", version.ref = "room" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
