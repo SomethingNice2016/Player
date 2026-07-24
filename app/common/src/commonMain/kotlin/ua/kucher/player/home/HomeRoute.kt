@@ -7,12 +7,17 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import ua.kucher.player.navigation.AppNavigator
+import ua.kucher.player.navigation.AppRouter
+import ua.kucher.player.navigation.navigateToAlbumList
+import ua.kucher.player.navigation.navigateToAllSongs
+import ua.kucher.player.navigation.navigateToArtist
+import ua.kucher.player.navigation.navigateToArtistList
+import ua.kucher.player.navigation.navigateToFavoriteSongs
 import ua.kucher.player.song.menu.SongMenuRoute
 
 @Composable
 internal fun HomeRoute(
-    navigator: AppNavigator,
+    router: AppRouter,
     presenter: HomePresenter
 ) {
 
@@ -30,13 +35,11 @@ internal fun HomeRoute(
         uiState = uiState,
         onSongClick = presenter::playSong,
         onRefresh = presenter::refresh,
-        onFavoriteSongsClick = navigator::navigateToFavoriteSongs,
-        onSeeAllAlbums = navigator::navigateToAlbumList,
-        onSeeAllSongs = navigator::navigateToAllSongs,
-        onSeeAllArtists = navigator::navigateToArtistList,
-        onArtistClick = { id ->
-
-        },
+        onFavoriteSongsClick = router::navigateToFavoriteSongs,
+        onSeeAllAlbums = router::navigateToAlbumList,
+        onSeeAllSongs = router::navigateToAllSongs,
+        onSeeAllArtists = router::navigateToArtistList,
+        onArtistClick = router::navigateToArtist,
         showSongMenu = { id ->
             selectedSongId = id
             showSongMenu = true
@@ -46,7 +49,7 @@ internal fun HomeRoute(
     SongMenuRoute(
         songId = selectedSongId,
         showSongMenu = showSongMenu,
-        navigator = navigator,
+        router = router,
         onDismiss = {
             showSongMenu = false
         }

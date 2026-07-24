@@ -3,6 +3,8 @@ import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 plugins {
     alias(libs.plugins.compose.compiler)
     alias(libs.plugins.android.application)
+    alias(libs.plugins.crashlytics)
+    alias(libs.plugins.gms)
 }
 
 android {
@@ -33,7 +35,9 @@ android {
 
     buildTypes {
         debug {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
+            isShrinkResources = false
+            versionNameSuffix = "-debug"
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -41,6 +45,8 @@ android {
         }
 //        release {
 //            isMinifyEnabled = true
+//            isShrinkResources = true
+//            versionNameSuffix = "-prod"
 //            signingConfig = signingConfigs.getByName("release")
 //            proguardFiles(
 //                getDefaultProguardFile("proguard-android-optimize.txt"),
@@ -63,6 +69,8 @@ kotlin {
 
 
 dependencies {
+    debugImplementation(libs.leakcanary)
+    implementation(kotlin("reflect"))
     implementation(libs.androidx.startup.runtime)
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.ktx.core)
@@ -71,6 +79,9 @@ dependencies {
     implementation(libs.koin.core)
     implementation(libs.koin.android)
     implementation(libs.koin.compose.core)
+
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.crashlytics)
 
     implementation(projects.app.common)
     implementation(projects.shared.entity)

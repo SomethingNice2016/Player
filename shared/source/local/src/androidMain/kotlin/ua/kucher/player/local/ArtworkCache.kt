@@ -7,6 +7,7 @@ import android.provider.MediaStore
 import ua.kucher.player.core.common.bitmap.cropToSquare
 import ua.kucher.player.core.common.bitmap.toBitmap
 import ua.kucher.player.core.common.bitmap.toByteArray
+import ua.kucher.player.core.common.security.sha256
 import java.io.File
 
 @Suppress("EXPECT_ACTUAL_CLASSIFIERS_ARE_IN_BETA_WARNING")
@@ -17,15 +18,7 @@ internal actual class ArtworkCache(private val context: Context) {
         private const val ARTWORK_FORMAT = ".jpg"
     }
 
-    actual suspend fun getAndCacheSongArtwork(songId: Long) = runCatching {
-        val artworkFile = File(
-            context.filesDir,
-            "$SONG_ARTWORK_DIR/$songId$ARTWORK_FORMAT"
-        )
-
-        if (artworkFile.exists()) {
-            return@runCatching artworkFile.toURI().toString()
-        }
+    actual suspend fun getAndCacheSongArtwork(songId: Long): String? = runCatching {
 
         val uri = ContentUris.withAppendedId(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
@@ -34,10 +27,7 @@ internal actual class ArtworkCache(private val context: Context) {
 
         val retriever = MediaMetadataRetriever()
 
-        retriever.setDataSource(
-            context,
-            uri
-        )
+        retriever.setDataSource(context, uri)
 
         val bytes = retriever.embeddedPicture
             ?.toBitmap()
@@ -46,28 +36,33 @@ internal actual class ArtworkCache(private val context: Context) {
 
         retriever.release()
 
-        if (bytes?.toList().isNullOrEmpty()) {
+        if (bytes == null) {
             return@runCatching null
         }
 
-        artworkFile.parentFile?.mkdirs()
-
-        artworkFile.outputStream().use { stream ->
-            stream.write(bytes)
+        if (bytes.isEmpty()) {
+            return@runCatching null
         }
-        return@runCatching artworkFile.toURI().toString()
+
+        val hash = sha256(bytes)
+
+        val artworkFile = File(
+            context.filesDir,
+            "$SONG_ARTWORK_DIR/$hash$ARTWORK_FORMAT"
+        )
+
+        if (!artworkFile.exists()) {
+            artworkFile.parentFile?.mkdirs()
+
+            artworkFile.outputStream().use {
+                it.write(bytes)
+            }
+        }
+
+        artworkFile.toURI().toString()
     }.getOrNull()
 
     actual suspend fun deleteSongArtworkFromCache(songId: Long) {
-        runCatching {
-            val artworkFile = File(
-                context.filesDir,
-                "$SONG_ARTWORK_DIR/$songId$ARTWORK_FORMAT"
-            )
-
-            if (!artworkFile.exists()) return@runCatching
-
-            artworkFile.delete()
-        }
+        //TODO
     }
 }

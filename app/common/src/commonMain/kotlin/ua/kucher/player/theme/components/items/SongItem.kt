@@ -22,12 +22,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.ImageRequest
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
@@ -37,6 +36,7 @@ import player.app.common.generated.resources.song_item_description
 import ua.kucher.player.core.ui.components.AudioVisualizer
 import ua.kucher.player.core.ui.components.FrostedGlass
 import ua.kucher.player.theme.PlayerTheme
+import ua.kucher.player.theme.extensions.rememberImageRequest
 import ua.kucher.player.theme.extensions.toPx
 
 @Composable
@@ -48,6 +48,7 @@ internal fun SongItem(
     isSongPlaying: Boolean,
     isPlaying: Boolean,
     artwork: String?,
+    placeholder: Painter,
     onClick: () -> Unit,
     onMenuClick: () -> Unit
 ) {
@@ -82,19 +83,20 @@ internal fun SongItem(
                 enabled = isSongPlaying,
                 tint = Color.Black.copy(alpha = 0.60F)
             ) {
+
+                val artworkSizePx = artworkSize.toPx()
+
                 AsyncImage(
                     modifier = Modifier.fillMaxSize(),
-                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                        .data(artwork)
-                        .size(
-                            width = artworkSize.toPx(),
-                            height = artworkSize.toPx()
-                        )
-                        .build(),
+                    model = rememberImageRequest(
+                        uri = artwork,
+                        height = artworkSizePx,
+                        width = artworkSizePx,
+                    ),
                     contentDescription = title,
                     contentScale = ContentScale.Crop,
-                    placeholder = painterResource(Res.drawable.default_song_artwork),
-                    error = painterResource(Res.drawable.default_song_artwork)
+                    placeholder = placeholder,
+                    error = placeholder
                 )
             }
             if (isSongPlaying) {
@@ -157,11 +159,12 @@ private fun SongItemPreview() {
         modifier = Modifier.background(PlayerTheme.colorScheme.primaryBackground),
         title = "Naver fade away",
         artist = "SAMURAI",
+        placeholder = painterResource(Res.drawable.default_song_artwork),
         duration = "2:22",
         isSongPlaying = false,
         isPlaying = false,
         artwork = "",
         onClick = {},
-        onMenuClick = {}
+        onMenuClick = {},
     )
 }

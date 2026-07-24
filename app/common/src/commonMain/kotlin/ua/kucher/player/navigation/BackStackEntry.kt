@@ -3,14 +3,14 @@ package ua.kucher.player.navigation
 import ua.kucher.player.core.ui.presenter.PresenterStore
 import ua.kucher.player.core.ui.presenter.PresenterStoreOwner
 
-internal abstract class ScreenEntry : PresenterStoreOwner {
+internal class BackStackEntry<T : Route>(
+    val route: T
+) : PresenterStoreOwner,
+    AutoCloseable {
 
-    override val presenterStore: PresenterStore = PresenterStore()
+    override val presenterStore = PresenterStore()
 
-    abstract val id: String
-
-    fun clear() {
+    override fun close() {
         presenterStore.clear()
     }
-
 }

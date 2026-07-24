@@ -11,6 +11,8 @@ kotlin {
         namespace = "ua.kucher.player.core.ui"
         compileSdk = libs.versions.androidSdkCompiled.get().toInt()
         minSdk = libs.versions.androidSdkMin.get().toInt()
+        androidResources.enable = true
+
 
         withHostTestBuilder {
 

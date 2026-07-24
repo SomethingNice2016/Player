@@ -39,10 +39,13 @@ kotlin {
     sourceSets {
         commonMain {
             dependencies {
+                api(kotlin("reflect"))
                 api(libs.kotlinx.coroutines.core)
                 api(libs.kotlinx.datetime)
                 api(libs.kotlin.stdlib)
+                api(libs.paging.common)
                 api(libs.kermit)
+                api(libs.okio)
             }
         }
 

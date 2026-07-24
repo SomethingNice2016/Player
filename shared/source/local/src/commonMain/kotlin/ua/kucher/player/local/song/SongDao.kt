@@ -16,30 +16,39 @@ internal interface SongDao {
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME}")
     suspend fun getSongsSnapshot(): List<SongEntity>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} ORDER BY lastModified DESC")
     fun getSongs(): Flow<List<SongDto>>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} ORDER BY listenCount DESC LIMIT 10")
     fun getTopSongs(): Flow<List<SongDto>>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE lastPlayed != 0 ORDER BY lastPlayed DESC LIMIT 10")
     fun getRecentlyPlayedSongs(): Flow<List<SongDto>>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE favoriteAddedTime IS NOT NULL ORDER BY favoriteAddedTime DESC")
     fun getFavoriteSongs(): Flow<List<SongDto>>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE albumId=:albumId")
     fun getSongsByAlbum(albumId: Long): Flow<List<SongDto>>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE artistId=:artistId")
     fun getSongsByArtist(artistId: Long): Flow<List<SongDto>>
 
+    @Transaction
     @Query("SELECT s.* FROM ${TableName.SONG_TABLE_NAME} s INNER JOIN ${TableName.SONG_WITH_PLAYLIST_TABLE_NAME} sp ON s.id = sp.songId WHERE sp.playlistId=:playlistId")
     fun getSongsByPlaylist(playlistId: Long): Flow<List<SongDto>>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE LOWER(title) LIKE '%' || LOWER(:title) || '%' ORDER BY lastModified DESC")
     fun searchSongsByTitle(title: String): Flow<List<SongDto>>
 
+    @Transaction
     @Query("SELECT * FROM ${TableName.SONG_TABLE_NAME} WHERE id=:id")
     fun getSongById(id: Long): Flow<SongDto?>
 

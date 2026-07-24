@@ -5,8 +5,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.MainCoroutineDispatcher
 
-internal class DispatcherProviderImpl :
-    ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider {
+internal class DispatcherProviderImpl : DispatcherProvider {
 
     override val io: CoroutineDispatcher = Dispatchers.IO
 

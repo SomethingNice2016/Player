@@ -50,16 +50,14 @@ internal class AllSongPresenter(
     )
 
     fun playSong(id: Long) {
-        scope.launch {
-            val song = songs.value.find { song ->
-                song.id == id
-            } ?: return@launch
+        val song = songs.value.find { song ->
+            song.id == id
+        } ?: return
 
-            playbackController.play(
-                playlist = songs.value,
-                item = song
-            )
-        }
+        playbackController.play(
+            playlist = songs.value,
+            item = song
+        )
     }
 
     fun refresh() {

@@ -14,6 +14,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEachIndexed
 
 @Composable
 fun AudioVisualizer(
@@ -30,8 +31,8 @@ fun AudioVisualizer(
         }
     }.map { index ->
         infiniteTransition.animateFloat(
-            initialValue = 0.2f,
-            targetValue = 1f,
+            initialValue = 0.2F,
+            targetValue = 1F,
             animationSpec = infiniteRepeatable(
                 animation = tween(
                     durationMillis = 300 + index * 40
@@ -43,7 +44,7 @@ fun AudioVisualizer(
     }
 
     val frozenHeights = remember(barsCount) {
-        MutableList(barsCount) { 0.2f }
+        MutableList(barsCount) { 0.2F }
     }
 
     Canvas(modifier = modifier) {
@@ -61,10 +62,10 @@ fun AudioVisualizer(
                     (barsCount - 1) * spacing
 
         val startX =
-            ((availableWidth - contentWidth) / 2f)
-                .coerceAtLeast(0f)
+            ((availableWidth - contentWidth) / 2F)
+                .coerceAtLeast(0F)
 
-        animations.forEachIndexed { index, animation ->
+        animations.fastForEachIndexed { index, animation ->
 
             if (isPlaying) {
                 frozenHeights[index] = animation.value
@@ -78,15 +79,15 @@ fun AudioVisualizer(
                 color = color,
                 topLeft = Offset(
                     x = startX + index * (barWidth + spacing),
-                    y = (size.height - barHeight) / 2f
+                    y = (size.height - barHeight) / 2F
                 ),
                 size = Size(
                     width = barWidth,
                     height = barHeight
                 ),
                 cornerRadius = CornerRadius(
-                    x = barWidth / 2f,
-                    y = barWidth / 2f
+                    x = barWidth / 2F,
+                    y = barWidth / 2F
                 )
             )
         }

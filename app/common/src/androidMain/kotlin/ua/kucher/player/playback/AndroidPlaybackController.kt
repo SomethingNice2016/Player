@@ -2,7 +2,6 @@ package ua.kucher.player.playback
 
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
-import co.touchlab.kermit.Logger
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -29,8 +28,11 @@ internal class AndroidPlaybackController : PlaybackController {
 
     private var progressJob: Job? = null
 
+    private val _state: MutableStateFlow<PlaybackState> =
+        MutableStateFlow(PlaybackState())
+
     override val state: StateFlow<PlaybackState>
-        field: MutableStateFlow<PlaybackState> = MutableStateFlow(PlaybackState())
+        get() = _state
 
     private val playerListener = object : Player.Listener {
 
@@ -128,7 +130,7 @@ internal class AndroidPlaybackController : PlaybackController {
 
     override fun seekToPosition(position: Long) = withController {
         seekTo(position)
-        state.update { value -> value.copy(progress = currentPosition) }
+        _state.update { value -> value.copy(progress = currentPosition) }
     }
 
     override fun setShuffleMode(isShuffle: Boolean) {
@@ -171,30 +173,30 @@ internal class AndroidPlaybackController : PlaybackController {
 
     private fun syncState() {
         val nonNullController = controller ?: run {
-            state.update {
+            _state.update {
                 PlaybackState(
                     currentItemId = null,
                     isPlaying = false,
                     isShuffle = false,
                     repeatMode = PlaybackController.RepeatMode.OFF,
                     progress = 0L,
-                    artworks = mapOf(),
+                    artworks = emptyMap(),
                 )
             }
             return
         }
-        state.update {
+        _state.update {
             PlaybackState(
                 currentItemId = nonNullController.currentMediaItem?.mediaId?.toLongOrNull(),
                 isPlaying = nonNullController.isPlaying,
                 isShuffle = nonNullController.shuffleModeEnabled,
                 repeatMode = PlaybackController.RepeatMode.fromPlayerRepeatMode(nonNullController.repeatMode),
                 progress = nonNullController.currentPosition,
-                artworks = buildMap { 
+                artworks = buildMap {
                     nonNullController.mediaItems.forEach { mediaItem ->
-                        Logger.w(mediaItem.mediaMetadata.title.toString(), tag = "Player")
-                        val id = mediaItem.mediaId.toLongOrNull() ?: return@forEach
-                        put(id, mediaItem.mediaMetadata.artworkUri?.toString().orEmpty())
+                        mediaItem.mediaId.toLongOrNull()?.let { id ->
+                            put(id, mediaItem.mediaMetadata.artworkUri?.toString())
+                        }
                     }
                 },
             )
@@ -209,7 +211,7 @@ internal class AndroidPlaybackController : PlaybackController {
                 if (!controller.isPlaying) {
                     break
                 }
-                state.update { value ->
+                _state.update { value ->
                     value.copy(progress = controller.currentPosition)
                 }
                 delay(PROGRESS_UPDATE_DELAY.milliseconds)

@@ -23,9 +23,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import coil3.compose.LocalPlatformContext
 import coil3.compose.SubcomposeAsyncImage
-import coil3.request.ImageRequest
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 import player.app.common.generated.resources.Res
@@ -33,6 +31,7 @@ import player.app.common.generated.resources.album_item_description
 import player.app.common.generated.resources.ic_album
 import player.app.common.generated.resources.ic_options
 import ua.kucher.player.theme.PlayerTheme
+import ua.kucher.player.theme.extensions.rememberImageRequest
 import ua.kucher.player.theme.extensions.toPx
 
 @Composable
@@ -59,18 +58,19 @@ internal fun AlbumItem(
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically
     ) {
+
+        val artworkSizePx = artworkSize.toPx()
+
         SubcomposeAsyncImage(
             modifier = Modifier
                 .size(artworkSize)
                 .clip(PlayerTheme.shapes.radius4Px)
                 .background(PlayerTheme.colorScheme.rippleColor),
-            model = ImageRequest.Builder(LocalPlatformContext.current)
-                .data(artwork)
-                .size(
-                    width = artworkSize.toPx(),
-                    height = artworkSize.toPx()
-                )
-                .build(),
+            model = rememberImageRequest(
+                uri = artwork,
+                height = artworkSizePx,
+                width = artworkSizePx
+            ),
             contentDescription = title,
             contentScale = ContentScale.Crop,
             error = {

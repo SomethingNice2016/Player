@@ -21,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,6 +39,7 @@ internal fun ArtistItem(
     modifier: Modifier = Modifier,
     name: String,
     artwork: String,
+    placeholder: Painter,
     numberOfAlbums: Int,
     numberOfSongs: Int,
     onClick: () -> Unit,
@@ -64,7 +66,7 @@ internal fun ArtistItem(
             contentScale = ContentScale.Crop,
             error = {
                 Image(
-                    painter = painterResource(Res.drawable.ic_artist),
+                    painter = placeholder,
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier
@@ -124,6 +126,7 @@ internal fun ArtistItemPreview() {
     ArtistItem(
         modifier = Modifier.background(PlayerTheme.colorScheme.primaryBackground),
         name = "SAMURAI",
+        placeholder = painterResource(Res.drawable.ic_artist),
         artwork = "",
         numberOfSongs = 4,
         numberOfAlbums = 2,

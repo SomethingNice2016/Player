@@ -8,13 +8,14 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import ua.kucher.player.navigation.AppNavigator
+import ua.kucher.player.navigation.AppRouter
+import ua.kucher.player.navigation.navigateToSongSearch
 import ua.kucher.player.song.menu.SongMenuRoute
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 internal fun AllSongRoute(
-    navigator: AppNavigator,
+    router: AppRouter,
     presenter: AllSongPresenter
 ) {
 
@@ -30,9 +31,15 @@ internal fun AllSongRoute(
 
     AllSongScreen(
         uiState = uiState,
-        onSongClick = presenter::playSong,
-        onRefresh = presenter::refresh,
-        onSearch = navigator::navigateToSongSearch,
+        onSongClick = { id ->
+            presenter.playSong(id)
+        },
+        onRefresh = {
+            presenter.refresh()
+        },
+        onSearch = {
+            router.navigateToSongSearch()
+        },
         onMenuClick = { id ->
             selectedSongId = id
             showSongMenu = true
@@ -42,7 +49,7 @@ internal fun AllSongRoute(
     SongMenuRoute(
         songId = selectedSongId,
         showSongMenu = showSongMenu,
-        navigator = navigator,
+        router = router,
         onDismiss = {
             showSongMenu = false
         }

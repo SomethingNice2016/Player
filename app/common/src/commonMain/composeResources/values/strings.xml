@@ -5,6 +5,7 @@
     <string name="setting_item_source_code">Source code</string>
     <string name="setting_item_about">About app</string>
     <string name="setting_item_rate_app">Rate app</string>
+    <string name="setting_item_hide_short_tracks">Hide short tracks</string>
     <string name="github_url">https://github.com/SomethingNice2016/Player</string>
     <string name="song_item_description">%1$s • %2$s</string>
     <string name="album_item_description">Album • %1$s • %2$s tracks</string>

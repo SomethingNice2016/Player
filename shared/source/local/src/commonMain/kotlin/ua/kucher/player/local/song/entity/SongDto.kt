@@ -15,9 +15,9 @@ internal data class SongDto(
     @Embedded
     val song: SongEntity,
     @Relation(parentColumn = "artistId", entityColumn = "id")
-    val artist: ArtistEntity?,
+    val artist: ArtistEntity? = null,
     @Relation(parentColumn = "albumId", entityColumn = "id")
-    val album: AlbumEntity?,
+    val album: AlbumEntity? = null,
     @Relation(
         parentColumn = "id",
         entity = PlaylistEntity::class,
@@ -28,7 +28,7 @@ internal data class SongDto(
             entityColumn = "playlistId"
         )
     )
-    val playlists: List<PlaylistEntity>
+    val playlists: List<PlaylistEntity> = emptyList()
 )
 
 internal fun SongDto.toDomain() = Song(

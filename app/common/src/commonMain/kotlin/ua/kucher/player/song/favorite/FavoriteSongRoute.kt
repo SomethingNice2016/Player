@@ -7,12 +7,13 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import ua.kucher.player.navigation.AppNavigator
+import ua.kucher.player.navigation.AppRouter
+import ua.kucher.player.navigation.navigateToSongSearch
 import ua.kucher.player.song.menu.SongMenuRoute
 
 @Composable
 internal fun FavoriteSongRoute(
-    navigator: AppNavigator,
+    router: AppRouter,
     presenter: FavoriteSongPresenter
 ) {
 
@@ -28,10 +29,18 @@ internal fun FavoriteSongRoute(
 
     FavoriteSongScreen(
         uiState = uiState,
-        onSongClick = presenter::playSong,
-        onRefresh = presenter::refresh,
-        onBackClick = navigator::navigateBack,
-        onSearch = navigator::navigateToSongSearch,
+        onSongClick = { id ->
+            presenter.playSong(id)
+        },
+        onRefresh = {
+            presenter.refresh()
+        },
+        onBackClick = {
+            router.navigateBack()
+        },
+        onSearch = {
+            router.navigateToSongSearch()
+        },
         onMenuClick = { id ->
             selectedSongId = id
             showSongMenu = true
@@ -41,7 +50,7 @@ internal fun FavoriteSongRoute(
     SongMenuRoute(
         songId = selectedSongId,
         showSongMenu = showSongMenu,
-        navigator = navigator,
+        router = router,
         onDismiss = {
             showSongMenu = false
         }

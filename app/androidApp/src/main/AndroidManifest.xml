@@ -27,7 +27,6 @@
                 android:name="ua.kucher.player.MainActivity"
                 android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
                 android:launchMode="singleInstance"
-                android:screenOrientation="portrait"
                 tools:ignore="LockedOrientationActivity"
                 android:windowSoftInputMode="adjustPan"
                 android:exported="true">

@@ -4,15 +4,17 @@ import androidx.compose.runtime.Composable
 import org.koin.core.parameter.ParametersHolder
 import org.koin.core.parameter.parametersOf
 import org.koin.mp.KoinPlatform.getKoin
+import ua.kucher.player.core.ui.presenter.LocalPresenterStoreOwner
 import ua.kucher.player.core.ui.presenter.Presenter
 import ua.kucher.player.core.ui.presenter.PresenterStoreOwner
+import ua.kucher.player.core.ui.presenter.rememberLocalPresenter
 import ua.kucher.player.core.ui.presenter.rememberPresenter
 
 @Composable
-internal inline fun <reified T : Presenter> koinPresenter(
+internal inline fun <reified T : Presenter> koinLocalPresenter(
     crossinline parameters: (() -> ParametersHolder) = { parametersOf() },
 ): T {
-    return rememberPresenter {
+    return rememberLocalPresenter {
         resolvePresenter(parameters)
     }
 }
@@ -20,7 +22,9 @@ internal inline fun <reified T : Presenter> koinPresenter(
 
 @Composable
 internal inline fun <reified T : Presenter> koinPresenter(
-    owner: PresenterStoreOwner,
+    owner: PresenterStoreOwner = requireNotNull(LocalPresenterStoreOwner.current) {
+        "Presenter owner must not be null!"
+    },
     crossinline parameters: (() -> ParametersHolder) = { parametersOf() },
 ): T {
     return rememberPresenter(owner) {
@@ -29,7 +33,7 @@ internal inline fun <reified T : Presenter> koinPresenter(
 }
 
 private inline fun <reified T : Presenter> resolvePresenter(
-    crossinline parameters: () -> ParametersHolder
+    parameters: () -> ParametersHolder
 ): T {
     val userParameters = parameters().values
     return getKoin().get {

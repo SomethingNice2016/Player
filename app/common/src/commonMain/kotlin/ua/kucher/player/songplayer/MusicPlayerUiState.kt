@@ -7,7 +7,7 @@ import ua.kucher.player.playback.PlaybackController
 @Stable
 internal data class MusicPlayerUiState(
     val currentSong: SongUi,
-    val artworks: Map<Long, String>,
+    val artworks: Map<Long, String?>,
     val displayProgress: String,
     val progress: Long,
     val isPlaying: Boolean,

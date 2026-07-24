@@ -7,6 +7,8 @@ interface AlbumRepository {
 
     fun getAlbums(): Flow<List<Album>>
 
+    fun getAlbumsByArtist(artistId: Long): Flow<List<Album>>
+
     fun searchAlbumsByTitle(title: String): Flow<List<Album>>
 
     fun getAlbumById(id: Long): Flow<Album?>

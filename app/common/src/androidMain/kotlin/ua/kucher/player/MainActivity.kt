@@ -6,8 +6,6 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
@@ -20,6 +18,9 @@ import kotlinx.coroutines.awaitCancellation
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import org.koin.android.ext.android.inject
+import ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider
+import ua.kucher.player.core.ui.presenter.PresenterActivity
+import ua.kucher.player.core.ui.presenter.compose.setContent
 import ua.kucher.player.data.albun.AlbumRepository
 import ua.kucher.player.data.artist.ArtistRepository
 import ua.kucher.player.data.song.SongRepository
@@ -29,7 +30,7 @@ import ua.kucher.player.playback.cancelStopPlaybackService
 import ua.kucher.player.playback.stopPlaybackService
 import kotlin.properties.Delegates
 
-class MainActivity : ComponentActivity() {
+class MainActivity : PresenterActivity() {
 
     private var controllerFuture: ListenableFuture<MediaController> by Delegates.notNull()
 
@@ -41,7 +42,7 @@ class MainActivity : ComponentActivity() {
 
     private val artistRepository: ArtistRepository by inject()
 
-    private val dispatcherProvider: ua.kucher.player.core.common.coroutines.dispather.DispatcherProvider by inject()
+    private val dispatcherProvider: DispatcherProvider by inject()
 
 
     private val playbackController: AndroidPlaybackController by inject()

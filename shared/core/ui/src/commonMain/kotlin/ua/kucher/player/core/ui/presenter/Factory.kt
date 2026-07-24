@@ -6,7 +6,9 @@ import androidx.compose.runtime.remember
 
 @Composable
 inline fun <reified T : Presenter> rememberPresenter(
-    owner: PresenterStoreOwner,
+    owner: PresenterStoreOwner = requireNotNull(LocalPresenterStoreOwner.current) {
+        "Presenter owner must not be null!"
+    },
     crossinline factory: () -> T,
 ): T {
     return remember(owner) {
@@ -17,7 +19,7 @@ inline fun <reified T : Presenter> rememberPresenter(
 }
 
 @Composable
-inline fun <reified T : Presenter> rememberPresenter(
+inline fun <reified T : Presenter> rememberLocalPresenter(
     crossinline factory: () -> T,
 ): T {
 
@@ -30,10 +32,12 @@ inline fun <reified T : Presenter> rememberPresenter(
             factory()
         }
     }
+
     DisposableEffect(presenter) {
         onDispose {
             localPresenterStore.clear()
         }
     }
+
     return presenter
 }

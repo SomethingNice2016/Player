@@ -6,6 +6,9 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import org.jetbrains.compose.resources.painterResource
+import player.app.common.generated.resources.Res
+import player.app.common.generated.resources.ic_artist
 import ua.kucher.player.common.ArtistUi
 import ua.kucher.player.theme.components.items.ArtistItem
 import ua.kucher.player.theme.extensions.BottomNavSpacer
@@ -18,6 +21,9 @@ internal fun ArtistsList(
     onArtistClick: (id: Long) -> Unit,
     onMenuClick: (id: Long) -> Unit
 ) {
+
+    val placeholder = painterResource(Res.drawable.ic_artist)
+
     LazyColumn(
         modifier = modifier,
         state = lazyListState,
@@ -32,6 +38,7 @@ internal fun ArtistsList(
                 name = artist.name,
                 numberOfSongs = artist.numberOfSongs,
                 numberOfAlbums = artist.numberOfAlbums,
+                placeholder = placeholder,
                 artwork = artist.artwork ?: "",
                 onMenuClick = {
                     onMenuClick(artist.id)
