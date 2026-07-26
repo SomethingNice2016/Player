@@ -26,6 +26,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.add_to_playlist
 import player.app.common.generated.resources.ic_add_to_playlist
@@ -99,12 +100,12 @@ internal fun SongMenuDialog(
                 Res.drawable.ic_like_outline
 
             PlayerMenuIconButton(
-                painter = painterResource(likeIcon),
+                imageVector = vectorResource(likeIcon),
                 onClick = setFavoriteState
             )
 
             PlayerMenuIconButton(
-                painter = painterResource(Res.drawable.ic_cross),
+                imageVector = vectorResource(Res.drawable.ic_cross),
                 onClick = onBackClick
             )
         }

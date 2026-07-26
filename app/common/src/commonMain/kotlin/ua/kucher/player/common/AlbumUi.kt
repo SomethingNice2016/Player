@@ -1,9 +1,9 @@
 package ua.kucher.player.common
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import ua.kucher.player.entity.Album
 
-@Stable
+@Immutable
 internal data class AlbumUi(
     val id: Long,
     val title: String,

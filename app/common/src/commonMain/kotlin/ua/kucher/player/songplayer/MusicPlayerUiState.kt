@@ -1,10 +1,10 @@
 package ua.kucher.player.songplayer
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import ua.kucher.player.common.SongUi
 import ua.kucher.player.playback.PlaybackController
 
-@Stable
+@Immutable
 internal data class MusicPlayerUiState(
     val currentSong: SongUi,
     val artworks: Map<Long, String?>,

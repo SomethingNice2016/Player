@@ -43,16 +43,16 @@ android {
                 "proguard-rules.pro"
             )
         }
-//        release {
-//            isMinifyEnabled = true
-//            isShrinkResources = true
-//            versionNameSuffix = "-prod"
-//            signingConfig = signingConfigs.getByName("release")
-//            proguardFiles(
-//                getDefaultProguardFile("proguard-android-optimize.txt"),
-//                "proguard-rules.pro"
-//            )
-//        }
+        release {
+            isMinifyEnabled = true
+            isShrinkResources = true
+            versionNameSuffix = "-prod"
+            signingConfig = signingConfigs.getByName("debug")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
         lint {
             baseline = file("lint-baseline.xml")
         }

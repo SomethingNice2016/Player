@@ -8,7 +8,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import ua.kucher.player.theme.PlayerTheme
 
@@ -20,7 +20,7 @@ internal fun PlayerMenuIconButton(
     iconSize: Dp = PlayerTheme.dimens.dimens24Px,
     buttonSize: Dp = PlayerTheme.dimens.menuIconSize,
     contentDescription: String? = null,
-    painter: Painter,
+    imageVector: ImageVector,
     onClick: (() -> Unit)? = null
 ) {
     IconButton(
@@ -34,7 +34,7 @@ internal fun PlayerMenuIconButton(
     ) {
         Icon(
             modifier = Modifier.size(iconSize),
-            painter = painter,
+            imageVector = imageVector,
             contentDescription = contentDescription,
             tint = tint
         )

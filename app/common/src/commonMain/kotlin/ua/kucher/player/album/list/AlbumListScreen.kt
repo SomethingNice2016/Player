@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.albums
 import player.app.common.generated.resources.ic_arrow_left
@@ -59,13 +59,13 @@ internal fun AlbumListScreen(
                 titleRes = Res.string.albums,
                 navigationIcon = {
                     PlayerMenuIconButton(
-                        painter = painterResource(Res.drawable.ic_arrow_left),
+                        imageVector = vectorResource(Res.drawable.ic_arrow_left),
                         onClick = onBackClick
                     )
                 },
                 actions = {
                     PlayerMenuIconButton(
-                        painter = painterResource(Res.drawable.ic_search),
+                        imageVector = vectorResource(Res.drawable.ic_search),
                         contentDescription = stringResource(Res.string.search),
                         iconSize = PlayerTheme.dimens.dimens20Px,
                         onClick = onSearch

@@ -15,8 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.ic_arrow_left
 import player.app.common.generated.resources.ic_search
@@ -71,7 +71,7 @@ internal fun SongListScreenTemplate(
                 navigationIcon = {
                     if (showBackButton) {
                         PlayerMenuIconButton(
-                            painter = painterResource(Res.drawable.ic_arrow_left),
+                            imageVector = vectorResource(Res.drawable.ic_arrow_left),
                             onClick = onBackClick
                         )
                     }
@@ -80,7 +80,7 @@ internal fun SongListScreenTemplate(
                 scrollBehavior = scrollBehavior,
                 actions = {
                     PlayerMenuIconButton(
-                        painter = painterResource(Res.drawable.ic_search),
+                        imageVector = vectorResource(Res.drawable.ic_search),
                         contentDescription = stringResource(Res.string.search),
                         iconSize = PlayerTheme.dimens.dimens20Px,
                         onClick = onSearch
@@ -121,7 +121,7 @@ private fun SongListScreenTemplatePreview() {
         displayDuration = "3:33",
         duration = 69000L,
         artwork = "",
-        isFavorite = false
+        isFavorite = false,
     )
 
     Box(

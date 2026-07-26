@@ -1,9 +1,9 @@
 package ua.kucher.player.album.list
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import ua.kucher.player.common.AlbumUi
 
-@Stable
+@Immutable
 internal data class AlbumListUiState(
     val isRefreshing: Boolean = false,
     val isPlayerShowed: Boolean = false,

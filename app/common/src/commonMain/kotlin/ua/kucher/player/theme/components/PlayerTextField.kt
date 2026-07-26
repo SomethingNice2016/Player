@@ -16,7 +16,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.vectorResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.ic_search
 import ua.kucher.player.theme.PlayerTheme
@@ -101,7 +101,7 @@ private fun PlayerTextFieldPreview() = PlayerTextField(
     onNewText = {},
     leadingIcon = {
         PlayerMenuIconButton(
-            painter = painterResource(Res.drawable.ic_search),
+            imageVector = vectorResource(Res.drawable.ic_search),
             contentDescription = null,
         )
     }

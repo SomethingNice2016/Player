@@ -1,6 +1,6 @@
 package ua.kucher.player.navigation
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.StringResource
 import player.app.common.generated.resources.Res
@@ -13,7 +13,7 @@ import player.app.common.generated.resources.setting_label
 import ua.kucher.player.theme.components.bottombar.MenuItem
 import kotlin.reflect.KClass
 
-@Stable
+@Immutable
 internal data class PlayerMenuItem(
     val screen: KClass<out AppRoute>,
     override val label: StringResource,

@@ -1,9 +1,9 @@
 package ua.kucher.player.common
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import ua.kucher.player.entity.Artist
 
-@Stable
+@Immutable
 internal data class ArtistUi(
     val id: Long,
     val name: String,

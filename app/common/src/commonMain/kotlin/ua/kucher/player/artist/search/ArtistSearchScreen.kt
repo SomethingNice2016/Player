@@ -20,8 +20,8 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.ic_arrow_left
 import player.app.common.generated.resources.ic_search
@@ -67,7 +67,7 @@ internal fun ArtistSearchScreen(
             ) {
 
                 PlayerMenuIconButton(
-                    painter = painterResource(Res.drawable.ic_arrow_left),
+                    imageVector = vectorResource(Res.drawable.ic_arrow_left),
                     onClick = {
                         keyboardController?.hide()
                         onBackClick()
@@ -91,7 +91,7 @@ internal fun ArtistSearchScreen(
                     onNewText = onSearch,
                     leadingIcon = {
                         PlayerMenuIconButton(
-                            painter = painterResource(Res.drawable.ic_search),
+                            imageVector = vectorResource(Res.drawable.ic_search),
                             iconSize = PlayerTheme.dimens.dimens16Px,
                             contentDescription = null,
                         )

@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.vectorResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.default_song_artwork
 import player.app.common.generated.resources.ic_arrow_down
@@ -93,6 +94,10 @@ internal fun MusicPlayerScreen(
     val artworkSmallSize = PlayerTheme.dimens.songIconSize
 
     val artworkBigSize = screenWidth - (PlayerTheme.dimens.dimens24Px * 2)
+
+    val backgroundMaxHeight = screenHeight + statusBarHeight + navBarHeight
+
+    val backgroundImagePixelSize = backgroundMaxHeight.toPx()
 
     var dragPlayerStartProgress by remember {
         mutableFloatStateOf(0F)
@@ -251,8 +256,8 @@ internal fun MusicPlayerScreen(
                             modifier = Modifier.fillMaxSize(),
                             model = rememberImageRequest(
                                 uri = nonNullState.currentSong.artwork,
-                                height = backgroundImageSize,
-                                width = backgroundImageSize,
+                                height = backgroundImagePixelSize,
+                                width = backgroundImagePixelSize,
                                 dispatcher = null
                             ),
                             contentDescription = null,
@@ -271,7 +276,7 @@ internal fun MusicPlayerScreen(
                         .alpha(appbarAlpha),
                 ) {
                     PlayerMenuIconButton(
-                        painter = painterResource(Res.drawable.ic_arrow_down),
+                        imageVector = vectorResource(Res.drawable.ic_arrow_down),
                         onClick = {
                             collapsePlayer()
                         }
@@ -280,12 +285,12 @@ internal fun MusicPlayerScreen(
                     Spacer(Modifier.weight(1F))
 
                     PlayerMenuIconButton(
-                        painter = painterResource(Res.drawable.ic_cast),
+                        imageVector = vectorResource(Res.drawable.ic_cast),
                         onClick = {}
                     )
 
                     PlayerMenuIconButton(
-                        painter = painterResource(Res.drawable.ic_options),
+                        imageVector = vectorResource(Res.drawable.ic_options),
                         onClick = {
                             onMenuClick(nonNullState.currentSong.id)
                         }
