@@ -1,5 +1,6 @@
 package ua.kucher.player.playback
 
+import android.os.Bundle
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -10,16 +11,30 @@ import androidx.media3.session.SessionCommands
 import ua.kucher.player.entity.PlaylistItem
 
 
+private const val ARTIST_ID_KEY = "ARTIST_ID_KEY"
+private const val ALBUM_ID_KEY = "ALBUM_ID_KEY"
+private const val DEFAULT_ID = -1L
+
 internal fun PlaylistItem.toMediaItem(): MediaItem {
 
     val artworkUri = artwork?.toUri()
 
+    val extras = Bundle().apply {
+        artistId?.let { nonNullId ->
+            putLong(ARTIST_ID_KEY, nonNullId)
+        }
+        albumId?.let { nonNullId ->
+            putLong(ALBUM_ID_KEY, nonNullId)
+        }
+    }
+
     val metadata = MediaMetadata.Builder()
-        .setAlbumTitle(albumTitle)
         .setTitle(title)
+        .setAlbumTitle(albumTitle)
+        .setArtist(artistTitle)
         .setIsPlayable(true)
         .setMediaType(MediaMetadata.MEDIA_TYPE_MUSIC)
-        .setArtist(artistTitle)
+        .setExtras(extras)
         .setArtworkUri(artworkUri)
         .build()
 
@@ -29,6 +44,16 @@ internal fun PlaylistItem.toMediaItem(): MediaItem {
         .setUri(uri)
         .build()
 }
+
+internal val MediaItem.artistId: Long?
+    get() = mediaMetadata.extras?.getLong(ARTIST_ID_KEY, DEFAULT_ID).takeIf { id ->
+        id != DEFAULT_ID
+    }
+
+internal val MediaItem.albumId: Long?
+    get() = mediaMetadata.extras?.getLong(ALBUM_ID_KEY, DEFAULT_ID).takeIf { id ->
+        id != DEFAULT_ID
+    }
 
 internal fun SessionCommands.Builder.addAll(list: List<CommandButton>): SessionCommands.Builder {
     list.mapNotNull { it.sessionCommand }.forEach {
@@ -62,11 +87,6 @@ internal val MediaController.previousMediaItemId: Long?
         return getMediaItemAt(previousIndex)
             .mediaId
             .toLongOrNull()
-    }
-
-internal fun List<MediaItem>.asPlaylistItems(): List<PlaylistItem> =
-    mapNotNull { item ->
-        item.localConfiguration?.tag as? PlaylistItem
     }
 
 internal fun PlaybackController.RepeatMode.Companion.fromPlayerRepeatMode(mode: Int) =

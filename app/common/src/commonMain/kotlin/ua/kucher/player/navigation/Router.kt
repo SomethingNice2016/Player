@@ -96,7 +96,7 @@ internal class Router<T : Route> private constructor(
     }
 
     private fun removeLastEntry() {
-        val route = _backStack.removeLast()
+        val route = _backStack.removeAt(_backStack.lastIndex)
         entries.remove(route.id)?.close()
     }
 }

@@ -15,17 +15,18 @@ private val ImageDispatcher = Dispatchers.IO.limitedParallelism(IMAGE_REQUEST_FI
 
 @Composable
 internal fun rememberImageRequest(
-    uri: String?,
+    model: Any?,
     height: Int,
     width: Int,
     dispatcher: CoroutineDispatcher? = ImageDispatcher
 ): ImageRequest {
 
     val context = LocalPlatformContext.current
-    return remember {
+
+    return remember(model, height, width) {
         val builder = ImageRequest.Builder(context)
-            .data(uri)
-            .memoryCacheKey(uri)
+            .data(model)
+            .memoryCacheKey(model?.toString())
             .size(
                 width = width,
                 height = height
@@ -41,7 +42,7 @@ internal fun rememberImageRequest(
 
 @Composable
 internal fun rememberImageRequest(
-    uri: String?,
+    model: Any?,
 ) = rememberAsyncImagePainter(
-    model = uri,
+    model = model,
 )

@@ -15,7 +15,6 @@ import androidx.annotation.RequiresPermission
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.TaskStackBuilder
-import androidx.lifecycle.lifecycleScope
 import androidx.media3.cast.CastPlayer
 import androidx.media3.common.AudioAttributes
 import androidx.media3.common.C
@@ -30,11 +29,8 @@ import androidx.media3.session.MediaSession
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import com.google.common.collect.ImmutableList
-import org.koin.android.ext.android.inject
 import org.koin.core.component.KoinComponent
 import ua.kucher.player.MainActivity
-import ua.kucher.player.data.artist.ArtistRepository
-import ua.kucher.player.data.song.SongRepository
 import kotlin.properties.Delegates
 
 @Suppress("OPT_IN_ARGUMENT_IS_NOT_MARKER")
@@ -64,16 +60,8 @@ class PlaybackService : MediaLibraryService(),
         }
     }
 
-    private val songRepository: SongRepository by inject()
-
-    private val artistRepository: ArtistRepository by inject()
-
     private val playbackAnalytics: PlaybackAnalytics by lazy {
-        PlaybackAnalytics(
-            songRepository = songRepository,
-            artistRepository = artistRepository,
-            coroutineScope = lifecycleScope
-        )
+        PlaybackAnalytics(applicationContext)
     }
 
     private lateinit var player: Player

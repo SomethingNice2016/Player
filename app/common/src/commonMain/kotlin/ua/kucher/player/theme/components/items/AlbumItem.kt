@@ -68,7 +68,7 @@ internal fun AlbumItem(
                 .clip(PlayerTheme.shapes.radius4Px)
                 .background(PlayerTheme.colorScheme.rippleColor),
             model = rememberImageRequest(
-                uri = artwork,
+                model = artwork,
                 height = artworkSizePx,
                 width = artworkSizePx
             ),

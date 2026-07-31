@@ -160,8 +160,6 @@ internal fun MusicPlayerScreen(
         else -> (expandPlayerProgress.value - 0.7F) / 0.3F
     }
 
-    val backgroundImageSize = backgroundHeight.toPx()
-
     val artworkPixelSize = artworkBigSize.toPx()
 
     val imageBackgroundAlpha = expandPlayerProgress.value
@@ -255,10 +253,9 @@ internal fun MusicPlayerScreen(
                         AsyncImage(
                             modifier = Modifier.fillMaxSize(),
                             model = rememberImageRequest(
-                                uri = nonNullState.currentSong.artwork,
+                                model = nonNullState.currentSong.artwork,
                                 height = backgroundImagePixelSize,
                                 width = backgroundImagePixelSize,
-                                dispatcher = null
                             ),
                             contentDescription = null,
                             contentScale = ContentScale.Crop
@@ -312,7 +309,7 @@ internal fun MusicPlayerScreen(
                             .size(artworkSize)
                             .clip(RoundedCornerShape(artworkCorner)),
                         model = rememberImageRequest(
-                            uri = pages[page].value,
+                            model = pages[page].value,
                             height = artworkPixelSize,
                             width = artworkPixelSize,
                         ),

@@ -24,7 +24,7 @@ internal class SongUiMapper(
             id = song.id,
             title = song.title,
             artwork = song.artwork,
-            artistName = song.artist?.name ?: "",
+            artistName = song.artist?.name.orEmpty(),
             duration = song.duration,
             isFavorite = song.isFavorite,
             displayDuration = timeFormatter.formatDuration(song.duration),

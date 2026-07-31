@@ -29,8 +29,8 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
 
             //koin
-            implementation(libs.koin.core)
-            implementation(libs.koin.compose.core)
+            api(libs.koin.core)
+            api(libs.koin.compose.core)
 
             //image loader
             implementation(libs.coil.compose)
@@ -44,15 +44,15 @@ kotlin {
 
         androidMain.dependencies {
             implementation(libs.androidx.startup.runtime)
-            implementation(libs.androidx.workmanager)
-            implementation(libs.koin.android)
             implementation(libs.coil.http)
+
+            api(libs.androidx.workmanager)
+            api(libs.koin.android)
 
             //Media
             implementation(libs.androidx.media.exoplayer.core)
             implementation(libs.androidx.media.session)
             implementation(libs.androidx.media.cast)
-            implementation(libs.androidx.media.ktx)
             implementation(libs.androidx.media.ui)
         }
 

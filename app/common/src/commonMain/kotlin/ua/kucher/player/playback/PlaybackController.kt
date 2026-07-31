@@ -21,7 +21,11 @@ interface PlaybackController {
 
     fun play(item: PlaylistItem)
 
-    fun play(playlist: List<PlaylistItem>, item: PlaylistItem)
+    fun play(
+        playlist: List<PlaylistItem>,
+        item: PlaylistItem,
+        isShuffle: Boolean = false
+    )
 
     fun playNext(item: PlaylistItem)
 

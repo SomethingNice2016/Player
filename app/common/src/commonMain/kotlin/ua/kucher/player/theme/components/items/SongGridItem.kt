@@ -48,7 +48,7 @@ internal fun SongGridItem(
     val artworkSizePx = artworkSize.toPx()
 
     val artworkRequest = rememberImageRequest(
-        uri = artwork,
+        model = artwork,
         height = artworkSizePx,
         width = artworkSizePx
     )

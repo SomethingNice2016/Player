@@ -58,6 +58,7 @@ class MainActivity : PresenterActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        lifecycle.addObserver(playbackController)
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 try {
@@ -79,6 +80,7 @@ class MainActivity : PresenterActivity() {
     }
 
     override fun onDestroy() {
+        lifecycle.removeObserver(playbackController)
         stopPlaybackService()
         super.onDestroy()
     }

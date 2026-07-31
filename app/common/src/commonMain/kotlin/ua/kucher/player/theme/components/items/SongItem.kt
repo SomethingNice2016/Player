@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +46,6 @@ internal fun SongItem(
     isSongPlaying: Boolean,
     isPlaying: Boolean,
     artwork: String?,
-    menuIcon: ImageVector,
     placeholder: Painter,
     onClick: () -> Unit,
     onMenuClick: () -> Unit
@@ -63,7 +61,7 @@ internal fun SongItem(
     val artworkPixelSize = artworkSize.toPx()
 
     val artworkImageRequest = rememberImageRequest(
-        uri = artwork,
+        model = artwork,
         height = artworkPixelSize,
         width = artworkPixelSize
     )
@@ -151,7 +149,7 @@ internal fun SongItem(
                 .clickable(onClick = onMenuClick)
                 .size(PlayerTheme.dimens.menuIconSize)
                 .padding(PlayerTheme.dimens.dimens12Px),
-            imageVector = menuIcon,
+            imageVector = vectorResource(Res.drawable.ic_options),
             contentDescription = null,
             tint = PlayerTheme.colorScheme.iconsMain
         )
@@ -166,7 +164,6 @@ private fun SongItemPreview() {
         title = "Naver fade away",
         artist = "SAMURAI",
         placeholder = painterResource(Res.drawable.default_song_artwork),
-        menuIcon = vectorResource(Res.drawable.ic_options),
         duration = "2:22",
         isSongPlaying = false,
         isPlaying = false,

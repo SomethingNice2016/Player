@@ -76,7 +76,6 @@ internal fun MiniPlayer(
                     color = PlayerTheme.colorScheme.primaryTextColor,
                     fontStyle = PlayerTheme.typography.largeBody.fontStyle,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens2Px))
                 Text(

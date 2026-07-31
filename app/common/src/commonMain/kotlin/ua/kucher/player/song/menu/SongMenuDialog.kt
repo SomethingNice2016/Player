@@ -50,12 +50,14 @@ import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 @Composable
 internal fun SongMenuDialog(
     uiState: SongMenuUiState,
+    showAlbumsItem: Boolean,
+    showArtistItem: Boolean,
     onBackClick: () -> Unit,
     setFavoriteState: () -> Unit,
     onPlayNextClick: () -> Unit,
     onShareClick: () -> Unit,
     goToArtist: () -> Unit,
-    goToAlbum: () -> Unit
+    goToAlbum: () -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -72,7 +74,7 @@ internal fun SongMenuDialog(
         ) {
             Column(modifier = Modifier.weight(1F)) {
                 Text(
-                    text = uiState.song?.title ?: "",
+                    text = uiState.song?.title.orEmpty(),
                     color = PlayerTheme.colorScheme.primaryTextColor,
                     style = PlayerTheme.typography.mediumTitle,
                     overflow = TextOverflow.Ellipsis,
@@ -84,8 +86,8 @@ internal fun SongMenuDialog(
                 Text(
                     text = stringResource(
                         Res.string.song_item_description,
-                        uiState.song?.artistName ?: "",
-                        uiState.song?.displayDuration ?: ""
+                        uiState.song?.artistName.orEmpty(),
+                        uiState.song?.displayDuration.orEmpty()
                     ),
                     color = PlayerTheme.colorScheme.secondaryTextColor,
                     style = PlayerTheme.typography.smallTitle,
@@ -151,18 +153,24 @@ internal fun SongMenuDialog(
 
             Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens16Px))
 
-            MenuItem(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(Res.string.song_menu_item_go_to_album),
-                icon = painterResource(Res.drawable.ic_album),
-                onClick = goToAlbum
-            )
-            MenuItem(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(Res.string.song_menu_item_go_to_artist),
-                icon = painterResource(Res.drawable.ic_artist),
-                onClick = goToArtist
-            )
+            if (showAlbumsItem) {
+                MenuItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(Res.string.song_menu_item_go_to_album),
+                    icon = painterResource(Res.drawable.ic_album),
+                    onClick = goToAlbum
+                )
+            }
+
+            if (showArtistItem) {
+                MenuItem(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(Res.string.song_menu_item_go_to_artist),
+                    icon = painterResource(Res.drawable.ic_artist),
+                    onClick = goToArtist
+                )
+            }
+
             MenuItem(
                 modifier = Modifier.fillMaxWidth(),
                 text = stringResource(Res.string.song_menu_item_add_to_queue),
@@ -259,6 +267,8 @@ private fun SongMenuDialogPreview() {
                 artwork = ""
             )
         ),
+        showAlbumsItem = true,
+        showArtistItem = true,
         onBackClick = {},
         onPlayNextClick = {},
         setFavoriteState = {},

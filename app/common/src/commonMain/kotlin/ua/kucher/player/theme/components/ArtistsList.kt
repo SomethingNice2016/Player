@@ -39,7 +39,7 @@ internal fun ArtistsList(
                 numberOfSongs = artist.numberOfSongs,
                 numberOfAlbums = artist.numberOfAlbums,
                 placeholder = placeholder,
-                artwork = artist.artwork ?: "",
+                artwork = artist.artwork.orEmpty(),
                 onMenuClick = {
                     onMenuClick(artist.id)
                 },

@@ -15,7 +15,7 @@ internal actual class ArtworkCache(private val context: Context) {
 
     companion object {
         private const val SONG_ARTWORK_DIR = "artwork/songs"
-        private const val ARTWORK_FORMAT = ".jpg"
+        private const val ARTWORK_FORMAT = ".webp"
     }
 
     actual suspend fun getAndCacheSongArtwork(songId: Long): String? = runCatching {

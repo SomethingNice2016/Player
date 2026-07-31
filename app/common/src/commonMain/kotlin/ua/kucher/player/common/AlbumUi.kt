@@ -17,5 +17,5 @@ internal fun Album.toUi() = AlbumUi(
     title = title,
     numberOfSongs = numberOfSongs,
     artwork = artwork,
-    artistName = artist?.name ?: "",
+    artistName = artist?.name.orEmpty(),
 )

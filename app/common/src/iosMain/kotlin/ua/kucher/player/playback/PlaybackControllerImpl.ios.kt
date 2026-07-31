@@ -12,7 +12,11 @@ internal class IOSPlaybackController : PlaybackController {
         TODO("Not yet implemented")
     }
 
-    override fun play(playlist: List<PlaylistItem>, item: PlaylistItem) {
+    override fun play(
+        playlist: List<PlaylistItem>,
+        item: PlaylistItem,
+        isShuffle: Boolean
+    ) {
         TODO("Not yet implemented")
     }
 
