@@ -1,9 +1,9 @@
 package ua.kucher.player.common
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import ua.kucher.player.entity.Album
 
-@Stable
+@Immutable
 internal data class AlbumUi(
     val id: Long,
     val title: String,
@@ -17,5 +17,5 @@ internal fun Album.toUi() = AlbumUi(
     title = title,
     numberOfSongs = numberOfSongs,
     artwork = artwork,
-    artistName = artist?.name ?: "",
+    artistName = artist?.name.orEmpty(),
 )

@@ -1,11 +1,12 @@
 package ua.kucher.player.playback
 
+import androidx.lifecycle.DefaultLifecycleObserver
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.Player
 import androidx.media3.session.MediaController
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,7 @@ import kotlinx.coroutines.launch
 import ua.kucher.player.entity.PlaylistItem
 import kotlin.time.Duration.Companion.milliseconds
 
-internal class AndroidPlaybackController : PlaybackController {
+internal class AndroidPlaybackController : PlaybackController, DefaultLifecycleObserver {
 
     companion object {
         private const val PROGRESS_UPDATE_DELAY = 200L
@@ -24,9 +25,13 @@ internal class AndroidPlaybackController : PlaybackController {
 
     private var controller: MediaController? = null
 
-    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var scope: CoroutineScope? = null
 
     private var progressJob: Job? = null
+        set(value) {
+            field?.cancel()
+            field = value
+        }
 
     private val _state: MutableStateFlow<PlaybackState> =
         MutableStateFlow(PlaybackState())
@@ -89,27 +94,37 @@ internal class AndroidPlaybackController : PlaybackController {
             playPause()
             return@withController
         }
+
         val existingIndex = mediaItems.indexOfFirst { mediaItem ->
             mediaItem.mediaId.toLongOrNull() == item.id
         }
+
         if (existingIndex >= 0) {
             seekToDefaultPosition(existingIndex)
         } else {
             setMediaItem(item.toMediaItem())
         }
+
         play()
         syncState()
     }
 
-    override fun play(playlist: List<PlaylistItem>, item: PlaylistItem) = withController {
+    override fun play(
+        playlist: List<PlaylistItem>,
+        item: PlaylistItem,
+        isShuffle: Boolean
+    ) = withController {
         val mediaItems = playlist.map { playlistItem ->
             playlistItem.toMediaItem()
         }
-        val index = mediaItems.indexOfFirst {
-            it.mediaId == item.id.toString()
+
+        val index = mediaItems.indexOfFirst { mediaItem ->
+            mediaItem.mediaId == item.id.toString()
         }
+
         setMediaItems(mediaItems, index, 0L)
         prepare()
+        setShuffleMode(isShuffle)
         play()
         syncState()
     }
@@ -120,11 +135,13 @@ internal class AndroidPlaybackController : PlaybackController {
         val existingIndex = mediaItems.indexOfFirst { mediaItem ->
             mediaItem.mediaId.toLongOrNull() == item.id
         }
+
         if (existingIndex >= 0) {
             moveMediaItem(existingIndex, insertIndex)
         } else {
             addMediaItem(insertIndex, item.toMediaItem())
         }
+
         syncState()
     }
 
@@ -171,11 +188,23 @@ internal class AndroidPlaybackController : PlaybackController {
         controller = null
     }
 
+    override fun onCreate(owner: LifecycleOwner) {
+        super.onCreate(owner)
+        scope = owner.lifecycleScope
+    }
+
+    override fun onDestroy(owner: LifecycleOwner) {
+        startProgressUpdates()
+        super.onDestroy(owner)
+    }
+
     private fun syncState() {
         val nonNullController = controller ?: run {
             _state.update {
                 PlaybackState(
                     currentItemId = null,
+                    currentItemAlbumId = null,
+                    currentItemArtistId = null,
                     isPlaying = false,
                     isShuffle = false,
                     repeatMode = PlaybackController.RepeatMode.OFF,
@@ -185,9 +214,12 @@ internal class AndroidPlaybackController : PlaybackController {
             }
             return
         }
+
         _state.update {
             PlaybackState(
                 currentItemId = nonNullController.currentMediaItem?.mediaId?.toLongOrNull(),
+                currentItemAlbumId = nonNullController.currentMediaItem?.albumId,
+                currentItemArtistId = nonNullController.currentMediaItem?.artistId,
                 isPlaying = nonNullController.isPlaying,
                 isShuffle = nonNullController.shuffleModeEnabled,
                 repeatMode = PlaybackController.RepeatMode.fromPlayerRepeatMode(nonNullController.repeatMode),
@@ -204,23 +236,24 @@ internal class AndroidPlaybackController : PlaybackController {
     }
 
     private fun startProgressUpdates() {
-        progressJob?.cancel()
-        progressJob = scope.launch {
+        progressJob = scope?.launch {
             while (currentCoroutineContext().isActive) {
                 val controller = controller ?: break
+
                 if (!controller.isPlaying) {
                     break
                 }
+
                 _state.update { value ->
                     value.copy(progress = controller.currentPosition)
                 }
+
                 delay(PROGRESS_UPDATE_DELAY.milliseconds)
             }
         }
     }
 
     private fun stopProgressUpdates() {
-        progressJob?.cancel()
         progressJob = null
     }
 

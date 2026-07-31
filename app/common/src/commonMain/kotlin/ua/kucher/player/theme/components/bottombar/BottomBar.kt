@@ -12,8 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.util.fastForEach
-import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import ua.kucher.player.theme.PlayerTheme
 import ua.kucher.player.theme.components.items.PlayerMenuIconButton
 
@@ -53,7 +53,7 @@ internal fun <T : MenuItem> BottomBar(
                 PlayerMenuIconButton(
                     backgroundColor = background,
                     tint = tint,
-                    painter = painterResource(item.icon),
+                    imageVector = vectorResource(item.icon),
                     contentDescription = stringResource(item.label),
                     onClick = { onClick(item) }
                 )

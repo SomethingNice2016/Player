@@ -42,7 +42,7 @@ import player.app.common.generated.resources.albums
 import player.app.common.generated.resources.albums_count
 import player.app.common.generated.resources.artists
 import player.app.common.generated.resources.artists_count
-import player.app.common.generated.resources.default_song_artwork
+import player.app.common.generated.resources.default_song_artwork_mini
 import player.app.common.generated.resources.favorites
 import player.app.common.generated.resources.home_label
 import player.app.common.generated.resources.home_screen_items_count
@@ -216,7 +216,7 @@ internal fun HomeScreen(
                         )
                     }
 
-                    val songPlaceholder = painterResource(Res.drawable.default_song_artwork)
+                    val songPlaceholder = painterResource(Res.drawable.default_song_artwork_mini)
 
                     LazyRow(
                         modifier = Modifier.fillMaxWidth(),

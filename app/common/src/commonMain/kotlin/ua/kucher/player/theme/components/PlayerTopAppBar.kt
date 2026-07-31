@@ -32,9 +32,9 @@ import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.material3.TopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.Stable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -75,7 +75,7 @@ enum class TopAppBarExpandState {
     INTERMEDIATE,
 }
 
-@Stable
+@Immutable
 class PlayerTopAppBarState internal constructor(
     private val scrollBehavior: TopAppBarScrollBehavior?,
 ) {

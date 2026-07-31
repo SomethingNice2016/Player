@@ -33,26 +33,31 @@ android {
 //        }
     }
 
+    flavorDimensions.add("type")
+
     buildTypes {
         debug {
+            isDebuggable = false
             isMinifyEnabled = false
             isShrinkResources = false
             versionNameSuffix = "-debug"
+            signingConfig = signingConfigs.getByName("debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
         }
-//        release {
-//            isMinifyEnabled = true
-//            isShrinkResources = true
-//            versionNameSuffix = "-prod"
-//            signingConfig = signingConfigs.getByName("release")
-//            proguardFiles(
-//                getDefaultProguardFile("proguard-android-optimize.txt"),
-//                "proguard-rules.pro"
-//            )
-//        }
+        release {
+            isDebuggable = false
+            isMinifyEnabled = true
+            isShrinkResources = true
+            versionNameSuffix = "-prod"
+            signingConfig = signingConfigs.getByName("debug")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
         lint {
             baseline = file("lint-baseline.xml")
         }
@@ -69,16 +74,11 @@ kotlin {
 
 
 dependencies {
-    debugImplementation(libs.leakcanary)
+//    debugImplementation(libs.leakcanary)
     implementation(kotlin("reflect"))
     implementation(libs.androidx.startup.runtime)
     implementation(libs.androidx.activityCompose)
     implementation(libs.androidx.ktx.core)
-
-    //koin
-    implementation(libs.koin.core)
-    implementation(libs.koin.android)
-    implementation(libs.koin.compose.core)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.crashlytics)

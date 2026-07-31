@@ -48,19 +48,22 @@ internal class ArtistDetailPresenter(
         initialValue = ArtistDetailUiState()
     )
 
-    fun play() {
-        val songId = songs.value.first().id
-        play(songId)
+    fun play(isShuffle: Boolean = false) {
+        songs.value.first().let { song ->
+            playbackController.play(
+                playlist = songs.value,
+                item = song,
+                isShuffle = isShuffle
+            )
+        }
     }
 
     fun play(id: Long) {
-        val song = songs.value.find { song ->
-            song.id == id
-        } ?: return
-
-        playbackController.play(
-            playlist = songs.value,
-            item = song
-        )
+        songs.value.find { song -> song.id == id }?.let { song ->
+            playbackController.play(
+                playlist = songs.value,
+                item = song
+            )
+        }
     }
 }

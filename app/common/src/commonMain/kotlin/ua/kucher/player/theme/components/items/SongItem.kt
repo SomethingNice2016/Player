@@ -1,27 +1,24 @@
 package ua.kucher.player.theme.components.items
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
@@ -29,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.AsyncImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.default_song_artwork
 import player.app.common.generated.resources.ic_options
@@ -59,47 +57,50 @@ internal fun SongItem(
         Color.Transparent
 
     val artworkSize = PlayerTheme.dimens.songIconSize
+    val verticalPadding = PlayerTheme.dimens.dimens8Px
+    val artworkPixelSize = artworkSize.toPx()
+
+    val artworkImageRequest = rememberImageRequest(
+        model = artwork,
+        height = artworkPixelSize,
+        width = artworkPixelSize
+    )
+
+    val artworkModifier = Modifier
+        .size(artworkSize)
+        .clip(PlayerTheme.shapes.radius4Px)
+        .background(PlayerTheme.colorScheme.menuEnableButton.copy(alpha = 0.15F))
 
     Row(
         modifier = modifier
             .clickable(onClick = onClick)
             .background(backgroundColor)
             .padding(
-                top = PlayerTheme.dimens.dimens8Px,
-                bottom = PlayerTheme.dimens.dimens8Px,
+                top = verticalPadding,
+                bottom = verticalPadding,
                 start = PlayerTheme.dimens.dimens16Px
             )
-            .height(IntrinsicSize.Min),
+            .height(artworkSize)
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Box(
-            modifier = Modifier
-                .size(artworkSize)
-                .clip(PlayerTheme.shapes.radius4Px)
-                .background(PlayerTheme.colorScheme.menuEnableButton.copy(alpha = 0.15F))
-        ) {
-            FrostedGlass(
-                modifier = Modifier.fillMaxSize(),
-                enabled = isSongPlaying,
-                tint = Color.Black.copy(alpha = 0.60F)
-            ) {
 
-                val artworkSizePx = artworkSize.toPx()
-
-                AsyncImage(
+        if (isSongPlaying) {
+            Box(modifier = artworkModifier) {
+                FrostedGlass(
                     modifier = Modifier.fillMaxSize(),
-                    model = rememberImageRequest(
-                        uri = artwork,
-                        height = artworkSizePx,
-                        width = artworkSizePx,
-                    ),
-                    contentDescription = title,
-                    contentScale = ContentScale.Crop,
-                    placeholder = placeholder,
-                    error = placeholder
-                )
-            }
-            if (isSongPlaying) {
+                    enabled = isSongPlaying,
+                    tint = Color.Black.copy(alpha = 0.60F)
+                ) {
+                    AsyncImage(
+                        modifier = Modifier.fillMaxSize(),
+                        model = artworkImageRequest,
+                        contentDescription = title,
+                        contentScale = ContentScale.Crop,
+                        error = placeholder,
+                        placeholder = placeholder
+                    )
+                }
                 AudioVisualizer(
                     modifier = Modifier
                         .fillMaxSize()
@@ -109,14 +110,21 @@ internal fun SongItem(
                     color = PlayerTheme.colorScheme.iconsMain
                 )
             }
+        } else {
+            AsyncImage(
+                modifier = artworkModifier,
+                model = artworkImageRequest,
+                contentDescription = title,
+                contentScale = ContentScale.Crop,
+                error = placeholder,
+            )
         }
 
-        Spacer(modifier = Modifier.width(PlayerTheme.dimens.dimens16Px))
         Column(
             modifier = Modifier
-                .weight(1f)
-                .align(Alignment.CenterVertically),
-            verticalArrangement = Arrangement.Center
+                .weight(1F)
+                .padding(start = PlayerTheme.dimens.dimens16Px),
+            verticalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens2Px),
         ) {
             Text(
                 text = title,
@@ -125,7 +133,6 @@ internal fun SongItem(
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
-            Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens2Px))
 
             Text(
                 text = stringResource(Res.string.song_item_description, artist, duration),
@@ -135,19 +142,16 @@ internal fun SongItem(
                 overflow = TextOverflow.MiddleEllipsis
             )
         }
-        IconButton(
-            modifier = Modifier.size(PlayerTheme.dimens.menuIconSize),
-            onClick = onMenuClick,
-            content = {
-                Image(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(PlayerTheme.dimens.dimens12Px),
-                    painter = painterResource(Res.drawable.ic_options),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(PlayerTheme.colorScheme.iconsMain)
-                )
-            }
+
+        Icon(
+            modifier = Modifier
+                .clip(CircleShape)
+                .clickable(onClick = onMenuClick)
+                .size(PlayerTheme.dimens.menuIconSize)
+                .padding(PlayerTheme.dimens.dimens12Px),
+            imageVector = vectorResource(Res.drawable.ic_options),
+            contentDescription = null,
+            tint = PlayerTheme.colorScheme.iconsMain
         )
     }
 }

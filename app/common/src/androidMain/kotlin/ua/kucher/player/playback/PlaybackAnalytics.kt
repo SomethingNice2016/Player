@@ -1,16 +1,10 @@
 package ua.kucher.player.playback
 
+import android.content.Context
 import androidx.media3.common.Player
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.firstOrNull
-import kotlinx.coroutines.launch
-import ua.kucher.player.data.artist.ArtistRepository
-import ua.kucher.player.data.song.SongRepository
 
 internal class PlaybackAnalytics(
-    private val songRepository: SongRepository,
-    private val artistRepository: ArtistRepository,
-    private val coroutineScope: CoroutineScope
+    private val context: Context
 ) : Player.Listener {
 
     private var currentItemId: Long? = null
@@ -28,15 +22,12 @@ internal class PlaybackAnalytics(
 
         currentItemId = id
 
-        id?.let { nonNullId ->
-            coroutineScope.launch {
-                songRepository.registerPlayback(nonNullId)
-                songRepository.getSongById(nonNullId).firstOrNull()?.let { song ->
-                    song.artist?.let { artist ->
-                        artistRepository.incListenCount(artist.id)
-                    }
-                }
-            }
-        }
+        if (currentItemId == null) return
+
+        PlaybackAnalyticsWorker.start(
+            context = context,
+            songId = currentItemId!!,
+            artistId = player.currentMediaItem?.artistId
+        )
     }
 }

@@ -108,6 +108,7 @@ internal val presenterModule = module {
             albumId = albumId,
             albumRepository = get(),
             songRepository = get(),
+            playbackController = get(),
             mapper = get()
         )
     }

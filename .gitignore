@@ -16,3 +16,4 @@ Pods/
 *.gpg
 *yarn.lock
 /app/androidApp/google-services.json
+/app/androidApp/lint-baseline.xml

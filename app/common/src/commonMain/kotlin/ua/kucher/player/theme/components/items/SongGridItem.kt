@@ -2,6 +2,7 @@ package ua.kucher.player.theme.components.items
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -44,6 +45,19 @@ internal fun SongGridItem(
 
     val artworkSize = PlayerTheme.dimens.songIconSize
 
+    val artworkSizePx = artworkSize.toPx()
+
+    val artworkRequest = rememberImageRequest(
+        model = artwork,
+        height = artworkSizePx,
+        width = artworkSizePx
+    )
+
+    val artworkModifier = Modifier
+        .size(PlayerTheme.dimens.songIconGridSize)
+        .clip(PlayerTheme.shapes.radius4Px)
+        .background(PlayerTheme.colorScheme.menuEnableButton.copy(alpha = 0.15F))
+
     Column(
         modifier = modifier
             .clip(PlayerTheme.shapes.radius4Px)
@@ -52,37 +66,25 @@ internal fun SongGridItem(
                 onLongClick = onLongClick
             )
             .padding(PlayerTheme.dimens.dimens8Px)
-            .width(PlayerTheme.dimens.songIconGridSize)
+            .width(PlayerTheme.dimens.songIconGridSize),
+        verticalArrangement = Arrangement.spacedBy(PlayerTheme.dimens.dimens2Px)
 
     ) {
-        Box(
-            modifier = Modifier
-                .size(PlayerTheme.dimens.songIconGridSize)
-                .clip(PlayerTheme.shapes.radius4Px)
-                .background(PlayerTheme.colorScheme.menuEnableButton.copy(alpha = 0.15F))
-        ) {
-            FrostedGlass(
-                modifier = Modifier.fillMaxSize(),
-                enabled = isSongPlaying,
-                tint = Color.Black.copy(alpha = 0.60F)
-            ) {
-
-                val artworkSizePx = artworkSize.toPx()
-
-                AsyncImage(
+        if (isSongPlaying) {
+            Box(modifier = artworkModifier) {
+                FrostedGlass(
                     modifier = Modifier.fillMaxSize(),
-                    model = rememberImageRequest(
-                        uri = artwork,
-                        height = artworkSizePx,
-                        width = artworkSizePx
-                    ),
-                    contentDescription = title,
-                    contentScale = ContentScale.Crop,
-                    placeholder = placeholder,
-                    error = placeholder
-                )
-            }
-            if (isSongPlaying) {
+                    tint = Color.Black.copy(alpha = 0.60F)
+                ) {
+                    AsyncImage(
+                        modifier = Modifier.fillMaxSize(),
+                        model = artworkRequest,
+                        contentDescription = title,
+                        contentScale = ContentScale.Crop,
+                        placeholder = placeholder,
+                        error = placeholder
+                    )
+                }
                 AudioVisualizer(
                     modifier = Modifier
                         .fillMaxSize()
@@ -92,9 +94,18 @@ internal fun SongGridItem(
                     color = PlayerTheme.colorScheme.iconsMain
                 )
             }
+        } else {
+            AsyncImage(
+                modifier = artworkModifier,
+                model = artworkRequest,
+                contentDescription = title,
+                contentScale = ContentScale.Crop,
+                placeholder = placeholder,
+                error = placeholder
+            )
         }
 
-        Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens4Px))
+        Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens2Px))
 
         Text(
             text = title,
@@ -103,9 +114,7 @@ internal fun SongGridItem(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-
-        Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens2Px))
-
+        
         Text(
             text = artist,
             color = PlayerTheme.colorScheme.secondaryTextColor,

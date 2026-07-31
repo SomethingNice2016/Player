@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.vectorResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.ic_pause_outline
 import player.app.common.generated.resources.ic_play_outline
@@ -232,13 +233,13 @@ internal fun PlayerControl(
             verticalAlignment = Alignment.CenterVertically
         ) {
             PlayerMenuIconButton(
-                painter = painterResource(Res.drawable.ic_shuffle),
+                imageVector = vectorResource(Res.drawable.ic_shuffle),
                 tint = shuffleButtonColor,
                 onClick = onShuffle
             )
 
             PlayerMenuIconButton(
-                painter = painterResource(Res.drawable.ic_skip_back),
+                imageVector = vectorResource(Res.drawable.ic_skip_back),
                 tint = PlayerTheme.colorScheme.iconsMain,
                 iconSize = PlayerTheme.dimens.dimens32Px,
                 onClick = onPrevious
@@ -285,14 +286,14 @@ internal fun PlayerControl(
             }
 
             PlayerMenuIconButton(
-                painter = painterResource(Res.drawable.ic_skip_forward),
+                imageVector = vectorResource(Res.drawable.ic_skip_forward),
                 tint = PlayerTheme.colorScheme.iconsMain,
                 iconSize = PlayerTheme.dimens.dimens32Px,
                 onClick = onForward
             )
 
             PlayerMenuIconButton(
-                painter = painterResource(repeatButtonRes),
+                imageVector = vectorResource(repeatButtonRes),
                 tint = repeatButtonColor,
                 onClick = onRepeat
             )

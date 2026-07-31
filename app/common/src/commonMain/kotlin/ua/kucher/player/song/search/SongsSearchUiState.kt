@@ -1,9 +1,9 @@
 package ua.kucher.player.song.search
 
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.Immutable
 import ua.kucher.player.common.SongUi
 
-@Stable
+@Immutable
 internal data class SongsSearchUiState(
     val searchQuery: String = "",
     val searchResult: List<SongUi> = emptyList(),

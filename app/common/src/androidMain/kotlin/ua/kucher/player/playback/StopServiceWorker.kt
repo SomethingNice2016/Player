@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import androidx.annotation.OptIn
 import androidx.media3.common.util.UnstableApi
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
@@ -30,24 +31,24 @@ internal class StopServiceWorker(
 
         @SuppressLint("VisibleForTests")
         @JvmStatic
-        fun start(context: Context?) {
-            context?.let { nonNullContext ->
-                val workManager = WorkManager.getInstance(nonNullContext)
-                workManager.cancelAllWorkByTag(STOP_SERVICE_WORKER)
-                val workRequest = OneTimeWorkRequestBuilder<StopServiceWorker>()
-                    .setInitialDelay(STOP_SERVICE_DELAY, TimeUnit.MILLISECONDS)
-                    .addTag(STOP_SERVICE_WORKER)
-                    .build()
-                workManager.enqueue(workRequest)
-            }
+        fun start(context: Context) {
+            val workRequest = OneTimeWorkRequestBuilder<StopServiceWorker>()
+                .setInitialDelay(STOP_SERVICE_DELAY, TimeUnit.MILLISECONDS)
+                .addTag(STOP_SERVICE_WORKER)
+                .build()
+
+            WorkManager.getInstance(context)
+                .enqueueUniqueWork(
+                    uniqueWorkName = STOP_SERVICE_WORKER,
+                    existingWorkPolicy = ExistingWorkPolicy.REPLACE,
+                    request = workRequest
+                )
         }
 
         @JvmStatic
-        fun stop(context: Context?) {
-            context?.let { nonNullContext ->
-                WorkManager.getInstance(nonNullContext)
-                    .cancelAllWorkByTag(STOP_SERVICE_WORKER)
-            }
+        fun stop(context: Context) {
+            WorkManager.getInstance(context)
+                .cancelAllWorkByTag(STOP_SERVICE_WORKER)
         }
     }
 

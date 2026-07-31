@@ -9,22 +9,24 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 
-private const val IMAGE_REQUEST_FIXED_THREADS = 8
+private const val IMAGE_REQUEST_FIXED_THREADS = 16
+
+private val ImageDispatcher = Dispatchers.IO.limitedParallelism(IMAGE_REQUEST_FIXED_THREADS)
 
 @Composable
 internal fun rememberImageRequest(
-    uri: String?,
+    model: Any?,
     height: Int,
     width: Int,
-    dispatcher: CoroutineDispatcher? = Dispatchers.IO.limitedParallelism(IMAGE_REQUEST_FIXED_THREADS)
+    dispatcher: CoroutineDispatcher? = ImageDispatcher
 ): ImageRequest {
 
     val context = LocalPlatformContext.current
 
-    return remember(context, uri, width, height) {
+    return remember(model, height, width) {
         val builder = ImageRequest.Builder(context)
-            .data(uri)
-            .memoryCacheKey(uri)
+            .data(model)
+            .memoryCacheKey(model?.toString())
             .size(
                 width = width,
                 height = height
@@ -40,7 +42,7 @@ internal fun rememberImageRequest(
 
 @Composable
 internal fun rememberImageRequest(
-    uri: String?,
+    model: Any?,
 ) = rememberAsyncImagePainter(
-    model = uri,
+    model = model,
 )

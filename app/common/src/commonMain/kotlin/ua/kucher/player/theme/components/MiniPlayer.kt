@@ -20,7 +20,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.vectorResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.ic_pause_outline
 import player.app.common.generated.resources.ic_play_outline
@@ -76,7 +76,6 @@ internal fun MiniPlayer(
                     color = PlayerTheme.colorScheme.primaryTextColor,
                     fontStyle = PlayerTheme.typography.largeBody.fontStyle,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
                 )
                 Spacer(modifier = Modifier.height(PlayerTheme.dimens.dimens2Px))
                 Text(
@@ -90,7 +89,7 @@ internal fun MiniPlayer(
             }
 
             PlayerMenuIconButton(
-                painter = painterResource(Res.drawable.ic_skip_back),
+                imageVector = vectorResource(Res.drawable.ic_skip_back),
                 buttonSize = PlayerTheme.dimens.dimens40Px,
                 contentDescription = "",
                 onClick = onPrevious
@@ -106,7 +105,7 @@ internal fun MiniPlayer(
             )
 
             PlayerMenuIconButton(
-                painter = painterResource(playButtonIconRes),
+                imageVector = vectorResource(playButtonIconRes),
                 buttonSize = PlayerTheme.dimens.dimens40Px,
                 iconSize = PlayerTheme.dimens.dimens28Px,
                 contentDescription = "",
@@ -123,7 +122,7 @@ internal fun MiniPlayer(
             )
 
             PlayerMenuIconButton(
-                painter = painterResource(Res.drawable.ic_skip_forward),
+                imageVector = vectorResource(Res.drawable.ic_skip_forward),
                 buttonSize = PlayerTheme.dimens.dimens40Px,
                 contentDescription = "",
                 onClick = onForward

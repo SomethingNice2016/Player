@@ -22,6 +22,15 @@ data class Song(
     override val albumTitle: String?
         get() = album?.title
 
+    override val albumId: Long?
+        get() = album?.id
+
+    override val artistId: Long?
+        get() = artist?.id
+
+    override val type: PlaylistItem.Type
+        get() = PlaylistItem.Type.AUDIO
+
     interface Mapper<out T> {
         fun map(song: Song): T
     }

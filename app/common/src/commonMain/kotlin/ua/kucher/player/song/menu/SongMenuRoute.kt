@@ -7,8 +7,10 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import kotlinx.coroutines.launch
 import org.koin.core.parameter.parametersOf
 import ua.kucher.player.navigation.AppRouter
 import ua.kucher.player.navigation.navigateToAlbum
@@ -23,6 +25,8 @@ internal fun SongMenuRoute(
     showSongMenu: Boolean,
     router: AppRouter,
     onDismiss: () -> Unit,
+    showAlbumsItem: Boolean = true,
+    showArtistItem: Boolean = true,
 ) {
 
     if (!showSongMenu) return
@@ -35,9 +39,18 @@ internal fun SongMenuRoute(
 
     val uiState by presenter.uiState.collectAsState()
 
+    val scope = rememberCoroutineScope()
+
+    fun dismiss() {
+        scope.launch {
+            sheetState.hide()
+            onDismiss()
+        }
+    }
+
     ModalBottomSheet(
         modifier = Modifier.fillMaxWidth(),
-        onDismissRequest = onDismiss,
+        onDismissRequest = ::dismiss,
         containerColor = Color.Transparent,
         sheetState = sheetState,
         dragHandle = null,
@@ -45,25 +58,27 @@ internal fun SongMenuRoute(
         content = {
             SongMenuDialog(
                 uiState = uiState,
-                onBackClick = onDismiss,
+                showArtistItem = showArtistItem,
+                showAlbumsItem = showAlbumsItem,
+                onBackClick = ::dismiss,
                 setFavoriteState = presenter::setFavoriteState,
                 onPlayNextClick = {
                     presenter.playNext()
-                    onDismiss()
+                    dismiss()
                 },
                 onShareClick = {
                     presenter.share()
                 },
                 goToArtist = {
-                    uiState.artistId?.let { id ->
-                        onDismiss()
-                        router.navigateToArtist(id)
+                    uiState.artistId?.let { artistId ->
+                        dismiss()
+                        router.navigateToArtist(artistId)
                     }
                 },
                 goToAlbum = {
-                    uiState.albumId?.let { id ->
-                        onDismiss()
-                        router.navigateToAlbum(id)
+                    uiState.albumId?.let { albumId ->
+                        dismiss()
+                        router.navigateToAlbum(albumId)
                     }
                 }
             )

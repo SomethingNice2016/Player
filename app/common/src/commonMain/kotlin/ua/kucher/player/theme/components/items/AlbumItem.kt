@@ -13,19 +13,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.IconButton
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import coil3.compose.SubcomposeAsyncImage
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 import player.app.common.generated.resources.Res
 import player.app.common.generated.resources.album_item_description
 import player.app.common.generated.resources.ic_album
@@ -67,7 +68,7 @@ internal fun AlbumItem(
                 .clip(PlayerTheme.shapes.radius4Px)
                 .background(PlayerTheme.colorScheme.rippleColor),
             model = rememberImageRequest(
-                uri = artwork,
+                model = artwork,
                 height = artworkSizePx,
                 width = artworkSizePx
             ),
@@ -82,7 +83,7 @@ internal fun AlbumItem(
                         .fillMaxSize()
                         .padding(PlayerTheme.dimens.dimens10Px)
                 )
-            }
+            },
         )
 
         Spacer(modifier = Modifier.width(PlayerTheme.dimens.dimens16Px))
@@ -110,19 +111,16 @@ internal fun AlbumItem(
                 overflow = TextOverflow.MiddleEllipsis
             )
         }
-        IconButton(
-            modifier = Modifier.size(PlayerTheme.dimens.menuIconSize),
-            onClick = onMenuClick,
-            content = {
-                Image(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(PlayerTheme.dimens.dimens12Px),
-                    painter = painterResource(Res.drawable.ic_options),
-                    contentDescription = null,
-                    colorFilter = ColorFilter.tint(PlayerTheme.colorScheme.iconsMain)
-                )
-            }
+
+        Icon(
+            modifier = Modifier
+                .clip(CircleShape)
+                .clickable(onClick = onMenuClick)
+                .size(PlayerTheme.dimens.menuIconSize)
+                .padding(PlayerTheme.dimens.dimens12Px),
+            imageVector = vectorResource(Res.drawable.ic_options),
+            contentDescription = null,
+            tint = PlayerTheme.colorScheme.iconsMain
         )
     }
 }
